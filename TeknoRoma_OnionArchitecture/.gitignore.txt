@@ -1,0 +1,51 @@
+# Build results
+bin/
+obj/
+
+# Visual Studio files
+.vs/
+*.user
+*.suo
+*.userosscache
+*.sln.docstates
+
+# Visual Studio Code files
+.vscode/
+
+# ASP.NET Scaffolding
+ScaffoldingReadMe.txt
+
+# User-specific files
+*.rsuser
+*.userprefs
+
+# Temporary files
+*.tmp
+*.log
+*.ncb
+*.cache
+*.dbmdl
+
+# Backup & package files
+*.bak
+*.zip
+*.7z
+*.tar
+*.rar
+*.gz
+*.tgz
+
+# NuGet Packages
+*.nupkg
+*.snupkg
+packages/
+*.nuspec
+
+# Publish directory
+publish/
+wwwroot/
+node_modules/
+
+# Others
+*.sqlite
+*.db
