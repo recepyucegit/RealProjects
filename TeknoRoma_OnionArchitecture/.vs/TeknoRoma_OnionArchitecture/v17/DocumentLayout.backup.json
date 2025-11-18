@@ -1,7 +1,84 @@
 {
   "Version": 1,
   "WorkspaceRootPath": "C:\\Users\\buse-\\OneDrive\\Belgeler\\GitHub\\RealProjects\\TeknoRoma_OnionArchitecture\\",
-  "Documents": [],
+  "Documents": [
+    {
+      "AbsoluteMoniker": "D:0:0:{3009A1F9-354F-42D2-8490-AB0E7AC44279}|Application\\Application\\Application.csproj|c:\\users\\buse-\\onedrive\\belgeler\\github\\realprojects\\teknoroma_onionarchitecture\\application\\application\\repositories\\isimplerepository.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{3009A1F9-354F-42D2-8490-AB0E7AC44279}|Application\\Application\\Application.csproj|solutionrelative:application\\application\\repositories\\isimplerepository.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{3009A1F9-354F-42D2-8490-AB0E7AC44279}|Application\\Application\\Application.csproj|c:\\users\\buse-\\onedrive\\belgeler\\github\\realprojects\\teknoroma_onionarchitecture\\application\\application\\repositories\\iexpenserepository.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{3009A1F9-354F-42D2-8490-AB0E7AC44279}|Application\\Application\\Application.csproj|solutionrelative:application\\application\\repositories\\iexpenserepository.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{3009A1F9-354F-42D2-8490-AB0E7AC44279}|Application\\Application\\Application.csproj|c:\\users\\buse-\\onedrive\\belgeler\\github\\realprojects\\teknoroma_onionarchitecture\\application\\application\\repositories\\isalerepository.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{3009A1F9-354F-42D2-8490-AB0E7AC44279}|Application\\Application\\Application.csproj|solutionrelative:application\\application\\repositories\\isalerepository.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{3009A1F9-354F-42D2-8490-AB0E7AC44279}|Application\\Application\\Application.csproj|c:\\users\\buse-\\onedrive\\belgeler\\github\\realprojects\\teknoroma_onionarchitecture\\application\\application\\repositories\\irepository.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{3009A1F9-354F-42D2-8490-AB0E7AC44279}|Application\\Application\\Application.csproj|solutionrelative:application\\application\\repositories\\irepository.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{3009A1F9-354F-42D2-8490-AB0E7AC44279}|Application\\Application\\Application.csproj|c:\\users\\buse-\\onedrive\\belgeler\\github\\realprojects\\teknoroma_onionarchitecture\\application\\application\\repositories\\iproductrepository.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{3009A1F9-354F-42D2-8490-AB0E7AC44279}|Application\\Application\\Application.csproj|solutionrelative:application\\application\\repositories\\iproductrepository.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{3009A1F9-354F-42D2-8490-AB0E7AC44279}|Application\\Application\\Application.csproj|c:\\users\\buse-\\onedrive\\belgeler\\github\\realprojects\\teknoroma_onionarchitecture\\application\\application\\repositories\\iemployeerepository.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{3009A1F9-354F-42D2-8490-AB0E7AC44279}|Application\\Application\\Application.csproj|solutionrelative:application\\application\\repositories\\iemployeerepository.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{3009A1F9-354F-42D2-8490-AB0E7AC44279}|Application\\Application\\Application.csproj|c:\\users\\buse-\\onedrive\\belgeler\\github\\realprojects\\teknoroma_onionarchitecture\\application\\application\\repositories\\icustomerrepository.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{3009A1F9-354F-42D2-8490-AB0E7AC44279}|Application\\Application\\Application.csproj|solutionrelative:application\\application\\repositories\\icustomerrepository.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{3009A1F9-354F-42D2-8490-AB0E7AC44279}|Application\\Application\\Application.csproj|c:\\users\\buse-\\onedrive\\belgeler\\github\\realprojects\\teknoroma_onionarchitecture\\application\\application\\services\\iproductservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{3009A1F9-354F-42D2-8490-AB0E7AC44279}|Application\\Application\\Application.csproj|solutionrelative:application\\application\\services\\iproductservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{3009A1F9-354F-42D2-8490-AB0E7AC44279}|Application\\Application\\Application.csproj|c:\\users\\buse-\\onedrive\\belgeler\\github\\realprojects\\teknoroma_onionarchitecture\\application\\application\\services\\isaleservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{3009A1F9-354F-42D2-8490-AB0E7AC44279}|Application\\Application\\Application.csproj|solutionrelative:application\\application\\services\\isaleservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{3009A1F9-354F-42D2-8490-AB0E7AC44279}|Application\\Application\\Application.csproj|c:\\users\\buse-\\onedrive\\belgeler\\github\\realprojects\\teknoroma_onionarchitecture\\application\\application\\services\\iexpenseservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{3009A1F9-354F-42D2-8490-AB0E7AC44279}|Application\\Application\\Application.csproj|solutionrelative:application\\application\\services\\iexpenseservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{3009A1F9-354F-42D2-8490-AB0E7AC44279}|Application\\Application\\Application.csproj|c:\\users\\buse-\\onedrive\\belgeler\\github\\realprojects\\teknoroma_onionarchitecture\\application\\application\\services\\icustomerservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{3009A1F9-354F-42D2-8490-AB0E7AC44279}|Application\\Application\\Application.csproj|solutionrelative:application\\application\\services\\icustomerservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{3009A1F9-354F-42D2-8490-AB0E7AC44279}|Application\\Application\\Application.csproj|c:\\users\\buse-\\onedrive\\belgeler\\github\\realprojects\\teknoroma_onionarchitecture\\application\\application\\dtos\\technicalservicedto.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{3009A1F9-354F-42D2-8490-AB0E7AC44279}|Application\\Application\\Application.csproj|solutionrelative:application\\application\\dtos\\technicalservicedto.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{3009A1F9-354F-42D2-8490-AB0E7AC44279}|Application\\Application\\Application.csproj|c:\\users\\buse-\\onedrive\\belgeler\\github\\realprojects\\teknoroma_onionarchitecture\\application\\application\\dtos\\expensedto.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{3009A1F9-354F-42D2-8490-AB0E7AC44279}|Application\\Application\\Application.csproj|solutionrelative:application\\application\\dtos\\expensedto.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{3009A1F9-354F-42D2-8490-AB0E7AC44279}|Application\\Application\\Application.csproj|c:\\users\\buse-\\onedrive\\belgeler\\github\\realprojects\\teknoroma_onionarchitecture\\application\\application\\dtos\\supplierdto.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{3009A1F9-354F-42D2-8490-AB0E7AC44279}|Application\\Application\\Application.csproj|solutionrelative:application\\application\\dtos\\supplierdto.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{3009A1F9-354F-42D2-8490-AB0E7AC44279}|Application\\Application\\Application.csproj|c:\\users\\buse-\\onedrive\\belgeler\\github\\realprojects\\teknoroma_onionarchitecture\\application\\application\\dtos\\saledto.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{3009A1F9-354F-42D2-8490-AB0E7AC44279}|Application\\Application\\Application.csproj|solutionrelative:application\\application\\dtos\\saledto.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{3009A1F9-354F-42D2-8490-AB0E7AC44279}|Application\\Application\\Application.csproj|c:\\users\\buse-\\onedrive\\belgeler\\github\\realprojects\\teknoroma_onionarchitecture\\application\\application\\dtos\\productdto.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{3009A1F9-354F-42D2-8490-AB0E7AC44279}|Application\\Application\\Application.csproj|solutionrelative:application\\application\\dtos\\productdto.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{3009A1F9-354F-42D2-8490-AB0E7AC44279}|Application\\Application\\Application.csproj|c:\\users\\buse-\\onedrive\\belgeler\\github\\realprojects\\teknoroma_onionarchitecture\\application\\application\\dtos\\employeedto.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{3009A1F9-354F-42D2-8490-AB0E7AC44279}|Application\\Application\\Application.csproj|solutionrelative:application\\application\\dtos\\employeedto.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{3009A1F9-354F-42D2-8490-AB0E7AC44279}|Application\\Application\\Application.csproj|c:\\users\\buse-\\onedrive\\belgeler\\github\\realprojects\\teknoroma_onionarchitecture\\application\\application\\dtos\\categorydto.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{3009A1F9-354F-42D2-8490-AB0E7AC44279}|Application\\Application\\Application.csproj|solutionrelative:application\\application\\dtos\\categorydto.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{3009A1F9-354F-42D2-8490-AB0E7AC44279}|Application\\Application\\Application.csproj|c:\\users\\buse-\\onedrive\\belgeler\\github\\realprojects\\teknoroma_onionarchitecture\\application\\application\\dtos\\customerdto.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{3009A1F9-354F-42D2-8490-AB0E7AC44279}|Application\\Application\\Application.csproj|solutionrelative:application\\application\\dtos\\customerdto.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    }
+  ],
   "DocumentGroupContainers": [
     {
       "Orientation": 0,
@@ -9,11 +86,258 @@
       "DocumentGroups": [
         {
           "DockedWidth": 200,
-          "SelectedChildIndex": -1,
+          "SelectedChildIndex": 18,
           "Children": [
             {
               "$type": "Bookmark",
               "Name": "ST:0:0:{1c4feeaa-4718-4aa9-859d-94ce25d182ba}"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 7,
+              "Title": "IProductService.cs",
+              "DocumentMoniker": "C:\\Users\\buse-\\OneDrive\\Belgeler\\GitHub\\RealProjects\\TeknoRoma_OnionArchitecture\\Application\\Application\\Services\\IProductService.cs",
+              "RelativeDocumentMoniker": "Application\\Application\\Services\\IProductService.cs",
+              "ToolTip": "C:\\Users\\buse-\\OneDrive\\Belgeler\\GitHub\\RealProjects\\TeknoRoma_OnionArchitecture\\Application\\Application\\Services\\IProductService.cs",
+              "RelativeToolTip": "Application\\Application\\Services\\IProductService.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAEAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-11-18T07:58:19.023Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 8,
+              "Title": "ISaleService.cs",
+              "DocumentMoniker": "C:\\Users\\buse-\\OneDrive\\Belgeler\\GitHub\\RealProjects\\TeknoRoma_OnionArchitecture\\Application\\Application\\Services\\ISaleService.cs",
+              "RelativeDocumentMoniker": "Application\\Application\\Services\\ISaleService.cs",
+              "ToolTip": "C:\\Users\\buse-\\OneDrive\\Belgeler\\GitHub\\RealProjects\\TeknoRoma_OnionArchitecture\\Application\\Application\\Services\\ISaleService.cs",
+              "RelativeToolTip": "Application\\Application\\Services\\ISaleService.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAEAAAAeAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-11-18T07:57:15.903Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 11,
+              "Title": "TechnicalServiceDTO.cs",
+              "DocumentMoniker": "C:\\Users\\buse-\\OneDrive\\Belgeler\\GitHub\\RealProjects\\TeknoRoma_OnionArchitecture\\Application\\Application\\DTOs\\TechnicalServiceDTO.cs",
+              "RelativeDocumentMoniker": "Application\\Application\\DTOs\\TechnicalServiceDTO.cs",
+              "ToolTip": "C:\\Users\\buse-\\OneDrive\\Belgeler\\GitHub\\RealProjects\\TeknoRoma_OnionArchitecture\\Application\\Application\\DTOs\\TechnicalServiceDTO.cs",
+              "RelativeToolTip": "Application\\Application\\DTOs\\TechnicalServiceDTO.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAADwAAAABAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-11-18T07:56:01.791Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 10,
+              "Title": "ICustomerService.cs",
+              "DocumentMoniker": "C:\\Users\\buse-\\OneDrive\\Belgeler\\GitHub\\RealProjects\\TeknoRoma_OnionArchitecture\\Application\\Application\\Services\\ICustomerService.cs",
+              "RelativeDocumentMoniker": "Application\\Application\\Services\\ICustomerService.cs",
+              "ToolTip": "C:\\Users\\buse-\\OneDrive\\Belgeler\\GitHub\\RealProjects\\TeknoRoma_OnionArchitecture\\Application\\Application\\Services\\ICustomerService.cs",
+              "RelativeToolTip": "Application\\Application\\Services\\ICustomerService.cs",
+              "ViewState": "AgIAABoAAAAAAAAAAAAIwAAAAAAiAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-11-18T07:54:07.906Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 9,
+              "Title": "IExpenseService.cs",
+              "DocumentMoniker": "C:\\Users\\buse-\\OneDrive\\Belgeler\\GitHub\\RealProjects\\TeknoRoma_OnionArchitecture\\Application\\Application\\Services\\IExpenseService.cs",
+              "RelativeDocumentMoniker": "Application\\Application\\Services\\IExpenseService.cs",
+              "ToolTip": "C:\\Users\\buse-\\OneDrive\\Belgeler\\GitHub\\RealProjects\\TeknoRoma_OnionArchitecture\\Application\\Application\\Services\\IExpenseService.cs",
+              "RelativeToolTip": "Application\\Application\\Services\\IExpenseService.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAIAAAAjAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-11-18T07:53:23.951Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 14,
+              "Title": "SaleDTO.cs",
+              "DocumentMoniker": "C:\\Users\\buse-\\OneDrive\\Belgeler\\GitHub\\RealProjects\\TeknoRoma_OnionArchitecture\\Application\\Application\\DTOs\\SaleDTO.cs",
+              "RelativeDocumentMoniker": "Application\\Application\\DTOs\\SaleDTO.cs",
+              "ToolTip": "C:\\Users\\buse-\\OneDrive\\Belgeler\\GitHub\\RealProjects\\TeknoRoma_OnionArchitecture\\Application\\Application\\DTOs\\SaleDTO.cs",
+              "RelativeToolTip": "Application\\Application\\DTOs\\SaleDTO.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAMAAAAiAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-11-18T07:51:52.188Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 15,
+              "Title": "ProductDTO.cs",
+              "DocumentMoniker": "C:\\Users\\buse-\\OneDrive\\Belgeler\\GitHub\\RealProjects\\TeknoRoma_OnionArchitecture\\Application\\Application\\DTOs\\ProductDTO.cs",
+              "RelativeDocumentMoniker": "Application\\Application\\DTOs\\ProductDTO.cs",
+              "ToolTip": "C:\\Users\\buse-\\OneDrive\\Belgeler\\GitHub\\RealProjects\\TeknoRoma_OnionArchitecture\\Application\\Application\\DTOs\\ProductDTO.cs",
+              "RelativeToolTip": "Application\\Application\\DTOs\\ProductDTO.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAMAAAAlAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-11-18T07:51:19.095Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 18,
+              "Title": "CustomerDTO.cs",
+              "DocumentMoniker": "C:\\Users\\buse-\\OneDrive\\Belgeler\\GitHub\\RealProjects\\TeknoRoma_OnionArchitecture\\Application\\Application\\DTOs\\CustomerDTO.cs",
+              "RelativeDocumentMoniker": "Application\\Application\\DTOs\\CustomerDTO.cs",
+              "ToolTip": "C:\\Users\\buse-\\OneDrive\\Belgeler\\GitHub\\RealProjects\\TeknoRoma_OnionArchitecture\\Application\\Application\\DTOs\\CustomerDTO.cs",
+              "RelativeToolTip": "Application\\Application\\DTOs\\CustomerDTO.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAMAAAAmAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-11-18T07:50:45.016Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 12,
+              "Title": "ExpenseDTO.cs",
+              "DocumentMoniker": "C:\\Users\\buse-\\OneDrive\\Belgeler\\GitHub\\RealProjects\\TeknoRoma_OnionArchitecture\\Application\\Application\\DTOs\\ExpenseDTO.cs",
+              "RelativeDocumentMoniker": "Application\\Application\\DTOs\\ExpenseDTO.cs",
+              "ToolTip": "C:\\Users\\buse-\\OneDrive\\Belgeler\\GitHub\\RealProjects\\TeknoRoma_OnionArchitecture\\Application\\Application\\DTOs\\ExpenseDTO.cs",
+              "RelativeToolTip": "Application\\Application\\DTOs\\ExpenseDTO.cs",
+              "ViewState": "AgIAADYAAAAAAAAAAAAQwDcAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-11-18T07:50:06.347Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 13,
+              "Title": "SupplierDTO.cs",
+              "DocumentMoniker": "C:\\Users\\buse-\\OneDrive\\Belgeler\\GitHub\\RealProjects\\TeknoRoma_OnionArchitecture\\Application\\Application\\DTOs\\SupplierDTO.cs",
+              "RelativeDocumentMoniker": "Application\\Application\\DTOs\\SupplierDTO.cs",
+              "ToolTip": "C:\\Users\\buse-\\OneDrive\\Belgeler\\GitHub\\RealProjects\\TeknoRoma_OnionArchitecture\\Application\\Application\\DTOs\\SupplierDTO.cs",
+              "RelativeToolTip": "Application\\Application\\DTOs\\SupplierDTO.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAACMAAAAaAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-11-18T07:48:49.227Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 17,
+              "Title": "CategoryDTO.cs",
+              "DocumentMoniker": "C:\\Users\\buse-\\OneDrive\\Belgeler\\GitHub\\RealProjects\\TeknoRoma_OnionArchitecture\\Application\\Application\\DTOs\\CategoryDTO.cs",
+              "RelativeDocumentMoniker": "Application\\Application\\DTOs\\CategoryDTO.cs",
+              "ToolTip": "C:\\Users\\buse-\\OneDrive\\Belgeler\\GitHub\\RealProjects\\TeknoRoma_OnionArchitecture\\Application\\Application\\DTOs\\CategoryDTO.cs",
+              "RelativeToolTip": "Application\\Application\\DTOs\\CategoryDTO.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAIAAAAmAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-11-18T07:48:15.28Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 16,
+              "Title": "EmployeeDTO.cs",
+              "DocumentMoniker": "C:\\Users\\buse-\\OneDrive\\Belgeler\\GitHub\\RealProjects\\TeknoRoma_OnionArchitecture\\Application\\Application\\DTOs\\EmployeeDTO.cs",
+              "RelativeDocumentMoniker": "Application\\Application\\DTOs\\EmployeeDTO.cs",
+              "ToolTip": "C:\\Users\\buse-\\OneDrive\\Belgeler\\GitHub\\RealProjects\\TeknoRoma_OnionArchitecture\\Application\\Application\\DTOs\\EmployeeDTO.cs",
+              "RelativeToolTip": "Application\\Application\\DTOs\\EmployeeDTO.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAMAAAAmAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-11-18T07:46:11.282Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 5,
+              "Title": "IEmployeeRepository.cs",
+              "DocumentMoniker": "C:\\Users\\buse-\\OneDrive\\Belgeler\\GitHub\\RealProjects\\TeknoRoma_OnionArchitecture\\Application\\Application\\Repositories\\IEmployeeRepository.cs",
+              "RelativeDocumentMoniker": "Application\\Application\\Repositories\\IEmployeeRepository.cs",
+              "ToolTip": "C:\\Users\\buse-\\OneDrive\\Belgeler\\GitHub\\RealProjects\\TeknoRoma_OnionArchitecture\\Application\\Application\\Repositories\\IEmployeeRepository.cs",
+              "RelativeToolTip": "Application\\Application\\Repositories\\IEmployeeRepository.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAABAAAAAWAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-11-18T07:44:09.2Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 4,
+              "Title": "IProductRepository.cs",
+              "DocumentMoniker": "C:\\Users\\buse-\\OneDrive\\Belgeler\\GitHub\\RealProjects\\TeknoRoma_OnionArchitecture\\Application\\Application\\Repositories\\IProductRepository.cs",
+              "RelativeDocumentMoniker": "Application\\Application\\Repositories\\IProductRepository.cs",
+              "ToolTip": "C:\\Users\\buse-\\OneDrive\\Belgeler\\GitHub\\RealProjects\\TeknoRoma_OnionArchitecture\\Application\\Application\\Repositories\\IProductRepository.cs",
+              "RelativeToolTip": "Application\\Application\\Repositories\\IProductRepository.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAA8AAAAmAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-11-18T07:43:33.749Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 2,
+              "Title": "ISaleRepository.cs",
+              "DocumentMoniker": "C:\\Users\\buse-\\OneDrive\\Belgeler\\GitHub\\RealProjects\\TeknoRoma_OnionArchitecture\\Application\\Application\\Repositories\\ISaleRepository.cs",
+              "RelativeDocumentMoniker": "Application\\Application\\Repositories\\ISaleRepository.cs",
+              "ToolTip": "C:\\Users\\buse-\\OneDrive\\Belgeler\\GitHub\\RealProjects\\TeknoRoma_OnionArchitecture\\Application\\Application\\Repositories\\ISaleRepository.cs",
+              "RelativeToolTip": "Application\\Application\\Repositories\\ISaleRepository.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAA0AAAASAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-11-18T07:43:06.538Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 6,
+              "Title": "ICustomerRepository.cs",
+              "DocumentMoniker": "C:\\Users\\buse-\\OneDrive\\Belgeler\\GitHub\\RealProjects\\TeknoRoma_OnionArchitecture\\Application\\Application\\Repositories\\ICustomerRepository.cs",
+              "RelativeDocumentMoniker": "Application\\Application\\Repositories\\ICustomerRepository.cs",
+              "ToolTip": "C:\\Users\\buse-\\OneDrive\\Belgeler\\GitHub\\RealProjects\\TeknoRoma_OnionArchitecture\\Application\\Application\\Repositories\\ICustomerRepository.cs",
+              "RelativeToolTip": "Application\\Application\\Repositories\\ICustomerRepository.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAgAAAAVAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-11-18T07:42:34.107Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 1,
+              "Title": "IExpenseRepository.cs",
+              "DocumentMoniker": "C:\\Users\\buse-\\OneDrive\\Belgeler\\GitHub\\RealProjects\\TeknoRoma_OnionArchitecture\\Application\\Application\\Repositories\\IExpenseRepository.cs",
+              "RelativeDocumentMoniker": "Application\\Application\\Repositories\\IExpenseRepository.cs",
+              "ToolTip": "C:\\Users\\buse-\\OneDrive\\Belgeler\\GitHub\\RealProjects\\TeknoRoma_OnionArchitecture\\Application\\Application\\Repositories\\IExpenseRepository.cs",
+              "RelativeToolTip": "Application\\Application\\Repositories\\IExpenseRepository.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAA8AAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-11-18T07:42:11.792Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 0,
+              "Title": "ISimpleRepository.cs",
+              "DocumentMoniker": "C:\\Users\\buse-\\OneDrive\\Belgeler\\GitHub\\RealProjects\\TeknoRoma_OnionArchitecture\\Application\\Application\\Repositories\\ISimpleRepository.cs",
+              "RelativeDocumentMoniker": "Application\\Application\\Repositories\\ISimpleRepository.cs",
+              "ToolTip": "C:\\Users\\buse-\\OneDrive\\Belgeler\\GitHub\\RealProjects\\TeknoRoma_OnionArchitecture\\Application\\Application\\Repositories\\ISimpleRepository.cs",
+              "RelativeToolTip": "Application\\Application\\Repositories\\ISimpleRepository.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAFYAAAAWAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-11-18T07:41:24.028Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 3,
+              "Title": "IRepository.cs",
+              "DocumentMoniker": "C:\\Users\\buse-\\OneDrive\\Belgeler\\GitHub\\RealProjects\\TeknoRoma_OnionArchitecture\\Application\\Application\\Repositories\\IRepository.cs",
+              "RelativeDocumentMoniker": "Application\\Application\\Repositories\\IRepository.cs",
+              "ToolTip": "C:\\Users\\buse-\\OneDrive\\Belgeler\\GitHub\\RealProjects\\TeknoRoma_OnionArchitecture\\Application\\Application\\Repositories\\IRepository.cs",
+              "RelativeToolTip": "Application\\Application\\Repositories\\IRepository.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAABEAAAASAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-11-18T07:39:30.492Z",
+              "EditorCaption": ""
             }
           ]
         }
