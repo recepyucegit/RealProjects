@@ -1,0 +1,71 @@
+@model LoginViewModel
+@{
+    ViewData["Title"] = "Giriş Yap";
+    Layout = "_Layout";
+}
+
+<div class="row justify-content-center mt-5">
+    <div class="col-md-6 col-lg-4">
+        <div class="card shadow">
+            <div class="card-body">
+                <div class="text-center mb-4">
+                    <i class="bi bi-lightning-charge" style="font-size: 3rem; color: #0d6efd;"></i>
+                    <h3>TeknoRoma</h3>
+                    <p class="text-muted">Elektronik Mağazalar Zinciri</p>
+                </div>
+
+                <form method="post" asp-action="Login">
+                    <div asp-validation-summary="All" class="text-danger mb-3"></div>
+
+                    <div class="mb-3">
+                        <label asp-for="Email" class="form-label"></label>
+                        <div class="input-group">
+                            <span class="input-group-text"><i class="bi bi-envelope"></i></span>
+                            <input asp-for="Email" class="form-control" placeholder="ornek@teknoroma.com" autofocus />
+                        </div>
+                        <span asp-validation-for="Email" class="text-danger small"></span>
+                    </div>
+
+                    <div class="mb-3">
+                        <label asp-for="Password" class="form-label"></label>
+                        <div class="input-group">
+                            <span class="input-group-text"><i class="bi bi-lock"></i></span>
+                            <input asp-for="Password" class="form-control" placeholder="••••••••" />
+                        </div>
+                        <span asp-validation-for="Password" class="text-danger small"></span>
+                    </div>
+
+                    <div class="mb-3 form-check">
+                        <input asp-for="RememberMe" class="form-check-input" />
+                        <label asp-for="RememberMe" class="form-check-label"></label>
+                    </div>
+
+                    <div class="d-grid">
+                        <button type="submit" class="btn btn-primary">
+                            <i class="bi bi-box-arrow-in-right"></i> Giriş Yap
+                        </button>
+                    </div>
+                </form>
+
+                <hr class="my-4" />
+
+                <div class="small text-muted">
+                    <h6>Demo Kullanıcılar:</h6>
+                    <ul class="list-unstyled">
+                        <li><strong>Şube Müdürü:</strong> halukbey@("@")teknoroma.com</li>
+                        <li><strong>Kasa Satış:</strong> gulsatar@("@")teknoroma.com</li>
+                        <li><strong>Mobil Satış:</strong> fahricepci@("@")teknoroma.com</li>
+                        <li><strong>Depo:</strong> kerimzulaci@("@")teknoroma.com</li>
+                        <li><strong>Muhasebe:</strong> feyzaparagoz@("@")teknoroma.com</li>
+                        <li><strong>Teknik Servis:</strong> ozgunkablocu@("@")teknoroma.com</li>
+                    </ul>
+                    <p class="mt-2"><strong>Şifre:</strong> TeknoRoma123!</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

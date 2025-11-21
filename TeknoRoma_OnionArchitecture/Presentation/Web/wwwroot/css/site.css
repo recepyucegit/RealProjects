@@ -1,0 +1,102 @@
+/* TeknoRoma Custom Styles */
+
+:root {
+    --teknoroma-primary: #0d6efd;
+    --teknoroma-secondary: #6c757d;
+    --teknoroma-success: #198754;
+    --teknoroma-warning: #ffc107;
+    --teknoroma-danger: #dc3545;
+}
+
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+.navbar-brand {
+    font-weight: bold;
+    font-size: 1.5rem;
+}
+
+.card {
+    border-radius: 10px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    margin-bottom: 1rem;
+}
+
+.card-header {
+    background-color: #f8f9fa;
+    border-bottom: 2px solid var(--teknoroma-primary);
+    font-weight: bold;
+}
+
+.footer {
+    position: fixed;
+    bottom: 0;
+    width: 100%;
+    white-space: nowrap;
+    line-height: 60px;
+    background-color: #f8f9fa;
+}
+
+.progress {
+    border-radius: 10px;
+}
+
+.badge {
+    font-size: 0.9rem;
+}
+
+/* Dashboard Cards */
+.dashboard-card {
+    transition: transform 0.2s;
+}
+
+.dashboard-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+}
+
+/* Login Page */
+.login-card {
+    margin-top: 5rem;
+}
+
+/* Table Styles */
+.table {
+    border-radius: 10px;
+    overflow: hidden;
+}
+
+.table thead {
+    background-color: var(--teknoroma-primary);
+    color: white;
+}
+
+/* Button Styles */
+.btn {
+    border-radius: 5px;
+    padding: 0.5rem 1.5rem;
+}
+
+.btn-lg {
+    padding: 0.75rem 2rem;
+}
+
+/* Alert Styles */
+.alert {
+    border-radius: 10px;
+    border: none;
+}
+
+/* Custom Badge Colors */
+.badge.bg-stock-ok {
+    background-color: var(--teknoroma-success) !important;
+}
+
+.badge.bg-stock-critical {
+    background-color: var(--teknoroma-warning) !important;
+}
+
+.badge.bg-stock-out {
+    background-color: var(--teknoroma-danger) !important;
+}

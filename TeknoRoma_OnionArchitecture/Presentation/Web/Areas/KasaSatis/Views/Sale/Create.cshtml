@@ -1,0 +1,335 @@
+@model SaleCreateViewModel
+@{
+    ViewData["Title"] = "Yeni Satış";
+}
+
+<div class="row">
+    <div class="col-12">
+        <h2><i class="bi bi-cart-plus"></i> Yeni Satış</h2>
+        <hr />
+    </div>
+</div>
+
+<form method="post" asp-action="Create">
+    <div class="row">
+        <!-- Müşteri Seçimi -->
+        <div class="col-md-4">
+            <div class="card">
+                <div class="card-header">
+                    <h5><i class="bi bi-person-circle"></i> Müşteri Bilgileri</h5>
+                </div>
+                <div class="card-body">
+                    <div class="mb-3">
+                        <label class="form-label">TC Kimlik No</label>
+                        <div class="input-group">
+                            <input type="text" id="identityNumber" class="form-control" placeholder="TC Kimlik No" maxlength="11" />
+                            <button type="button" class="btn btn-primary" onclick="searchCustomer()">
+                                <i class="bi bi-search"></i> Ara
+                            </button>
+                        </div>
+                    </div>
+                    <div id="customerInfo" style="display: none;">
+                        <div class="alert alert-success">
+                            <strong id="customerName"></strong><br />
+                            <small id="customerPhone"></small>
+                        </div>
+                        <input type="hidden" asp-for="CustomerId" id="customerId" />
+                    </div>
+                    <div id="customerNotFound" class="alert alert-warning" style="display: none;">
+                        Müşteri bulunamadı. Önce müşteri kaydı yapmalısınız.
+                    </div>
+                </div>
+            </div>
+
+            <!-- Ödeme Bilgileri -->
+            <div class="card mt-3">
+                <div class="card-header">
+                    <h5><i class="bi bi-credit-card"></i> Ödeme Bilgileri</h5>
+                </div>
+                <div class="card-body">
+                    <div class="mb-3">
+                        <label asp-for="PaymentType" class="form-label"></label>
+                        <select asp-for="PaymentType" class="form-select" asp-items="Html.GetEnumSelectList<PaymentType>()">
+                            <option value="">Ödeme Türü Seçin</option>
+                        </select>
+                        <span asp-validation-for="PaymentType" class="text-danger"></span>
+                    </div>
+                    <div class="mb-3">
+                        <label asp-for="DiscountAmount" class="form-label"></label>
+                        <input asp-for="DiscountAmount" class="form-control" type="number" step="0.01" min="0" id="discountAmount" />
+                        <span asp-validation-for="DiscountAmount" class="text-danger"></span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Ürün Arama ve Ekleme -->
+        <div class="col-md-8">
+            <div class="card">
+                <div class="card-header">
+                    <h5><i class="bi bi-upc-scan"></i> Ürün Ekle</h5>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-8">
+                            <label class="form-label">Barkod / Ürün Adı</label>
+                            <input type="text" id="productSearch" class="form-control" placeholder="Barkod okutun veya ürün adı yazın" />
+                        </div>
+                        <div class="col-md-4">
+                            <label class="form-label">Miktar</label>
+                            <input type="number" id="productQuantity" class="form-control" value="1" min="1" />
+                        </div>
+                    </div>
+                    <button type="button" class="btn btn-success mt-3" onclick="addProduct()">
+                        <i class="bi bi-plus-circle"></i> Sepete Ekle
+                    </button>
+                </div>
+            </div>
+
+            <!-- Sepet -->
+            <div class="card mt-3">
+                <div class="card-header">
+                    <h5><i class="bi bi-cart"></i> Sepet</h5>
+                </div>
+                <div class="card-body">
+                    <table class="table table-hover" id="cartTable">
+                        <thead>
+                            <tr>
+                                <th>Ürün</th>
+                                <th>Birim Fiyat</th>
+                                <th>Miktar</th>
+                                <th>Toplam</th>
+                                <th></th>
+                            </tr>
+                        </thead>
+                        <tbody id="cartItems">
+                            <tr id="emptyCart">
+                                <td colspan="5" class="text-center text-muted">Sepet boş</td>
+                            </tr>
+                        </tbody>
+                    </table>
+
+                    <hr />
+
+                    <!-- Özet -->
+                    <div class="row">
+                        <div class="col-md-8"></div>
+                        <div class="col-md-4">
+                            <table class="table">
+                                <tr>
+                                    <td><strong>Ara Toplam:</strong></td>
+                                    <td class="text-end" id="subtotal">0.00 TL</td>
+                                </tr>
+                                <tr>
+                                    <td><strong>KDV (%20):</strong></td>
+                                    <td class="text-end" id="taxAmount">0.00 TL</td>
+                                </tr>
+                                <tr>
+                                    <td><strong>İndirim:</strong></td>
+                                    <td class="text-end" id="discountDisplay">0.00 TL</td>
+                                </tr>
+                                <tr class="table-success">
+                                    <td><strong>GENEL TOPLAM:</strong></td>
+                                    <td class="text-end"><strong id="totalAmount">0.00 TL</strong></td>
+                                </tr>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Satışı Tamamla -->
+            <div class="row mt-3">
+                <div class="col-12 text-end">
+                    <a asp-action="Index" asp-controller="Dashboard" class="btn btn-secondary">
+                        <i class="bi bi-x-circle"></i> İptal
+                    </a>
+                    <button type="submit" class="btn btn-success btn-lg" id="completeBtn" disabled>
+                        <i class="bi bi-check-circle"></i> Satışı Tamamla
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</form>
+
+@section Scripts {
+    <script>
+        let cart = [];
+        let productDatabase = {}; // Cache for products
+
+        // Müşteri Arama
+        async function searchCustomer() {
+            const identityNumber = document.getElementById('identityNumber').value;
+            if (identityNumber.length !== 11) {
+                alert('TC Kimlik No 11 haneli olmalıdır');
+                return;
+            }
+
+            try {
+                const response = await fetch(`/KasaSatis/Customer/SearchByIdentity?identityNumber=${identityNumber}`);
+                if (response.ok) {
+                    const customer = await response.json();
+                    document.getElementById('customerId').value = customer.id;
+                    document.getElementById('customerName').textContent = `${customer.firstName} ${customer.lastName}`;
+                    document.getElementById('customerPhone').textContent = customer.phone;
+                    document.getElementById('customerInfo').style.display = 'block';
+                    document.getElementById('customerNotFound').style.display = 'none';
+                    validateForm();
+                } else {
+                    document.getElementById('customerInfo').style.display = 'none';
+                    document.getElementById('customerNotFound').style.display = 'block';
+                    document.getElementById('customerId').value = '';
+                    validateForm();
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                alert('Müşteri arama sırasında hata oluştu');
+            }
+        }
+
+        // Ürün Arama ve Ekleme
+        async function addProduct() {
+            const searchTerm = document.getElementById('productSearch').value;
+            const quantity = parseInt(document.getElementById('productQuantity').value);
+
+            if (!searchTerm) {
+                alert('Lütfen ürün adı veya barkod giriniz');
+                return;
+            }
+
+            if (quantity < 1) {
+                alert('Miktar en az 1 olmalıdır');
+                return;
+            }
+
+            try {
+                const response = await fetch(`/KasaSatis/Sale/SearchProduct?search=${encodeURIComponent(searchTerm)}`);
+                if (response.ok) {
+                    const product = await response.json();
+
+                    if (product.unitsInStock < quantity) {
+                        alert(`Yetersiz stok! Mevcut: ${product.unitsInStock}`);
+                        return;
+                    }
+
+                    // Cache product
+                    productDatabase[product.id] = product;
+
+                    // Check if product already in cart
+                    const existingItem = cart.find(item => item.productId === product.id);
+                    if (existingItem) {
+                        existingItem.quantity += quantity;
+                    } else {
+                        cart.push({
+                            productId: product.id,
+                            productName: product.name,
+                            unitPrice: product.unitPrice,
+                            quantity: quantity
+                        });
+                    }
+
+                    updateCart();
+                    document.getElementById('productSearch').value = '';
+                    document.getElementById('productQuantity').value = '1';
+                } else {
+                    alert('Ürün bulunamadı');
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                alert('Ürün arama sırasında hata oluştu');
+            }
+        }
+
+        // Sepeti Güncelle
+        function updateCart() {
+            const tbody = document.getElementById('cartItems');
+            tbody.innerHTML = '';
+
+            if (cart.length === 0) {
+                tbody.innerHTML = '<tr id="emptyCart"><td colspan="5" class="text-center text-muted">Sepet boş</td></tr>';
+                document.getElementById('subtotal').textContent = '0.00 TL';
+                document.getElementById('taxAmount').textContent = '0.00 TL';
+                document.getElementById('totalAmount').textContent = '0.00 TL';
+                validateForm();
+                return;
+            }
+
+            cart.forEach((item, index) => {
+                const lineTotal = item.unitPrice * item.quantity;
+                const row = `
+                    <tr>
+                        <td>${item.productName}</td>
+                        <td>${item.unitPrice.toFixed(2)} TL</td>
+                        <td>${item.quantity}</td>
+                        <td>${lineTotal.toFixed(2)} TL</td>
+                        <td>
+                            <button type="button" class="btn btn-sm btn-danger" onclick="removeItem(${index})">
+                                <i class="bi bi-trash"></i>
+                            </button>
+                        </td>
+                    </tr>
+                `;
+                tbody.innerHTML += row;
+            });
+
+            updateTotals();
+            validateForm();
+        }
+
+        // Toplamları Hesapla
+        function updateTotals() {
+            const subtotal = cart.reduce((sum, item) => sum + (item.unitPrice * item.quantity), 0);
+            const taxRate = 0.20;
+            const taxAmount = subtotal * taxRate;
+            const discount = parseFloat(document.getElementById('discountAmount').value) || 0;
+            const total = subtotal + taxAmount - discount;
+
+            document.getElementById('subtotal').textContent = subtotal.toFixed(2) + ' TL';
+            document.getElementById('taxAmount').textContent = taxAmount.toFixed(2) + ' TL';
+            document.getElementById('discountDisplay').textContent = discount.toFixed(2) + ' TL';
+            document.getElementById('totalAmount').textContent = total.toFixed(2) + ' TL';
+        }
+
+        // Ürünü Sepetten Çıkar
+        function removeItem(index) {
+            cart.splice(index, 1);
+            updateCart();
+        }
+
+        // Form Validasyonu
+        function validateForm() {
+            const hasCustomer = document.getElementById('customerId').value !== '';
+            const hasItems = cart.length > 0;
+            const hasPaymentType = document.getElementById('PaymentType').value !== '';
+
+            document.getElementById('completeBtn').disabled = !(hasCustomer && hasItems && hasPaymentType);
+        }
+
+        // İndirim değiştiğinde toplamı güncelle
+        document.getElementById('discountAmount').addEventListener('input', updateTotals);
+        document.getElementById('PaymentType').addEventListener('change', validateForm);
+
+        // Barkod input - Enter tuşu
+        document.getElementById('productSearch').addEventListener('keypress', function (e) {
+            if (e.key === 'Enter') {
+                e.preventDefault();
+                addProduct();
+            }
+        });
+
+        // Form submit - sepet verilerini ekle
+        document.querySelector('form').addEventListener('submit', function (e) {
+            // Add cart items to form
+            cart.forEach((item, index) => {
+                const inputs = `
+                    <input type="hidden" name="Items[${index}].ProductId" value="${item.productId}" />
+                    <input type="hidden" name="Items[${index}].Quantity" value="${item.quantity}" />
+                    <input type="hidden" name="Items[${index}].UnitPrice" value="${item.unitPrice}" />
+                    <input type="hidden" name="Items[${index}].ProductName" value="${item.productName}" />
+                `;
+                this.insertAdjacentHTML('beforeend', inputs);
+            });
+        });
+    </script>
+}
