@@ -1,0 +1,83 @@
+@model DashboardViewModel
+@{
+    ViewData["Title"] = "Kasa Satış Dashboard";
+}
+
+<div class="row mb-4">
+    <div class="col">
+        <h2><i class="bi bi-cash-register"></i> Hoş Geldiniz, @Model.UserName</h2>
+        <p class="text-muted">@Model.StoreName - @Model.DepartmentName</p>
+    </div>
+</div>
+
+<div class="row g-3">
+    <div class="col-md-4">
+        <div class="card text-white bg-primary">
+            <div class="card-body">
+                <h5 class="card-title"><i class="bi bi-graph-up"></i> Aylık Satışlarım</h5>
+                <h3>@Model.MonthlySales?.ToString("N2") TL</h3>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-4">
+        <div class="card text-white bg-warning">
+            <div class="card-body">
+                <h5 class="card-title"><i class="bi bi-target"></i> Satış Kotam</h5>
+                <h3>@Model.SalesQuota?.ToString("N2") TL</h3>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-4">
+        <div class="card text-white bg-success">
+            <div class="card-body">
+                <h5 class="card-title"><i class="bi bi-currency-dollar"></i> Primim</h5>
+                <h3>@Model.CommissionAmount?.ToString("N2") TL</h3>
+            </div>
+        </div>
+    </div>
+</div>
+
+@if (Model.SalesQuota > 0 && Model.MonthlySales.HasValue)
+{
+    var percentage = (Model.MonthlySales.Value / Model.SalesQuota.Value) * 100;
+    var progressClass = percentage >= 100 ? "bg-success" : percentage >= 75 ? "bg-warning" : "bg-danger";
+
+    <div class="row mt-4">
+        <div class="col">
+            <div class="card">
+                <div class="card-body">
+                    <h5><i class="bi bi-bar-chart"></i> Kotaya İlerleme</h5>
+                    <div class="progress" style="height: 30px;">
+                        <div class="progress-bar @progressClass" role="progressbar"
+                             style="width: @Math.Min(percentage, 100)%">
+                            %@percentage.ToString("N0")
+                        </div>
+                    </div>
+                    <p class="mt-2 text-muted">
+                        @Model.MonthlySales?.ToString("N2") / @Model.SalesQuota?.ToString("N2") TL
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+}
+
+<div class="row mt-4">
+    <div class="col">
+        <div class="card">
+            <div class="card-header">
+                <h5><i class="bi bi-lightning"></i> Hızlı İşlemler</h5>
+            </div>
+            <div class="card-body">
+                <a asp-controller="Sale" asp-action="Create" class="btn btn-primary btn-lg">
+                    <i class="bi bi-cart-plus"></i> Yeni Satış
+                </a>
+                <a asp-controller="Customer" asp-action="Search" class="btn btn-secondary btn-lg ms-2">
+                    <i class="bi bi-search"></i> Müşteri Ara
+                </a>
+            </div>
+        </div>
+    </div>
+</div>

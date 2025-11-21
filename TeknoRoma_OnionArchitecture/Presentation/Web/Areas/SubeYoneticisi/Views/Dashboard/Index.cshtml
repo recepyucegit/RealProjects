@@ -1,0 +1,84 @@
+@model DashboardViewModel
+@{
+    ViewData["Title"] = "Şube Müdürü Dashboard";
+}
+
+<div class="row mb-4">
+    <div class="col">
+        <h2><i class="bi bi-speedometer2"></i> Hoş Geldiniz, @Model.UserName</h2>
+        <p class="text-muted">@Model.StoreName - @Model.DepartmentName</p>
+    </div>
+</div>
+
+<div class="row g-3">
+    <div class="col-md-3">
+        <div class="card text-white bg-primary">
+            <div class="card-body">
+                <h5 class="card-title"><i class="bi bi-cash-coin"></i> Bugünkü Satışlar</h5>
+                <h3>@Model.TodaysTotalSales?.ToString("N2") TL</h3>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-3">
+        <div class="card text-white bg-success">
+            <div class="card-body">
+                <h5 class="card-title"><i class="bi bi-calendar-month"></i> Aylık Satışlar</h5>
+                <h3>@Model.MonthlyTotalSales?.ToString("N2") TL</h3>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-3">
+        <div class="card text-white bg-info">
+            <div class="card-body">
+                <h5 class="card-title"><i class="bi bi-people"></i> Toplam Çalışan</h5>
+                <h3>@Model.TotalEmployees</h3>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-3">
+        <div class="card text-white bg-warning">
+            <div class="card-body">
+                <h5 class="card-title"><i class="bi bi-exclamation-triangle"></i> Kritik Stok</h5>
+                <h3>@Model.CriticalStockCount</h3>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row mt-4">
+    <div class="col-md-6">
+        <div class="card">
+            <div class="card-header">
+                <h5><i class="bi bi-graph-up"></i> Hızlı Erişim</h5>
+            </div>
+            <div class="list-group list-group-flush">
+                <a asp-controller="Report" asp-action="Sales" class="list-group-item list-group-item-action">
+                    <i class="bi bi-file-earmark-bar-graph"></i> Satış Raporları
+                </a>
+                <a asp-controller="Report" asp-action="TopProducts" class="list-group-item list-group-item-action">
+                    <i class="bi bi-trophy"></i> En Çok Satılan Ürünler
+                </a>
+                <a asp-controller="Report" asp-action="EmployeePerformance" class="list-group-item list-group-item-action">
+                    <i class="bi bi-people"></i> Çalışan Performansı
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-6">
+        <div class="card">
+            <div class="card-header">
+                <h5><i class="bi bi-info-circle"></i> Bilgilendirme</h5>
+            </div>
+            <div class="card-body">
+                <p><strong>Satış Kotası:</strong> 10.000 TL</p>
+                <p><strong>Prim Oranı:</strong> %10</p>
+                <p><strong>KDV Oranı:</strong> %20</p>
+                <p><strong>Kritik Stok Seviyesi:</strong> 10 adet</p>
+            </div>
+        </div>
+    </div>
+</div>
