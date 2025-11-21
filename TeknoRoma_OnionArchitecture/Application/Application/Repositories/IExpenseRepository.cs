@@ -62,6 +62,16 @@ namespace Application.Repositories
         /// Format: G-2024-00001
         /// </summary>
         Task<string> GenerateExpenseNumberAsync();
+
+        /// <summary>
+        /// Aylık toplam gideri hesaplar (TRY cinsinden)
+        /// </summary>
+        Task<decimal> GetMonthlyExpensesTotalAsync(int year, int month);
+
+        /// <summary>
+        /// Ödenmemiş giderlerin toplam tutarını döndürür
+        /// </summary>
+        Task<decimal> GetUnpaidExpensesAmountAsync();
     }
 
     /// <summary>
@@ -124,6 +134,26 @@ namespace Application.Repositories
         /// Format: TS-2024-00001
         /// </summary>
         Task<string> GenerateServiceNumberAsync();
+
+        /// <summary>
+        /// Açık sorunları getirir (Acik ve Islemde durumundakiler)
+        /// </summary>
+        Task<IReadOnlyList<TechnicalService>> GetOpenIssuesAsync();
+
+        /// <summary>
+        /// Atanmış sorunları getirir
+        /// </summary>
+        Task<IReadOnlyList<TechnicalService>> GetAssignedIssuesAsync(int employeeId);
+
+        /// <summary>
+        /// Öncelik seviyesine göre sorunları getirir
+        /// </summary>
+        Task<IReadOnlyList<TechnicalService>> GetByPriorityAsync(int priority);
+
+        /// <summary>
+        /// Açık sorun sayısını döndürür
+        /// </summary>
+        Task<int> GetOpenIssuesCountAsync();
     }
 
     /// <summary>
