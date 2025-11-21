@@ -8,19 +8,33 @@ namespace TeknoRoma.DataAccess.Concrete;
 /// <summary>
 /// Unit of Work Implementation
 /// Transaction yönetimi ve repository koordinasyonu yapar
+///
+/// NEDEN Bu Kadar Önemli?
+/// - Birden fazla repository işlemini tek transaction'da toplar
+/// - SaveChangesAsync tek noktadan çağrılır
+/// - Transaction yönetimi (Begin, Commit, Rollback)
+/// - Lazy Loading pattern ile performans optimizasyonu
 /// </summary>
 public class UnitOfWork : IUnitOfWork
 {
     private readonly TeknoRomaDbContext _context;
     private IDbContextTransaction? _transaction;
 
-    // Repository instance'ları - Lazy initialization için nullable
+    // ====== REPOSITORY INSTANCE'LARI ======
+    // Lazy initialization için nullable
+    // İlk erişimde oluşturulur, sonrasında cache'ten döner
+
+    private IRepository<Store>? _stores;
+    private IRepository<Department>? _departments;
+    private IRepository<Employee>? _employees;
     private IRepository<Category>? _categories;
     private IRepository<Product>? _products;
     private IRepository<Supplier>? _suppliers;
     private IRepository<Customer>? _customers;
-    private IRepository<Order>? _orders;
-    private IRepository<OrderDetail>? _orderDetails;
+    private IRepository<Sale>? _sales;
+    private IRepository<SaleDetail>? _saleDetails;
+    private IRepository<Expense>? _expenses;
+    private IRepository<TechnicalService>? _technicalServices;
 
     /// <summary>
     /// Constructor - DbContext'i dependency injection ile alır
@@ -30,16 +44,29 @@ public class UnitOfWork : IUnitOfWork
         _context = context;
     }
 
-    // Repository Properties - Lazy initialization pattern
-    // İlk erişimde oluşturulur, sonraki erişimlerde aynı instance kullanılır
+
+    // ====== REPOSITORY PROPERTIES ======
+    // Lazy initialization pattern
+    // NEDEN? İhtiyaç olduğunda oluşturulur, gereksiz yere memory kullanmaz
+
+    public IRepository<Store> Stores
+    {
+        get { return _stores ??= new Repository<Store>(_context); }
+    }
+
+    public IRepository<Department> Departments
+    {
+        get { return _departments ??= new Repository<Department>(_context); }
+    }
+
+    public IRepository<Employee> Employees
+    {
+        get { return _employees ??= new Repository<Employee>(_context); }
+    }
 
     public IRepository<Category> Categories
     {
-        get
-        {
-            // Null ise yeni instance oluştur, değilse mevcut instance'ı döndür
-            return _categories ??= new Repository<Category>(_context);
-        }
+        get { return _categories ??= new Repository<Category>(_context); }
     }
 
     public IRepository<Product> Products
@@ -57,19 +84,38 @@ public class UnitOfWork : IUnitOfWork
         get { return _customers ??= new Repository<Customer>(_context); }
     }
 
-    public IRepository<Order> Orders
+    public IRepository<Sale> Sales
     {
-        get { return _orders ??= new Repository<Order>(_context); }
+        get { return _sales ??= new Repository<Sale>(_context); }
     }
 
-    public IRepository<OrderDetail> OrderDetails
+    public IRepository<SaleDetail> SaleDetails
     {
-        get { return _orderDetails ??= new Repository<OrderDetail>(_context); }
+        get { return _saleDetails ??= new Repository<SaleDetail>(_context); }
     }
+
+    public IRepository<Expense> Expenses
+    {
+        get { return _expenses ??= new Repository<Expense>(_context); }
+    }
+
+    public IRepository<TechnicalService> TechnicalServices
+    {
+        get { return _technicalServices ??= new Repository<TechnicalService>(_context); }
+    }
+
+
+    // ====== TRANSACTION METHODS ======
 
     /// <summary>
     /// Tüm değişiklikleri veritabanına kaydeder
     /// Başarılı ise true, hata varsa false döner
+    ///
+    /// KULLANIM:
+    /// if (await _unitOfWork.SaveChangesAsync())
+    ///     return Ok("Başarılı");
+    /// else
+    ///     return BadRequest("Hata");
     /// </summary>
     public async Task<bool> SaveChangesAsync()
     {
@@ -89,6 +135,9 @@ public class UnitOfWork : IUnitOfWork
 
     /// <summary>
     /// Tüm değişiklikleri veritabanına kaydeder ve etkilenen satır sayısını döner
+    ///
+    /// KULLANIM:
+    /// int affectedRows = await _unitOfWork.CommitAsync();
     /// </summary>
     public async Task<int> CommitAsync()
     {
@@ -97,7 +146,34 @@ public class UnitOfWork : IUnitOfWork
 
     /// <summary>
     /// Transaction başlatır
-    /// Örnek kullanım: Sipariş + Sipariş Detayları ekleme işlemini tek transaction'da yapmak
+    ///
+    /// ÖRNEK KULLANIM:
+    /// // Satış işlemi: Satış ekle + Stok azalt + Gider kaydet
+    /// await _unitOfWork.BeginTransactionAsync();
+    /// try
+    /// {
+    ///     // 1. Satış ekle
+    ///     await _unitOfWork.Sales.AddAsync(sale);
+    ///     await _unitOfWork.SaveChangesAsync();
+    ///
+    ///     // 2. Satış detaylarını ekle ve stokları azalt
+    ///     foreach (var detail in saleDetails)
+    ///     {
+    ///         await _unitOfWork.SaleDetails.AddAsync(detail);
+    ///         var product = await _unitOfWork.Products.GetByIdAsync(detail.ProductId);
+    ///         product.Stock -= detail.Quantity;
+    ///         _unitOfWork.Products.Update(product);
+    ///     }
+    ///
+    ///     // 3. Tümünü commit et
+    ///     await _unitOfWork.CommitTransactionAsync();
+    /// }
+    /// catch
+    /// {
+    ///     // Hata olursa tümünü geri al
+    ///     await _unitOfWork.RollbackTransactionAsync();
+    ///     throw;
+    /// }
     /// </summary>
     public async Task BeginTransactionAsync()
     {
@@ -107,6 +183,10 @@ public class UnitOfWork : IUnitOfWork
     /// <summary>
     /// Transaction'ı commit eder (onaylar)
     /// Tüm işlemler başarılı olduysa çağrılır
+    ///
+    /// NEDEN?
+    /// - Atomicity sağlar (Ya hepsi başarılı, ya hiçbiri)
+    /// - Consistency garantisi (Veritabanı tutarlı kalır)
     /// </summary>
     public async Task CommitTransactionAsync()
     {
@@ -134,6 +214,10 @@ public class UnitOfWork : IUnitOfWork
     /// <summary>
     /// Transaction'ı rollback eder (geri alır)
     /// Hata durumunda tüm işlemler geri alınır
+    ///
+    /// NEDEN?
+    /// - Hata durumunda veritabanını tutarlı tutmak için
+    /// - Örnek: Satış eklendi ama stok güncellenemedi → Satışı da geri al
     /// </summary>
     public async Task RollbackTransactionAsync()
     {
@@ -148,6 +232,11 @@ public class UnitOfWork : IUnitOfWork
     /// <summary>
     /// Dispose pattern implementation
     /// Resources'ları temizler
+    ///
+    /// NEDEN?
+    /// - Memory leak'leri önler
+    /// - Database bağlantılarını kapatır
+    /// - IDisposable pattern gereği
     /// </summary>
     public void Dispose()
     {
