@@ -62,6 +62,16 @@ namespace Application.Repositories
         /// Format: G-2024-00001
         /// </summary>
         Task<string> GenerateExpenseNumberAsync();
+
+        /// <summary>
+        /// Aylık toplam gideri hesaplar (TRY cinsinden)
+        /// </summary>
+        Task<decimal> GetMonthlyExpensesTotalAsync(int year, int month);
+
+        /// <summary>
+        /// Ödenmemiş giderlerin toplam tutarını döndürür
+        /// </summary>
+        Task<decimal> GetUnpaidExpensesAmountAsync();
     }
 
     /// <summary>
@@ -124,6 +134,61 @@ namespace Application.Repositories
         /// Format: TS-2024-00001
         /// </summary>
         Task<string> GenerateServiceNumberAsync();
+
+        /// <summary>
+        /// Açık sorunları getirir (Acik ve Islemde durumundakiler)
+        /// </summary>
+        Task<IReadOnlyList<TechnicalService>> GetOpenIssuesAsync();
+
+        /// <summary>
+        /// Atanmış sorunları getirir
+        /// </summary>
+        Task<IReadOnlyList<TechnicalService>> GetAssignedIssuesAsync(int employeeId);
+
+        /// <summary>
+        /// Öncelik seviyesine göre sorunları getirir
+        /// </summary>
+        Task<IReadOnlyList<TechnicalService>> GetByPriorityAsync(int priority);
+
+        /// <summary>
+        /// Açık sorun sayısını döndürür
+        /// </summary>
+        Task<int> GetOpenIssuesCountAsync();
+
+        /// <summary>
+        /// Tarih aralığındaki servis kayıtlarını getirir
+        /// </summary>
+        Task<IReadOnlyList<TechnicalService>> GetByDateRangeAsync(DateTime startDate, DateTime endDate);
+
+        /// <summary>
+        /// Açık ve atanmamış sorunları getirir
+        /// </summary>
+        Task<IReadOnlyList<TechnicalService>> GetUnassignedAsync();
+
+        /// <summary>
+        /// Kritik öncelikli ve açık durumda olan sorunları getirir
+        /// </summary>
+        Task<IReadOnlyList<TechnicalService>> GetCriticalOpenIssuesAsync();
+
+        /// <summary>
+        /// Belirli süreyi aşmış çözülmemiş sorunları getirir
+        /// </summary>
+        Task<IReadOnlyList<TechnicalService>> GetOverdueIssuesAsync(int hours);
+
+        /// <summary>
+        /// Servis kaydını ilişkili verilerle getirir (Eager Loading)
+        /// </summary>
+        Task<TechnicalService> GetWithDetailsAsync(int serviceId);
+
+        /// <summary>
+        /// Ortalama çözüm süresini hesaplar (saat cinsinden)
+        /// </summary>
+        Task<double> GetAverageResolutionTimeAsync(DateTime? startDate = null, DateTime? endDate = null);
+
+        /// <summary>
+        /// Durum bazlı istatistikleri getirir
+        /// </summary>
+        Task<Dictionary<TechnicalServiceStatus, int>> GetStatusStatisticsAsync();
     }
 
     /// <summary>

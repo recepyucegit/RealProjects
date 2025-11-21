@@ -131,4 +131,17 @@ namespace Application.Repositories
         /// </summary>
         Task DeleteRangeAsync(IEnumerable<T> entities);
     }
+
+    /// <summary>
+    /// Simple Repository Interface
+    /// Generic Repository için alias - özel iş mantığı gerektirmeyen entity'ler için
+    /// NEDEN?
+    /// - UnitOfWork'te basit entity'ler için IRepository<T> yerine daha okunabilir bir isim
+    /// - Category, Supplier, Store, Department gibi entity'ler için
+    /// </summary>
+    public interface ISimpleRepository<T> : IRepository<T> where T : BaseEntity
+    {
+        // IRepository'den tüm metodları miras alır
+        // Ekstra metod gerekmez - sadece isim değişikliği için
+    }
 }

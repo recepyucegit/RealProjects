@@ -204,5 +204,36 @@ namespace Infrastructure.Repositories
 
             return $"{prefix}{nextNumber:D5}"; // Format: G-2024-00001
         }
+
+
+        // ====== EK METODLAR (API için) ======
+
+        /// <summary>
+        /// Aylık toplam gideri hesaplar (TRY cinsinden)
+        /// </summary>
+        public async Task<decimal> GetMonthlyExpensesTotalAsync(int year, int month)
+        {
+            var firstDayOfMonth = new DateTime(year, month, 1);
+            var firstDayOfNextMonth = firstDayOfMonth.AddMonths(1);
+
+            var total = await _dbSet
+                .Where(e => e.ExpenseDate >= firstDayOfMonth
+                         && e.ExpenseDate < firstDayOfNextMonth)
+                .SumAsync(e => e.AmountInTRY);
+
+            return total;
+        }
+
+        /// <summary>
+        /// Ödenmemiş giderlerin toplam tutarını döndürür
+        /// </summary>
+        public async Task<decimal> GetUnpaidExpensesAmountAsync()
+        {
+            var total = await _dbSet
+                .Where(e => e.IsPaid == false)
+                .SumAsync(e => e.AmountInTRY);
+
+            return total;
+        }
     }
 }

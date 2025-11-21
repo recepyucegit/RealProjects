@@ -50,7 +50,6 @@ namespace Infrastructure.Repositories
 
         /// <summary>
         /// Duruma göre servis kayıtlarını getirir
-        /// Özgün Kablocu: "Açık sorunları görüp öncelik sırasına göre çözmeliyim"
         /// </summary>
         public async Task<IReadOnlyList<TechnicalService>> GetByStatusAsync(TechnicalServiceStatus status)
         {
@@ -60,8 +59,8 @@ namespace Infrastructure.Repositories
                 .Include(ts => ts.AssignedToEmployee)
                 .Include(ts => ts.Customer)
                 .Where(ts => ts.Status == status)
-                .OrderByDescending(ts => ts.Priority) // Önce yüksek öncelikli
-                .ThenBy(ts => ts.ReportedDate) // Sonra eski tarihli
+                .OrderByDescending(ts => ts.Priority)
+                .ThenBy(ts => ts.ReportedDate)
                 .ToListAsync();
         }
 
@@ -127,7 +126,6 @@ namespace Infrastructure.Repositories
 
         /// <summary>
         /// Müşteri sorunlarını getirir
-        /// IsCustomerIssue = true
         /// </summary>
         public async Task<IReadOnlyList<TechnicalService>> GetCustomerIssuesAsync()
         {
@@ -144,7 +142,6 @@ namespace Infrastructure.Repositories
 
         /// <summary>
         /// Sistem sorunlarını getirir
-        /// IsCustomerIssue = false
         /// </summary>
         public async Task<IReadOnlyList<TechnicalService>> GetSystemIssuesAsync()
         {
@@ -281,12 +278,29 @@ namespace Infrastructure.Repositories
             return Math.Round(totalHours, 2);
         }
 
+        /// <summary>
+        /// Açık sorunları öncelik sırasına göre getirir
+        /// </summary>
+        public async Task<IReadOnlyList<TechnicalService>> GetOpenIssuesByPriorityAsync()
+        {
+            return await _dbSet
+                .Include(ts => ts.Store)
+                .Include(ts => ts.ReportedByEmployee)
+                .Include(ts => ts.AssignedToEmployee)
+                .Include(ts => ts.Customer)
+                .Where(ts => ts.Status == TechnicalServiceStatus.Acik
+                          || ts.Status == TechnicalServiceStatus.Islemde)
+                .OrderByDescending(ts => ts.Priority)
+                .ThenBy(ts => ts.ReportedDate)
+                .ToListAsync();
+        }
+
 
         // ====== NUMARA OLUŞTURMA ======
 
         /// <summary>
         /// Yeni servis numarası oluşturur
-        /// Format: TS-2024-00001, TS-2024-00002, ...
+        /// Format: TS-2024-00001
         /// </summary>
         public async Task<string> GenerateServiceNumberAsync()
         {
@@ -309,7 +323,53 @@ namespace Infrastructure.Repositories
                 }
             }
 
-            return $"{prefix}{nextNumber:D5}"; // Format: TS-2024-00001
+            return $"{prefix}{nextNumber:D5}";
+        }
+
+
+        // ====== EK METODLAR (API için) ======
+
+        /// <summary>
+        /// Açık sorunları getirir (Acik ve Islemde durumundakiler)
+        /// </summary>
+        public async Task<IReadOnlyList<TechnicalService>> GetOpenIssuesAsync()
+        {
+            return await _dbSet
+                .Include(ts => ts.Store)
+                .Include(ts => ts.ReportedByEmployee)
+                .Include(ts => ts.AssignedToEmployee)
+                .Include(ts => ts.Customer)
+                .Where(ts => ts.Status == TechnicalServiceStatus.Acik
+                          || ts.Status == TechnicalServiceStatus.Islemde)
+                .OrderByDescending(ts => ts.Priority)
+                .ThenBy(ts => ts.ReportedDate)
+                .ToListAsync();
+        }
+
+        /// <summary>
+        /// Atanmış sorunları getirir
+        /// </summary>
+        public async Task<IReadOnlyList<TechnicalService>> GetAssignedIssuesAsync(int employeeId)
+        {
+            return await _dbSet
+                .Include(ts => ts.Store)
+                .Include(ts => ts.ReportedByEmployee)
+                .Include(ts => ts.Customer)
+                .Where(ts => ts.AssignedToEmployeeId == employeeId)
+                .OrderByDescending(ts => ts.Priority)
+                .ThenBy(ts => ts.ReportedDate)
+                .ToListAsync();
+        }
+
+        /// <summary>
+        /// Açık sorun sayısını döndürür
+        /// </summary>
+        public async Task<int> GetOpenIssuesCountAsync()
+        {
+            return await _dbSet
+                .Where(ts => ts.Status == TechnicalServiceStatus.Acik
+                          || ts.Status == TechnicalServiceStatus.Islemde)
+                .CountAsync();
         }
 
         /// <summary>
