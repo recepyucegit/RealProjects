@@ -15,17 +15,17 @@ namespace Domain.Entities
         /// UNIQUE constraint olacak (aynı TC ile birden fazla müşteri olamaz)
         /// 11 haneli string
         /// </summary>
-        public string IdentityNumber { get; set; }
+        public string IdentityNumber { get; set; } = null!;
 
         /// <summary>
         /// Ad
         /// </summary>
-        public string FirstName { get; set; }
+        public string FirstName { get; set; } = null!;
 
         /// <summary>
         /// Soyad
         /// </summary>
-        public string LastName { get; set; }
+        public string LastName { get; set; } = null!;
 
         /// <summary>
         /// Doğum Tarihi
@@ -43,22 +43,22 @@ namespace Domain.Entities
         /// Email adresi
         /// Kampanya ve bilgilendirme için
         /// </summary>
-        public string Email { get; set; }
+        public string? Email { get; set; }
 
         /// <summary>
         /// Telefon numarası
         /// </summary>
-        public string Phone { get; set; }
+        public string Phone { get; set; } = null!;
 
         /// <summary>
         /// Adres
         /// </summary>
-        public string Address { get; set; }
+        public string? Address { get; set; }
 
         /// <summary>
         /// Şehir
         /// </summary>
-        public string City { get; set; }
+        public string? City { get; set; }
 
         /// <summary>
         /// Müşteri aktif mi?
@@ -92,6 +92,6 @@ namespace Domain.Entities
         /// Müşterinin yaptığı satışlar
         /// One-to-Many ilişki (Bir müşteri birden fazla alışveriş yapabilir)
         /// </summary>
-        public virtual ICollection<Sale> Sales { get; set; }
+        public virtual ICollection<Sale> Sales { get; set; } = new List<Sale>();
     }
 }

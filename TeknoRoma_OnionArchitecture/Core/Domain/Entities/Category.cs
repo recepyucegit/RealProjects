@@ -12,12 +12,12 @@ namespace Domain.Entities
         /// <summary>
         /// Kategori Adı
         /// </summary>
-        public string Name { get; set; }
+        public string Name { get; set; } = null!;
 
         /// <summary>
         /// Kategori Açıklaması
         /// </summary>
-        public string Description { get; set; }
+        public string? Description { get; set; }
 
         /// <summary>
         /// Kategori aktif mi?
@@ -33,6 +33,6 @@ namespace Domain.Entities
         /// One-to-Many ilişki (Bir kategoride birden fazla ürün)
         /// Haluk Bey'in istediği rapor: "Kategorilere göre ürünlerin listesi"
         /// </summary>
-        public virtual ICollection<Product> Products { get; set; }
+        public virtual ICollection<Product> Products { get; set; } = new List<Product>();
     }
 }

@@ -17,19 +17,19 @@ namespace Domain.Entities
         /// Servis Numarası (Benzersiz)
         /// Format: "TS-2024-00001"
         /// </summary>
-        public string ServiceNumber { get; set; }
+        public string ServiceNumber { get; set; } = null!;
 
         /// <summary>
         /// Sorun Başlığı
         /// Kısa özet
         /// </summary>
-        public string Title { get; set; }
+        public string Title { get; set; } = null!;
 
         /// <summary>
         /// Sorun Açıklaması
         /// Detaylı açıklama
         /// </summary>
-        public string Description { get; set; }
+        public string Description { get; set; } = null!;
 
         /// <summary>
         /// Hangi mağaza? (Foreign Key)
@@ -90,7 +90,7 @@ namespace Domain.Entities
         /// Ne yapıldı? Nasıl çözüldü?
         /// Null olabilir (henüz çözülmediyse)
         /// </summary>
-        public string Resolution { get; set; }
+        public string? Resolution { get; set; }
 
 
         // ====== NAVIGATION PROPERTIES ======
@@ -99,26 +99,26 @@ namespace Domain.Entities
         /// Sorunun bildirildiği mağaza
         /// Many-to-One ilişki
         /// </summary>
-        public virtual Store Store { get; set; }
+        public virtual Store Store { get; set; } = null!;
 
         /// <summary>
         /// Sorunu bildiren çalışan
         /// Many-to-One ilişki
         /// </summary>
-        public virtual Employee ReportedByEmployee { get; set; }
+        public virtual Employee ReportedByEmployee { get; set; } = null!;
 
         /// <summary>
         /// Sorunu çözen teknik servis elemanı
         /// Many-to-One ilişki
         /// Null olabilir
         /// </summary>
-        public virtual Employee AssignedToEmployee { get; set; }
+        public virtual Employee? AssignedToEmployee { get; set; }
 
         /// <summary>
         /// Sorunu olan müşteri (müşteri sorunlarında)
         /// Many-to-One ilişki
         /// Null olabilir
         /// </summary>
-        public virtual Customer Customer { get; set; }
+        public virtual Customer? Customer { get; set; }
     }
 }

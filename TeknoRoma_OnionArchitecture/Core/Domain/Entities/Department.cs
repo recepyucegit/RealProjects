@@ -14,12 +14,12 @@ namespace Domain.Entities
         /// Departman Adı
         /// Örn: "Bilgisayar Donanımları", "Satış Departmanı", "Depo"
         /// </summary>
-        public string Name { get; set; }
+        public string Name { get; set; } = null!;
 
         /// <summary>
         /// Departman Açıklaması
         /// </summary>
-        public string Description { get; set; }
+        public string? Description { get; set; }
 
         /// <summary>
         /// Hangi mağazaya ait? (Foreign Key)
@@ -41,12 +41,12 @@ namespace Domain.Entities
         /// Departmanın bağlı olduğu mağaza
         /// Many-to-One ilişki (Birden fazla departman bir mağazaya ait)
         /// </summary>
-        public virtual Store Store { get; set; }
+        public virtual Store Store { get; set; } = null!;
 
         /// <summary>
         /// Bu departmandaki çalışanlar
         /// One-to-Many ilişki (Bir departmanda birden fazla çalışan)
         /// </summary>
-        public virtual ICollection<Employee> Employees { get; set; }
+        public virtual ICollection<Employee> Employees { get; set; } = new List<Employee>();
     }
 }

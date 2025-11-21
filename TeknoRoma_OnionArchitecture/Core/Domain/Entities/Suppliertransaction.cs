@@ -15,7 +15,7 @@
         /// İşlem Numarası (Benzersiz)
         /// Format: "TH-2024-00001"
         /// </summary>
-        public string TransactionNumber { get; set; }
+        public string TransactionNumber { get; set; } = null!;
 
         /// <summary>
         /// İşlem Tarihi
@@ -56,12 +56,12 @@
         /// Fatura Numarası
         /// Tedarikçinin fatura numarası
         /// </summary>
-        public string InvoiceNumber { get; set; }
+        public string? InvoiceNumber { get; set; }
 
         /// <summary>
         /// Açıklama/Not
         /// </summary>
-        public string Notes { get; set; }
+        public string? Notes { get; set; }
 
         /// <summary>
         /// Ödeme yapıldı mı?
@@ -82,12 +82,12 @@
         /// İşlemin yapıldığı tedarikçi
         /// Many-to-One ilişki
         /// </summary>
-        public virtual Supplier Supplier { get; set; }
+        public virtual Supplier Supplier { get; set; } = null!;
 
         /// <summary>
         /// Alınan ürün
         /// Many-to-One ilişki
         /// </summary>
-        public virtual Product Product { get; set; }
+        public virtual Product Product { get; set; } = null!;
     }
 }

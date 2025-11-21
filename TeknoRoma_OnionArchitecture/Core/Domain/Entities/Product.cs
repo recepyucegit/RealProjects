@@ -12,20 +12,20 @@ namespace Domain.Entities
         /// Ürün Adı
         /// Örn: "iPhone 15 Pro 256GB", "Samsung Galaxy S24", "Logitech MX Master 3"
         /// </summary>
-        public string Name { get; set; }
+        public string Name { get; set; } = null!;
 
         /// <summary>
         /// Ürün Açıklaması
         /// Detaylı teknik özellikler
         /// </summary>
-        public string Description { get; set; }
+        public string Description { get; set; } = null!;
 
         /// <summary>
         /// Barkod Numarası
         /// UNIQUE constraint olacak
         /// Fahri Cepçi'nin istediği: "Ürün barkodunu okutup hızlıca bilgi alabilmeliyim"
         /// </summary>
-        public string Barcode { get; set; }
+        public string Barcode { get; set; } = null!;
 
         /// <summary>
         /// Birim Fiyatı (TL)
@@ -76,7 +76,7 @@ namespace Domain.Entities
         /// Ürün görseli (URL veya path)
         /// Opsiyonel
         /// </summary>
-        public string ImageUrl { get; set; }
+        public string? ImageUrl { get; set; }
 
 
         // ====== CALCULATED PROPERTIES ======
@@ -105,25 +105,25 @@ namespace Domain.Entities
         /// Ürünün kategorisi
         /// Many-to-One ilişki
         /// </summary>
-        public virtual Category Category { get; set; }
+        public virtual Category Category { get; set; } = null!;
 
         /// <summary>
         /// Ürünün tedarikçisi
         /// Many-to-One ilişki
         /// </summary>
-        public virtual Supplier Supplier { get; set; }
+        public virtual Supplier Supplier { get; set; } = null!;
 
         /// <summary>
         /// Bu ürünün satış detayları
         /// One-to-Many ilişki
         /// Haluk Bey'in raporu: "En çok satılan 10 ürün"
         /// </summary>
-        public virtual ICollection<SaleDetail> SaleDetails { get; set; }
+        public virtual ICollection<SaleDetail> SaleDetails { get; set; } = new List<SaleDetail>();
 
         /// <summary>
         /// Bu ürünün tedarikçi hareketleri
         /// Hangi tarihte ne kadar alındı?
         /// </summary>
-        public virtual ICollection<SupplierTransaction> SupplierTransactions { get; set; }
+        public virtual ICollection<SupplierTransaction> SupplierTransactions { get; set; } = new List<SupplierTransaction>();
     }
 }

@@ -29,7 +29,7 @@
         /// NEDEN? Ürün adı sonradan değişebilir ama satış kaydı değişmemeli
         /// Snapshot: O anki ürün bilgisi
         /// </summary>
-        public string ProductName { get; set; }
+        public string ProductName { get; set; } = null!;
 
         /// <summary>
         /// Satış anındaki birim fiyatı
@@ -77,12 +77,12 @@
         /// Bağlı olduğu satış
         /// Many-to-One ilişki
         /// </summary>
-        public virtual Sale Sale { get; set; }
+        public virtual Sale Sale { get; set; } = null!;
 
         /// <summary>
         /// Satılan ürün
         /// Many-to-One ilişki
         /// </summary>
-        public virtual Product Product { get; set; }
+        public virtual Product Product { get; set; } = null!;
     }
 }

@@ -19,7 +19,7 @@ namespace Domain.Entities
         /// Fahri Cepçi: "Müşteriye bir satış numarası verse, ben o numarayı girip görebilsem"
         /// Format: "S-2024-00001", "S-2024-00002"
         /// </summary>
-        public string SaleNumber { get; set; }
+        public string SaleNumber { get; set; } = null!;
 
         /// <summary>
         /// Satış Tarihi
@@ -85,13 +85,13 @@ namespace Domain.Entities
         /// Örn: "Kasa 1", "Kasa 2", "Mobil"
         /// Null olabilir (Mobil satışta kasa yok)
         /// </summary>
-        public string CashRegisterNumber { get; set; }
+        public string? CashRegisterNumber { get; set; }
 
         /// <summary>
         /// Satış açıklaması/notu
         /// Opsiyonel notlar
         /// </summary>
-        public string Notes { get; set; }
+        public string? Notes { get; set; }
 
 
         // ====== NAVIGATION PROPERTIES ======
@@ -100,25 +100,25 @@ namespace Domain.Entities
         /// Satışı yapan müşteri
         /// Many-to-One ilişki
         /// </summary>
-        public virtual Customer Customer { get; set; }
+        public virtual Customer Customer { get; set; } = null!;
 
         /// <summary>
         /// Satışı yapan çalışan
         /// Many-to-One ilişki
         /// </summary>
-        public virtual Employee Employee { get; set; }
+        public virtual Employee Employee { get; set; } = null!;
 
         /// <summary>
         /// Satışın yapıldığı mağaza
         /// Many-to-One ilişki
         /// </summary>
-        public virtual Store Store { get; set; }
+        public virtual Store Store { get; set; } = null!;
 
         /// <summary>
         /// Satışın detayları (Satılan ürünler)
         /// One-to-Many ilişki
         /// Bir satışta birden fazla ürün olabilir
         /// </summary>
-        public virtual ICollection<SaleDetail> SaleDetails { get; set; }
+        public virtual ICollection<SaleDetail> SaleDetails { get; set; } = new List<SaleDetail>();
     }
 }

@@ -18,34 +18,34 @@ namespace Domain.Entities
         /// Identity tablosundaki kullanıcı ile eşleştirme için
         /// NEDEN? Authentication ve Authorization Identity üzerinden
         /// </summary>
-        public string IdentityUserId { get; set; }
+        public string IdentityUserId { get; set; } = null!;
 
         /// <summary>
         /// TC Kimlik Numarası
         /// UNIQUE constraint olacak
         /// </summary>
-        public string IdentityNumber { get; set; }
+        public string IdentityNumber { get; set; } = null!;
 
         /// <summary>
         /// Ad
         /// </summary>
-        public string FirstName { get; set; }
+        public string FirstName { get; set; } = null!;
 
         /// <summary>
         /// Soyad
         /// </summary>
-        public string LastName { get; set; }
+        public string LastName { get; set; } = null!;
 
         /// <summary>
         /// Email adresi
         /// Identity tablosundaki email ile senkron olacak
         /// </summary>
-        public string Email { get; set; }
+        public string Email { get; set; } = null!;
 
         /// <summary>
         /// Telefon numarası
         /// </summary>
-        public string Phone { get; set; }
+        public string Phone { get; set; } = null!;
 
         /// <summary>
         /// Doğum Tarihi
@@ -110,30 +110,30 @@ namespace Domain.Entities
         /// Çalışanın bağlı olduğu mağaza
         /// Many-to-One ilişki
         /// </summary>
-        public virtual Store Store { get; set; }
+        public virtual Store Store { get; set; } = null!;
 
         /// <summary>
         /// Çalışanın bağlı olduğu departman
         /// Many-to-One ilişki
         /// </summary>
-        public virtual Department Department { get; set; }
+        public virtual Department Department { get; set; } = null!;
 
         /// <summary>
         /// Çalışanın yaptığı satışlar
         /// One-to-Many ilişki
         /// Haluk Bey'in raporu: "Hangi çalışanım ne kadar satmış"
         /// </summary>
-        public virtual ICollection<Sale> Sales { get; set; }
+        public virtual ICollection<Sale> Sales { get; set; } = new List<Sale>();
 
         /// <summary>
         /// Çalışanın aldığı maaş ödemeleri
         /// Expense tablosundan gelecek
         /// </summary>
-        public virtual ICollection<Expense> Expenses { get; set; }
+        public virtual ICollection<Expense> Expenses { get; set; } = new List<Expense>();
 
         /// <summary>
         /// Çalışanın çözdüğü teknik servis kayıtları
         /// </summary>
-        public virtual ICollection<TechnicalService> AssignedTechnicalServices { get; set; }
+        public virtual ICollection<TechnicalService> AssignedTechnicalServices { get; set; } = new List<TechnicalService>();
     }
 }

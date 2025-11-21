@@ -19,7 +19,7 @@ namespace Domain.Entities
         /// Gider Numarası (Benzersiz)
         /// Format: "G-2024-00001"
         /// </summary>
-        public string ExpenseNumber { get; set; }
+        public string ExpenseNumber { get; set; } = null!;
 
         /// <summary>
         /// Gider Tarihi
@@ -78,13 +78,13 @@ namespace Domain.Entities
         /// "Elektrik Faturası - Aralık 2023"
         /// "Sunucu Bakım Ücreti"
         /// </summary>
-        public string Description { get; set; }
+        public string Description { get; set; } = null!;
 
         /// <summary>
         /// Fatura/Evrak Numarası
         /// Opsiyonel
         /// </summary>
-        public string DocumentNumber { get; set; }
+        public string? DocumentNumber { get; set; }
 
         /// <summary>
         /// Ödeme yapıldı mı?
@@ -104,13 +104,13 @@ namespace Domain.Entities
         /// Giderin ait olduğu mağaza
         /// Many-to-One ilişki
         /// </summary>
-        public virtual Store Store { get; set; }
+        public virtual Store Store { get; set; } = null!;
 
         /// <summary>
         /// Giderin ait olduğu çalışan (maaş ödemelerinde)
         /// Many-to-One ilişki
         /// Null olabilir
         /// </summary>
-        public virtual Employee Employee { get; set; }
+        public virtual Employee? Employee { get; set; }
     }
 }
