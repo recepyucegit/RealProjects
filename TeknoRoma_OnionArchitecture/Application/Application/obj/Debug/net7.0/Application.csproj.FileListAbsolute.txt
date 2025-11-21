@@ -1,6 +1,0 @@
-C:\Users\buse-\OneDrive\Belgeler\GitHub\RealProjects\TeknoRoma_OnionArchitecture\Application\Application\obj\Debug\net7.0\Application.csproj.AssemblyReference.cache
-C:\Users\buse-\OneDrive\Belgeler\GitHub\RealProjects\TeknoRoma_OnionArchitecture\Application\Application\obj\Debug\net7.0\Application.GeneratedMSBuildEditorConfig.editorconfig
-C:\Users\buse-\OneDrive\Belgeler\GitHub\RealProjects\TeknoRoma_OnionArchitecture\Application\Application\obj\Debug\net7.0\Application.AssemblyInfoInputs.cache
-C:\Users\buse-\OneDrive\Belgeler\GitHub\RealProjects\TeknoRoma_OnionArchitecture\Application\Application\obj\Debug\net7.0\Application.AssemblyInfo.cs
-C:\Users\buse-\OneDrive\Belgeler\GitHub\RealProjects\TeknoRoma_OnionArchitecture\Application\Application\obj\Debug\net7.0\Application.csproj.CoreCompileInputs.cache
-C:\Users\buse-\OneDrive\Belgeler\GitHub\RealProjects\TeknoRoma_OnionArchitecture\Application\Application\obj\Debug\net7.0\Application.sourcelink.json
