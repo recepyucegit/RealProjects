@@ -1,8 +1,11 @@
+using Application.Services;
 using Infrastructure;
 using Infrastructure.Persistance;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Serilog;
+using Web.Hubs;
+using Web.Services;
 
 namespace Web
 {
@@ -93,6 +96,12 @@ namespace Web
                 // HTTP Context Accessor (Session için)
                 builder.Services.AddHttpContextAccessor();
 
+                // SignalR - Gerçek zamanlı bildirimler
+                builder.Services.AddSignalR();
+
+                // Notification Service
+                builder.Services.AddScoped<INotificationService, NotificationService>();
+
 
                 // ====== APPLICATION CONFIGURATION ======
 
@@ -133,6 +142,9 @@ namespace Web
                 app.MapControllerRoute(
                     name: "default",
                     pattern: "{controller=Home}/{action=Index}/{id?}");
+
+                // SignalR Hub endpoint
+                app.MapHub<NotificationHub>("/notificationHub");
 
 
                 // ====== SEED DATA ======
