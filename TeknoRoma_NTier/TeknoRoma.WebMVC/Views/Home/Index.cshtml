@@ -1,0 +1,95 @@
+@model IEnumerable<TeknoRoma.Business.DTOs.ProductDto>
+
+@{
+    ViewData["Title"] = "Ana Sayfa";
+}
+
+<!-- Hero Section -->
+<div class="jumbotron bg-light p-5 rounded-3 mb-5">
+    <h1 class="display-4">TeknoRoma'ya Hoş Geldiniz!</h1>
+    <p class="lead">En yeni teknoloji ürünlerini uygun fiyatlarla bulabileceğiniz adres.</p>
+    <hr class="my-4">
+    <p>N-tier Katmanlı Mimari ile geliştirilmiş modern e-ticaret platformu.</p>
+    <a class="btn btn-primary btn-lg" asp-controller="Products" asp-action="Index" role="button">
+        <i class="fas fa-shopping-bag"></i> Alışverişe Başla
+    </a>
+</div>
+
+<!-- Featured Products -->
+<h2 class="mb-4">
+    <i class="fas fa-star text-warning"></i> Öne Çıkan Ürünler
+</h2>
+
+@if (Model != null && Model.Any())
+{
+    <div class="row">
+        @foreach (var product in Model)
+        {
+            <div class="col-md-4 col-lg-3 mb-4">
+                <div class="card product-card">
+                    @if (!string.IsNullOrEmpty(product.ImageUrl))
+                    {
+                        <img src="@product.ImageUrl" class="card-img-top" alt="@product.Name" style="height: 200px; object-fit: cover;">
+                    }
+                    else
+                    {
+                        <div class="bg-secondary text-white d-flex align-items-center justify-content-center" style="height: 200px;">
+                            <i class="fas fa-image fa-3x"></i>
+                        </div>
+                    }
+                    <div class="card-body">
+                        <h5 class="card-title">@product.Name</h5>
+                        <p class="card-text text-muted">@product.CategoryName</p>
+
+                        @if (product.DiscountPrice.HasValue)
+                        {
+                            <p class="card-text">
+                                <span class="text-decoration-line-through text-muted">@product.Price.ToString("C2")</span>
+                                <span class="text-danger fw-bold ms-2">@product.DiscountPrice.Value.ToString("C2")</span>
+                                <span class="badge bg-success ms-2">%@product.DiscountPercentage İndirim</span>
+                            </p>
+                        }
+                        else
+                        {
+                            <p class="card-text fw-bold text-primary">@product.Price.ToString("C2")</p>
+                        }
+
+                        <a asp-controller="Products" asp-action="Details" asp-route-id="@product.Id" class="btn btn-primary btn-sm w-100">
+                            <i class="fas fa-info-circle"></i> Detaylar
+                        </a>
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+}
+else
+{
+    <div class="alert alert-info">
+        <i class="fas fa-info-circle"></i> Henüz öne çıkan ürün bulunmamaktadır.
+    </div>
+}
+
+<!-- Categories Section -->
+<div class="mt-5">
+    <h2 class="mb-4">
+        <i class="fas fa-th-large"></i> Kategoriler
+    </h2>
+    <div class="row">
+        @if (ViewBag.Categories != null)
+        {
+            @foreach (var category in ViewBag.Categories)
+            {
+                <div class="col-md-3 col-sm-6 mb-3">
+                    <a asp-controller="Products" asp-action="Index" asp-route-categoryId="@category.Id" class="text-decoration-none">
+                        <div class="card text-center">
+                            <div class="card-body">
+                                <h5 class="card-title">@category.Name</h5>
+                            </div>
+                        </div>
+                    </a>
+                </div>
+            }
+        }
+    </div>
+</div>
