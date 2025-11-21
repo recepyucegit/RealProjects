@@ -1,0 +1,286 @@
+@model TechnicalService
+@{
+    ViewData["Title"] = "Yeni Sorun Kaydı";
+}
+
+<div class="row">
+    <div class="col-12">
+        <h2><i class="bi bi-tools"></i> Yeni Teknik Servis Kaydı</h2>
+        <p class="text-muted">Teknik sorunları kaydetmek ve takip etmek için formu doldurun</p>
+        <hr />
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-md-10 mx-auto">
+        <div class="card">
+            <div class="card-header">
+                <h5><i class="bi bi-file-earmark-medical"></i> Sorun Detayları</h5>
+            </div>
+            <div class="card-body">
+                <form method="post" asp-action="Create">
+                    <div class="row">
+                        <!-- Sorun Türü -->
+                        <div class="col-md-6 mb-3">
+                            <label asp-for="IssueType" class="form-label">
+                                <i class="bi bi-tag"></i> Sorun Türü
+                            </label>
+                            <select asp-for="IssueType" class="form-select" asp-items="Html.GetEnumSelectList<IssueType>()"
+                                    id="issueTypeSelect" onchange="toggleCustomerField()" required>
+                                <option value="">Sorun Türü Seçin</option>
+                            </select>
+                            <span asp-validation-for="IssueType" class="text-danger"></span>
+                            <small class="form-text text-muted">
+                                Müşteri: Ürün arızası | Sistem: İç teknik sorunlar
+                            </small>
+                        </div>
+
+                        <!-- Öncelik Seviyesi -->
+                        <div class="col-md-6 mb-3">
+                            <label asp-for="Priority" class="form-label">
+                                <i class="bi bi-speedometer"></i> Öncelik Seviyesi
+                            </label>
+                            <select asp-for="Priority" class="form-select" id="prioritySelect" onchange="updatePriorityInfo()" required>
+                                <option value="">Öncelik Seçin</option>
+                                <option value="1">1 - Düşük (Normal sorunlar)</option>
+                                <option value="2">2 - Orta (Hızlı çözüm gerekli)</option>
+                                <option value="3">3 - Yüksek (Acil müdahale)</option>
+                                <option value="4">4 - Kritik (Sistem durdu!)</option>
+                            </select>
+                            <span asp-validation-for="Priority" class="text-danger"></span>
+                        </div>
+                    </div>
+
+                    <!-- Öncelik Bilgilendirme -->
+                    <div class="alert alert-info" id="priorityInfo" style="display: none;">
+                        <strong id="priorityLabel"></strong>
+                        <p class="mb-0" id="priorityDescription"></p>
+                    </div>
+
+                    <!-- Başlık -->
+                    <div class="mb-3">
+                        <label asp-for="Title" class="form-label">
+                            <i class="bi bi-card-heading"></i> Sorun Başlığı
+                        </label>
+                        <input asp-for="Title" type="text" class="form-control"
+                               placeholder="Kısa ve açıklayıcı bir başlık girin" required />
+                        <span asp-validation-for="Title" class="text-danger"></span>
+                    </div>
+
+                    <!-- Açıklama -->
+                    <div class="mb-3">
+                        <label asp-for="Description" class="form-label">
+                            <i class="bi bi-file-text"></i> Detaylı Açıklama
+                        </label>
+                        <textarea asp-for="Description" class="form-control" rows="5" required
+                                  placeholder="Sorunun detaylı açıklamasını, ne zaman başladığını, hangi hata mesajlarını aldığınızı yazın..."></textarea>
+                        <span asp-validation-for="Description" class="text-danger"></span>
+                    </div>
+
+                    <hr class="my-4" />
+
+                    <!-- Müşteri Bilgisi (Sadece Müşteri sorunlarında) -->
+                    <div id="customerSection" style="display: none;">
+                        <div class="alert alert-warning">
+                            <h6><i class="bi bi-person-circle"></i> Müşteri Bilgisi Gerekli</h6>
+                            <p class="mb-0">Bu sorun müşteri ürününe ait olduğu için müşteri bilgisi girmeniz gerekiyor.</p>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-8 mb-3">
+                                <label class="form-label">Müşteri TC Kimlik No / Müşteri Ara</label>
+                                <div class="input-group">
+                                    <input type="text" id="customerSearch" class="form-control"
+                                           placeholder="TC Kimlik No ile ara" maxlength="11" />
+                                    <button type="button" class="btn btn-primary" onclick="searchCustomer()">
+                                        <i class="bi bi-search"></i> Ara
+                                    </button>
+                                </div>
+                            </div>
+
+                            <div class="col-md-4 mb-3">
+                                <label asp-for="CustomerId" class="form-label">Müşteri ID</label>
+                                <input asp-for="CustomerId" type="number" class="form-control" id="customerIdInput" readonly />
+                                <span asp-validation-for="CustomerId" class="text-danger"></span>
+                            </div>
+                        </div>
+
+                        <div id="customerInfoDisplay" style="display: none;" class="alert alert-success">
+                            <strong id="customerName"></strong><br />
+                            <small id="customerDetails"></small>
+                        </div>
+
+                        <hr class="my-4" />
+                    </div>
+
+                    <!-- Atanacak Teknisyen (Opsiyonel) -->
+                    <div class="mb-3">
+                        <label asp-for="AssignedEmployeeId" class="form-label">
+                            <i class="bi bi-person-badge"></i> Atanacak Teknisyen (Opsiyonel)
+                        </label>
+                        <select asp-for="AssignedEmployeeId" class="form-select">
+                            <option value="">Şimdilik atama - Sonra atanacak</option>
+                            <!-- Bu liste dinamik olarak doldurulabilir -->
+                        </select>
+                        <small class="form-text text-muted">
+                            Boş bırakırsanız sorun havuzda bekler, daha sonra atama yapılabilir.
+                        </small>
+                    </div>
+
+                    <hr class="my-4" />
+
+                    <!-- Bilgilendirme Kutusu -->
+                    <div class="card bg-light mb-3">
+                        <div class="card-body">
+                            <h6 class="card-title"><i class="bi bi-lightbulb"></i> Öncelik Seviyesi Rehberi</h6>
+                            <table class="table table-sm mb-0">
+                                <tr>
+                                    <td><span class="badge bg-info">1 - Düşük</span></td>
+                                    <td>Küçük hatalar, kozmetik sorunlar (1-2 gün)</td>
+                                </tr>
+                                <tr>
+                                    <td><span class="badge bg-warning">2 - Orta</span></td>
+                                    <td>Orta seviye sorunlar, iş akışını kısmen etkiler (Aynı gün)</td>
+                                </tr>
+                                <tr>
+                                    <td><span class="badge bg-danger">3 - Yüksek</span></td>
+                                    <td>Önemli sorunlar, müşteri memnuniyetini etkiler (2 saat)</td>
+                                </tr>
+                                <tr>
+                                    <td><span class="badge bg-dark">4 - Kritik</span></td>
+                                    <td>Sistem tamamen durdu, acil müdahale (30 dakika)</td>
+                                </tr>
+                            </table>
+                        </div>
+                    </div>
+
+                    <!-- Butonlar -->
+                    <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+                        <a asp-action="Index" asp-controller="Dashboard" class="btn btn-secondary">
+                            <i class="bi bi-x-circle"></i> İptal
+                        </a>
+                        <button type="reset" class="btn btn-warning" onclick="resetForm()">
+                            <i class="bi bi-arrow-counterclockwise"></i> Temizle
+                        </button>
+                        <button type="submit" class="btn btn-danger btn-lg">
+                            <i class="bi bi-check-circle"></i> Sorunu Kaydet
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+
+    <script>
+        // Sorun türü değiştiğinde
+        function toggleCustomerField() {
+            const issueType = document.getElementById('issueTypeSelect').value;
+            const customerSection = document.getElementById('customerSection');
+            const customerIdInput = document.getElementById('customerIdInput');
+
+            if (issueType === 'Musteri') {
+                customerSection.style.display = 'block';
+                customerIdInput.setAttribute('required', 'required');
+            } else {
+                customerSection.style.display = 'none';
+                customerIdInput.removeAttribute('required');
+                customerIdInput.value = '';
+                document.getElementById('customerInfoDisplay').style.display = 'none';
+            }
+        }
+
+        // Öncelik bilgisi güncelle
+        function updatePriorityInfo() {
+            const priority = document.getElementById('prioritySelect').value;
+            const priorityInfo = document.getElementById('priorityInfo');
+            const priorityLabel = document.getElementById('priorityLabel');
+            const priorityDescription = document.getElementById('priorityDescription');
+
+            if (priority === '') {
+                priorityInfo.style.display = 'none';
+                return;
+            }
+
+            const priorities = {
+                '1': {
+                    label: '1 - Düşük Öncelik',
+                    description: 'Normal işleyişi etkilemeyen, küçük sorunlar. 1-2 gün içinde çözülebilir.',
+                    className: 'alert-info'
+                },
+                '2': {
+                    label: '2 - Orta Öncelik',
+                    description: 'İş akışını kısmen etkileyen sorunlar. Aynı gün içinde çözülmelidir.',
+                    className: 'alert-warning'
+                },
+                '3': {
+                    label: '3 - Yüksek Öncelik',
+                    description: 'Müşteri memnuniyetini ve satışları etkileyen ciddi sorunlar. 2 saat içinde müdahale gerekir.',
+                    className: 'alert-danger'
+                },
+                '4': {
+                    label: '4 - KRİTİK',
+                    description: 'Sistem tamamen durdu! Acil müdahale gerekiyor. 30 dakika içinde başlanmalı.',
+                    className: 'alert-dark'
+                }
+            };
+
+            const info = priorities[priority];
+            priorityLabel.textContent = info.label;
+            priorityDescription.textContent = info.description;
+
+            // Eski class'ları temizle
+            priorityInfo.className = 'alert ' + info.className;
+            priorityInfo.style.display = 'block';
+        }
+
+        // Müşteri Arama
+        async function searchCustomer() {
+            const identityNumber = document.getElementById('customerSearch').value;
+
+            if (identityNumber.length !== 11) {
+                alert('TC Kimlik No 11 haneli olmalıdır');
+                return;
+            }
+
+            try {
+                const response = await fetch(`/api/customers/identity/${identityNumber}`);
+                if (response.ok) {
+                    const customer = await response.json();
+
+                    document.getElementById('customerIdInput').value = customer.id;
+                    document.getElementById('customerName').textContent =
+                        `${customer.firstName} ${customer.lastName}`;
+                    document.getElementById('customerDetails').textContent =
+                        `Telefon: ${customer.phone} | Email: ${customer.email}`;
+                    document.getElementById('customerInfoDisplay').style.display = 'block';
+                } else {
+                    alert('Müşteri bulunamadı. Lütfen önce müşteri kaydı yapın.');
+                    document.getElementById('customerIdInput').value = '';
+                    document.getElementById('customerInfoDisplay').style.display = 'none';
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                alert('Müşteri arama sırasında hata oluştu');
+            }
+        }
+
+        // Form reset
+        function resetForm() {
+            document.getElementById('customerSection').style.display = 'none';
+            document.getElementById('customerInfoDisplay').style.display = 'none';
+            document.getElementById('priorityInfo').style.display = 'none';
+        }
+
+        // Enter tuşu için müşteri arama
+        document.getElementById('customerSearch')?.addEventListener('keypress', function (e) {
+            if (e.key === 'Enter') {
+                e.preventDefault();
+                searchCustomer();
+            }
+        });
+    </script>
+}

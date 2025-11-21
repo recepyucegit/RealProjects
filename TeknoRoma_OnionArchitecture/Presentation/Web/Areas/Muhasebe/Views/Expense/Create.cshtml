@@ -1,0 +1,247 @@
+@model Expense
+@{
+    ViewData["Title"] = "Yeni Gider Girişi";
+}
+
+<div class="row">
+    <div class="col-12">
+        <h2><i class="bi bi-cash-stack"></i> Yeni Gider Girişi</h2>
+        <p class="text-muted">Mağaza giderlerini kaydetmek için formu doldurun</p>
+        <hr />
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-md-8 mx-auto">
+        <div class="card">
+            <div class="card-header">
+                <h5><i class="bi bi-file-earmark-text"></i> Gider Bilgileri</h5>
+            </div>
+            <div class="card-body">
+                <form method="post" asp-action="Create">
+                    <div class="row">
+                        <!-- Gider Türü -->
+                        <div class="col-md-6 mb-3">
+                            <label asp-for="ExpenseType" class="form-label">
+                                <i class="bi bi-tag"></i> Gider Türü
+                            </label>
+                            <select asp-for="ExpenseType" class="form-select" asp-items="Html.GetEnumSelectList<ExpenseType>()" required>
+                                <option value="">Gider Türü Seçin</option>
+                            </select>
+                            <span asp-validation-for="ExpenseType" class="text-danger"></span>
+                            <small class="form-text text-muted">
+                                Çalışan Ödemesi, Teknik Altyapı, Fatura, Diğer
+                            </small>
+                        </div>
+
+                        <!-- Gider Tarihi -->
+                        <div class="col-md-6 mb-3">
+                            <label asp-for="ExpenseDate" class="form-label">
+                                <i class="bi bi-calendar"></i> Gider Tarihi
+                            </label>
+                            <input asp-for="ExpenseDate" type="date" class="form-control" required />
+                            <span asp-validation-for="ExpenseDate" class="text-danger"></span>
+                        </div>
+                    </div>
+
+                    <!-- Açıklama -->
+                    <div class="mb-3">
+                        <label asp-for="Description" class="form-label">
+                            <i class="bi bi-file-text"></i> Açıklama
+                        </label>
+                        <textarea asp-for="Description" class="form-control" rows="3" required
+                                  placeholder="Giderin detaylı açıklamasını yazın..."></textarea>
+                        <span asp-validation-for="Description" class="text-danger"></span>
+                    </div>
+
+                    <hr class="my-4" />
+
+                    <!-- Para Birimi ve Tutar -->
+                    <div class="row">
+                        <div class="col-md-4 mb-3">
+                            <label asp-for="Currency" class="form-label">
+                                <i class="bi bi-currency-exchange"></i> Para Birimi
+                            </label>
+                            <select asp-for="Currency" class="form-select" asp-items="Html.GetEnumSelectList<Currency>()"
+                                    id="currencySelect" onchange="updateExchangeRate()" required>
+                            </select>
+                            <span asp-validation-for="Currency" class="text-danger"></span>
+                        </div>
+
+                        <div class="col-md-4 mb-3">
+                            <label asp-for="Amount" class="form-label">
+                                <i class="bi bi-cash"></i> Tutar
+                            </label>
+                            <input asp-for="Amount" type="number" step="0.01" min="0" class="form-control"
+                                   id="amountInput" onchange="calculateTRY()" required />
+                            <span asp-validation-for="Amount" class="text-danger"></span>
+                        </div>
+
+                        <div class="col-md-4 mb-3" id="exchangeRateDiv" style="display: none;">
+                            <label asp-for="ExchangeRate" class="form-label">
+                                <i class="bi bi-graph-up"></i> Döviz Kuru
+                            </label>
+                            <input asp-for="ExchangeRate" type="number" step="0.0001" min="0" class="form-control"
+                                   id="exchangeRateInput" onchange="calculateTRY()" />
+                            <span asp-validation-for="ExchangeRate" class="text-danger"></span>
+                        </div>
+                    </div>
+
+                    <!-- TL Karşılığı -->
+                    <div class="alert alert-info" id="tryAmountAlert" style="display: none;">
+                        <strong>TL Karşılığı:</strong>
+                        <span id="tryAmount" class="fs-5">0.00</span> TL
+                    </div>
+
+                    <input type="hidden" asp-for="AmountInTRY" id="amountInTRY" />
+
+                    <hr class="my-4" />
+
+                    <!-- Ödeme Durumu -->
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <div class="form-check form-switch">
+                                <input asp-for="IsPaid" class="form-check-input" type="checkbox"
+                                       id="isPaidCheck" onchange="togglePaymentDate()" />
+                                <label class="form-check-label" for="isPaidCheck">
+                                    <i class="bi bi-check-circle"></i> Ödendi olarak işaretle
+                                </label>
+                            </div>
+                        </div>
+
+                        <div class="col-md-6 mb-3" id="paymentDateDiv" style="display: none;">
+                            <label asp-for="PaymentDate" class="form-label">
+                                <i class="bi bi-calendar-check"></i> Ödeme Tarihi
+                            </label>
+                            <input asp-for="PaymentDate" type="date" class="form-control" id="paymentDateInput" />
+                            <span asp-validation-for="PaymentDate" class="text-danger"></span>
+                        </div>
+                    </div>
+
+                    <hr class="my-4" />
+
+                    <!-- Bilgilendirme -->
+                    <div class="alert alert-warning">
+                        <h6><i class="bi bi-info-circle"></i> Önemli Bilgiler:</h6>
+                        <ul class="mb-0">
+                            <li><strong>Çalışan Ödemesi:</strong> Maaş, prim ve diğer personel ödemeleri</li>
+                            <li><strong>Teknik Altyapı:</strong> Sunucu, yazılım lisansı, donanım giderleri</li>
+                            <li><strong>Fatura:</strong> Elektrik, su, kira vb. düzenli giderler</li>
+                            <li><strong>Diğer:</strong> Yukarıdaki kategorilere girmeyen giderler</li>
+                        </ul>
+                    </div>
+
+                    <!-- Butonlar -->
+                    <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+                        <a asp-action="Index" asp-controller="Dashboard" class="btn btn-secondary">
+                            <i class="bi bi-x-circle"></i> İptal
+                        </a>
+                        <button type="reset" class="btn btn-warning">
+                            <i class="bi bi-arrow-counterclockwise"></i> Temizle
+                        </button>
+                        <button type="submit" class="btn btn-success btn-lg">
+                            <i class="bi bi-check-circle"></i> Gideri Kaydet
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <!-- Güncel Döviz Kurları Bilgi Kartı -->
+        <div class="card mt-3">
+            <div class="card-header bg-light">
+                <h6 class="mb-0"><i class="bi bi-currency-dollar"></i> Güncel Döviz Kurları (Tahmini)</h6>
+            </div>
+            <div class="card-body">
+                <div class="row text-center">
+                    <div class="col-md-6">
+                        <strong>USD:</strong> <span class="text-primary">~32.50 TL</span>
+                    </div>
+                    <div class="col-md-6">
+                        <strong>EUR:</strong> <span class="text-success">~35.20 TL</span>
+                    </div>
+                </div>
+                <small class="text-muted d-block mt-2">
+                    <i class="bi bi-exclamation-circle"></i> Güncel kurları manuel olarak girmeniz gerekmektedir.
+                </small>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+
+    <script>
+        // Sayfa yüklendiğinde bugünün tarihi
+        document.addEventListener('DOMContentLoaded', function () {
+            const today = new Date().toISOString().split('T')[0];
+            document.getElementById('ExpenseDate').value = today;
+
+            // İlk yükleme için TRY seçiliyse
+            updateExchangeRate();
+        });
+
+        // Para birimi değiştiğinde
+        function updateExchangeRate() {
+            const currency = document.getElementById('currencySelect').value;
+            const exchangeRateDiv = document.getElementById('exchangeRateDiv');
+            const exchangeRateInput = document.getElementById('exchangeRateInput');
+
+            if (currency === 'TRY' || currency === '') {
+                exchangeRateDiv.style.display = 'none';
+                exchangeRateInput.value = '1';
+                exchangeRateInput.removeAttribute('required');
+            } else {
+                exchangeRateDiv.style.display = 'block';
+                exchangeRateInput.setAttribute('required', 'required');
+
+                // Tahmini kurları otomatik doldur
+                if (currency === 'USD') {
+                    exchangeRateInput.value = '32.50';
+                } else if (currency === 'EUR') {
+                    exchangeRateInput.value = '35.20';
+                }
+            }
+
+            calculateTRY();
+        }
+
+        // TL karşılığını hesapla
+        function calculateTRY() {
+            const amount = parseFloat(document.getElementById('amountInput').value) || 0;
+            const exchangeRate = parseFloat(document.getElementById('exchangeRateInput').value) || 1;
+            const amountInTRY = amount * exchangeRate;
+
+            document.getElementById('tryAmount').textContent = amountInTRY.toFixed(2);
+            document.getElementById('amountInTRY').value = amountInTRY;
+
+            const tryAmountAlert = document.getElementById('tryAmountAlert');
+            if (amount > 0) {
+                tryAmountAlert.style.display = 'block';
+            } else {
+                tryAmountAlert.style.display = 'none';
+            }
+        }
+
+        // Ödeme tarihi görünürlüğü
+        function togglePaymentDate() {
+            const isPaid = document.getElementById('isPaidCheck').checked;
+            const paymentDateDiv = document.getElementById('paymentDateDiv');
+            const paymentDateInput = document.getElementById('paymentDateInput');
+
+            if (isPaid) {
+                paymentDateDiv.style.display = 'block';
+                paymentDateInput.setAttribute('required', 'required');
+
+                // Bugünün tarihi otomatik
+                const today = new Date().toISOString().split('T')[0];
+                paymentDateInput.value = today;
+            } else {
+                paymentDateDiv.style.display = 'none';
+                paymentDateInput.removeAttribute('required');
+                paymentDateInput.value = '';
+            }
+        }
+    </script>
+}

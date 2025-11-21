@@ -1,0 +1,363 @@
+@model IEnumerable<ProductSalesReportViewModel>
+@{
+    ViewData["Title"] = "En Çok Satan Ürünler";
+    var startDate = ViewBag.StartDate as DateTime?;
+    var endDate = ViewBag.EndDate as DateTime?;
+    var totalRevenue = ViewBag.TotalRevenue as decimal? ?? 0;
+}
+
+<div class="row">
+    <div class="col-12">
+        <h2><i class="bi bi-graph-up-arrow"></i> En Çok Satan Ürünler Raporu</h2>
+        <p class="text-muted">Satış performansına göre en başarılı ürünler</p>
+        <hr />
+    </div>
+</div>
+
+<!-- Tarih Filtresi -->
+<div class="row mb-4">
+    <div class="col-md-12">
+        <div class="card">
+            <div class="card-header">
+                <h5><i class="bi bi-funnel"></i> Rapor Filtreleri</h5>
+            </div>
+            <div class="card-body">
+                <form method="get" asp-action="TopProducts" class="row g-3">
+                    <div class="col-md-4">
+                        <label class="form-label">Başlangıç Tarihi</label>
+                        <input type="date" name="startDate" class="form-control"
+                               value="@(startDate?.ToString("yyyy-MM-dd") ?? DateTime.Now.AddMonths(-1).ToString("yyyy-MM-dd"))" />
+                    </div>
+                    <div class="col-md-4">
+                        <label class="form-label">Bitiş Tarihi</label>
+                        <input type="date" name="endDate" class="form-control"
+                               value="@(endDate?.ToString("yyyy-MM-dd") ?? DateTime.Now.ToString("yyyy-MM-dd"))" />
+                    </div>
+                    <div class="col-md-2">
+                        <label class="form-label">Sonuç Sayısı</label>
+                        <select name="top" class="form-select">
+                            <option value="10" selected>İlk 10</option>
+                            <option value="20">İlk 20</option>
+                            <option value="50">İlk 50</option>
+                        </select>
+                    </div>
+                    <div class="col-md-2 d-flex align-items-end">
+                        <button type="submit" class="btn btn-primary w-100">
+                            <i class="bi bi-search"></i> Filtrele
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Özet İstatistikler -->
+@if (Model != null && Model.Any())
+{
+    <div class="row mb-4">
+        <div class="col-md-3">
+            <div class="card border-primary">
+                <div class="card-body text-center">
+                    <h3 class="text-primary">@Model.Count()</h3>
+                    <p class="mb-0">Ürün Çeşidi</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card border-success">
+                <div class="card-body text-center">
+                    <h3 class="text-success">@Model.Sum(p => p.TotalQuantity)</h3>
+                    <p class="mb-0">Toplam Satış Adedi</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card border-info">
+                <div class="card-body text-center">
+                    <h3 class="text-info">@totalRevenue.ToString("N2") TL</h3>
+                    <p class="mb-0">Toplam Ciro</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card border-warning">
+                <div class="card-body text-center">
+                    <h3 class="text-warning">@((totalRevenue / Model.Sum(p => p.TotalQuantity)).ToString("N2")) TL</h3>
+                    <p class="mb-0">Ortalama Sepet</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Grafik -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header">
+                    <h5><i class="bi bi-bar-chart"></i> Satış Grafiği</h5>
+                </div>
+                <div class="card-body">
+                    <canvas id="salesChart" height="80"></canvas>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Ürün Listesi -->
+    <div class="card">
+        <div class="card-header">
+            <h5><i class="bi bi-trophy"></i> En Çok Satan Ürünler</h5>
+        </div>
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table table-hover">
+                    <thead>
+                        <tr>
+                            <th class="text-center" width="50">#</th>
+                            <th>Ürün Adı</th>
+                            <th>Kategori</th>
+                            <th>Barkod</th>
+                            <th class="text-center">Satış Adedi</th>
+                            <th class="text-end">Birim Fiyat</th>
+                            <th class="text-end">Toplam Gelir</th>
+                            <th class="text-center">Pazar Payı</th>
+                            <th class="text-center">Mevcut Stok</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @{
+                            var rank = 1;
+                            var totalSalesQuantity = Model.Sum(p => p.TotalQuantity);
+                        }
+                        @foreach (var product in Model)
+                        {
+                            var marketShare = totalSalesQuantity > 0 ? (product.TotalQuantity * 100.0 / totalSalesQuantity) : 0;
+                            var medalClass = rank <= 3 ? "fs-4" : "";
+                            var rowClass = rank <= 3 ? "table-warning" : "";
+
+                            <tr class="@rowClass">
+                                <td class="text-center @medalClass">
+                                    @if (rank == 1)
+                                    {
+                                        <i class="bi bi-trophy-fill text-warning" title="1. Sıra"></i>
+                                    }
+                                    else if (rank == 2)
+                                    {
+                                        <i class="bi bi-trophy-fill text-secondary" title="2. Sıra"></i>
+                                    }
+                                    else if (rank == 3)
+                                    {
+                                        <i class="bi bi-trophy-fill" style="color: #CD7F32;" title="3. Sıra"></i>
+                                    }
+                                    else
+                                    {
+                                        @rank
+                                    }
+                                </td>
+                                <td>
+                                    <strong>@product.ProductName</strong>
+                                </td>
+                                <td>
+                                    <span class="badge bg-info">@product.CategoryName</span>
+                                </td>
+                                <td>
+                                    <code>@product.Barcode</code>
+                                </td>
+                                <td class="text-center">
+                                    <span class="badge bg-success fs-6">@product.TotalQuantity</span>
+                                </td>
+                                <td class="text-end">
+                                    @product.UnitPrice.ToString("N2") TL
+                                </td>
+                                <td class="text-end">
+                                    <strong class="text-success">@product.TotalRevenue.ToString("N2") TL</strong>
+                                </td>
+                                <td class="text-center">
+                                    <div class="progress" style="height: 25px;">
+                                        <div class="progress-bar bg-primary" role="progressbar"
+                                             style="width: @marketShare.ToString("F1")%"
+                                             aria-valuenow="@marketShare" aria-valuemin="0" aria-valuemax="100">
+                                            @marketShare.ToString("F1")%
+                                        </div>
+                                    </div>
+                                </td>
+                                <td class="text-center">
+                                    @if (product.CurrentStock == 0)
+                                    {
+                                        <span class="badge bg-danger">Tükendi</span>
+                                    }
+                                    else if (product.CurrentStock <= 10)
+                                    {
+                                        <span class="badge bg-warning">@product.CurrentStock (Kritik)</span>
+                                    }
+                                    else
+                                    {
+                                        <span class="badge bg-success">@product.CurrentStock</span>
+                                    }
+                                </td>
+                            </tr>
+                            rank++;
+                        }
+                    </tbody>
+                    <tfoot class="table-light">
+                        <tr>
+                            <th colspan="4" class="text-end">TOPLAM:</th>
+                            <th class="text-center">@Model.Sum(p => p.TotalQuantity)</th>
+                            <th></th>
+                            <th class="text-end">@Model.Sum(p => p.TotalRevenue).ToString("N2") TL</th>
+                            <th colspan="2"></th>
+                        </tr>
+                    </tfoot>
+                </table>
+            </div>
+        </div>
+        <div class="card-footer text-muted">
+            <i class="bi bi-calendar"></i>
+            @if (startDate.HasValue && endDate.HasValue)
+            {
+                <text>Rapor Dönemi: @startDate.Value.ToString("dd.MM.yyyy") - @endDate.Value.ToString("dd.MM.yyyy")</text>
+            }
+            else
+            {
+                <text>Son 30 Gün</text>
+            }
+            | Oluşturma: @DateTime.Now.ToString("dd.MM.yyyy HH:mm")
+        </div>
+    </div>
+
+    <!-- Öneriler -->
+    <div class="row mt-4">
+        <div class="col-md-6">
+            <div class="card border-success">
+                <div class="card-header bg-success text-white">
+                    <h6 class="mb-0"><i class="bi bi-check-circle"></i> Stok Önerileri</h6>
+                </div>
+                <div class="card-body">
+                    <ul class="mb-0">
+                        @foreach (var product in Model.Where(p => p.CurrentStock <= 10).Take(5))
+                        {
+                            <li>
+                                <strong>@product.ProductName</strong>: Stok kritik (@product.CurrentStock adet),
+                                son 30 günde @product.TotalQuantity adet satıldı.
+                                <span class="text-danger">Acilen sipariş verin!</span>
+                            </li>
+                        }
+                        @if (!Model.Any(p => p.CurrentStock <= 10))
+                        {
+                            <li class="text-success">Tüm popüler ürünlerin stok durumu iyidir.</li>
+                        }
+                    </ul>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-6">
+            <div class="card border-info">
+                <div class="card-header bg-info text-white">
+                    <h6 class="mb-0"><i class="bi bi-lightbulb"></i> Satış Önerileri</h6>
+                </div>
+                <div class="card-body">
+                    <ul class="mb-0">
+                        <li>İlk 3 ürün toplam satışların <strong>@Model.Take(3).Sum(p => p.TotalQuantity * 100.0 / totalSalesQuantity).ToString("F1")%</strong>'ini oluşturuyor.</li>
+                        <li>En çok satan ürün: <strong>@Model.First().ProductName</strong> (@Model.First().TotalQuantity adet)</li>
+                        <li>Ortalama satış fiyatı: <strong>@((Model.Sum(p => p.TotalRevenue) / Model.Sum(p => p.TotalQuantity)).ToString("N2")) TL</strong></li>
+                        <li>Kampanya önerisi: İlk 10 üründe indirim yaparak satışları artırabilirsiniz.</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+}
+else
+{
+    <div class="alert alert-warning">
+        <h4 class="alert-heading"><i class="bi bi-exclamation-triangle"></i> Veri Bulunamadı</h4>
+        <p class="mb-0">Seçilen tarih aralığında satış verisi bulunmamaktadır. Lütfen farklı bir tarih aralığı deneyin.</p>
+    </div>
+}
+
+<!-- İşlem Butonları -->
+<div class="row mt-4">
+    <div class="col-12">
+        <a asp-action="Index" asp-controller="Dashboard" class="btn btn-secondary">
+            <i class="bi bi-arrow-left"></i> Dashboard'a Dön
+        </a>
+        <a asp-action="Sales" class="btn btn-info">
+            <i class="bi bi-graph-up"></i> Satış Raporları
+        </a>
+        <button type="button" class="btn btn-success" onclick="window.print()">
+            <i class="bi bi-printer"></i> Raporu Yazdır
+        </button>
+        <button type="button" class="btn btn-primary" onclick="exportToExcel()">
+            <i class="bi bi-file-earmark-excel"></i> Excel'e Aktar
+        </button>
+    </div>
+</div>
+
+@section Scripts {
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+    <script>
+        // Satış Grafiği
+        @if (Model != null && Model.Any())
+        {
+            <text>
+            const ctx = document.getElementById('salesChart').getContext('2d');
+            const salesChart = new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: [@Html.Raw(string.Join(",", Model.Select(p => $"'{p.ProductName.Length > 20 ? p.ProductName.Substring(0, 20) + "..." : p.ProductName}'")))]                    ,
+                    datasets: [{
+                        label: 'Satış Adedi',
+                        data: [@string.Join(",", Model.Select(p => p.TotalQuantity))],
+                        backgroundColor: 'rgba(54, 162, 235, 0.5)',
+                        borderColor: 'rgba(54, 162, 235, 1)',
+                        borderWidth: 1
+                    }, {
+                        label: 'Gelir (TL)',
+                        data: [@string.Join(",", Model.Select(p => p.TotalRevenue))],
+                        backgroundColor: 'rgba(75, 192, 192, 0.5)',
+                        borderColor: 'rgba(75, 192, 192, 1)',
+                        borderWidth: 1,
+                        yAxisID: 'y1'
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    interaction: {
+                        mode: 'index',
+                        intersect: false,
+                    },
+                    scales: {
+                        y: {
+                            type: 'linear',
+                            display: true,
+                            position: 'left',
+                            title: {
+                                display: true,
+                                text: 'Satış Adedi'
+                            }
+                        },
+                        y1: {
+                            type: 'linear',
+                            display: true,
+                            position: 'right',
+                            title: {
+                                display: true,
+                                text: 'Gelir (TL)'
+                            },
+                            grid: {
+                                drawOnChartArea: false
+                            }
+                        }
+                    }
+                }
+            });
+            </text>
+        }
+
+        // Excel Export
+        function exportToExcel() {
+            alert('Excel export özelliği yakında eklenecek');
+        }
+    </script>
+}
