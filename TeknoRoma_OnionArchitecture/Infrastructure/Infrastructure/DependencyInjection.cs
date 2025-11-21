@@ -1,7 +1,9 @@
 using Application.Repositories;
+using Application.Services;
 using Domain.Entities;
 using Infrastructure.Persistance;
 using Infrastructure.Repositories;
+using Infrastructure.Services;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -92,6 +94,15 @@ namespace Infrastructure
 
             // UnitOfWork - Tüm repository'leri bir arada tutar
             services.AddScoped<IUnitOfWork, UnitOfWork>();
+
+
+            // ====== EXTERNAL SERVICES ======
+
+            // Memory Cache (Döviz kuru için)
+            services.AddMemoryCache();
+
+            // Exchange Rate Service - TCMB entegrasyonu
+            services.AddScoped<IExchangeRateService, ExchangeRateService>();
 
 
             return services; // Method chaining için

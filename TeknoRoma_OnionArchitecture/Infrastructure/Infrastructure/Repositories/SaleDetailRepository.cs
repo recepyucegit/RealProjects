@@ -35,7 +35,7 @@ namespace Infrastructure.Repositories
         /// Satışa göre detayları getirir
         /// Fatura görüntüleme için
         /// </summary>
-        public async Task<IReadOnlyList<SaleDetail>> GetBySaleAsync(int saleId)
+        public async Task<IReadOnlyList<SaleDetail>> GetBySaleIdAsync(int saleId)
         {
             return await _dbSet
                 .Include(sd => sd.Product)
@@ -49,7 +49,7 @@ namespace Infrastructure.Repositories
         /// Ürüne göre satış detaylarını getirir
         /// Ürün satış geçmişi için
         /// </summary>
-        public async Task<IReadOnlyList<SaleDetail>> GetByProductAsync(int productId)
+        public async Task<IReadOnlyList<SaleDetail>> GetByProductIdAsync(int productId)
         {
             return await _dbSet
                 .Include(sd => sd.Sale)
@@ -61,46 +61,87 @@ namespace Infrastructure.Repositories
                 .ToListAsync();
         }
 
+        /// <summary>
+        /// Belirli bir ürünün tarih aralığındaki satışlarını getirir
+        /// </summary>
+        public async Task<IReadOnlyList<SaleDetail>> GetByProductAndDateRangeAsync(int productId, DateTime startDate, DateTime endDate)
+        {
+            return await _dbSet
+                .Include(sd => sd.Sale)
+                    .ThenInclude(s => s.Customer)
+                .Include(sd => sd.Sale)
+                    .ThenInclude(s => s.Employee)
+                .Where(sd => sd.ProductId == productId
+                          && sd.Sale.SaleDate >= startDate
+                          && sd.Sale.SaleDate <= endDate)
+                .OrderByDescending(sd => sd.Sale.SaleDate)
+                .ToListAsync();
+        }
+
+        /// <summary>
+        /// Satış detayını ürün bilgisiyle birlikte getirir (Eager Loading)
+        /// </summary>
+        public async Task<SaleDetail> GetWithProductAsync(int saleDetailId)
+        {
+            return await _dbSet
+                .Include(sd => sd.Product)
+                    .ThenInclude(p => p.Category)
+                .Include(sd => sd.Product)
+                    .ThenInclude(p => p.Supplier)
+                .FirstOrDefaultAsync(sd => sd.ID == saleDetailId);
+        }
+
+        /// <summary>
+        /// Toplam satış miktarını ürün bazında hesaplar
+        /// </summary>
+        public async Task<int> GetTotalQuantitySoldAsync(int productId, DateTime? startDate = null, DateTime? endDate = null)
+        {
+            var query = _dbSet
+                .Include(sd => sd.Sale)
+                .Where(sd => sd.ProductId == productId && sd.Sale.Status == SaleStatus.Tamamlandi);
+
+            if (startDate.HasValue && endDate.HasValue)
+            {
+                query = query.Where(sd => sd.Sale.SaleDate >= startDate.Value
+                                       && sd.Sale.SaleDate <= endDate.Value);
+            }
+
+            return await query.SumAsync(sd => sd.Quantity);
+        }
+
+        /// <summary>
+        /// Toplam satış tutarını ürün bazında hesaplar
+        /// </summary>
+        public async Task<decimal> GetTotalRevenueByProductAsync(int productId, DateTime? startDate = null, DateTime? endDate = null)
+        {
+            var query = _dbSet
+                .Include(sd => sd.Sale)
+                .Where(sd => sd.ProductId == productId && sd.Sale.Status == SaleStatus.Tamamlandi);
+
+            if (startDate.HasValue && endDate.HasValue)
+            {
+                query = query.Where(sd => sd.Sale.SaleDate >= startDate.Value
+                                       && sd.Sale.SaleDate <= endDate.Value);
+            }
+
+            return await query.SumAsync(sd => sd.TotalAmount);
+        }
+
 
         // ====== ANALİZ VE RAPORLAMA ======
 
         /// <summary>
         /// En çok satılan ürünleri getirir
         /// Haluk Bey: "En çok satılan 10 ürünü görmek istiyorum"
-        ///
-        /// NASIL HESAPLANIYOR?
-        /// - SaleDetail'leri ProductId'ye göre grupla
-        /// - Her grup için SUM(Quantity) hesapla
-        /// - Büyükten küçüğe sırala
-        /// - İlk N ürünü getir
-        ///
-        /// NEDEN SADECE TAMAMLANAN SATIŞLAR?
-        /// - İptal edilen satışlar dahil olmamalı
-        /// - Beklemede olanlar henüz gerçekleşmedi
-        ///
-        /// SQL Eşdeğeri:
-        /// SELECT sd.ProductId, SUM(sd.Quantity) as TotalQuantity
-        /// FROM SaleDetails sd
-        /// JOIN Sales s ON sd.SaleId = s.ID
-        /// WHERE s.Status = Tamamlandi
-        ///   [AND s.SaleDate BETWEEN startDate AND endDate]
-        /// GROUP BY sd.ProductId
-        /// ORDER BY TotalQuantity DESC
-        /// LIMIT count
         /// </summary>
-        public async Task<IReadOnlyList<SaleDetail>> GetTopSellingProductsAsync(
-            int count,
-            DateTime? startDate = null,
-            DateTime? endDate = null)
+        public async Task<IReadOnlyList<(int ProductId, string ProductName, int TotalQuantity, decimal TotalRevenue)>> GetTopSellingProductsAsync(
+            int count, DateTime? startDate = null, DateTime? endDate = null)
         {
             if (count <= 0)
                 throw new ArgumentException("Miktar pozitif olmalı", nameof(count));
 
             var query = _dbSet
                 .Include(sd => sd.Product)
-                    .ThenInclude(p => p.Category)
-                .Include(sd => sd.Product)
-                    .ThenInclude(p => p.Supplier)
                 .Include(sd => sd.Sale)
                 .Where(sd => sd.Sale.Status == SaleStatus.Tamamlandi);
 
@@ -112,20 +153,52 @@ namespace Infrastructure.Repositories
             }
 
             // Ürün bazında gruplama ve toplam satış miktarı
-            var topProductDetails = await query
-                .GroupBy(sd => sd.ProductId)
+            var topProducts = await query
+                .GroupBy(sd => new { sd.ProductId, sd.Product.ProductName })
                 .Select(g => new
                 {
-                    ProductId = g.Key,
+                    ProductId = g.Key.ProductId,
+                    ProductName = g.Key.ProductName,
                     TotalQuantity = g.Sum(sd => sd.Quantity),
-                    FirstDetail = g.OrderByDescending(sd => sd.Sale.SaleDate).First() // En son satılan detay
+                    TotalRevenue = g.Sum(sd => sd.TotalAmount)
                 })
                 .OrderByDescending(x => x.TotalQuantity)
                 .Take(count)
-                .Select(x => x.FirstDetail)
                 .ToListAsync();
 
-            return topProductDetails;
+            return topProducts.Select(x => (x.ProductId, x.ProductName, x.TotalQuantity, x.TotalRevenue)).ToList();
+        }
+
+        /// <summary>
+        /// Kategoriye göre satış toplamlarını getirir
+        /// </summary>
+        public async Task<IReadOnlyList<(int CategoryId, string CategoryName, decimal TotalRevenue)>> GetSalesByCategoryAsync(
+            DateTime? startDate = null, DateTime? endDate = null)
+        {
+            var query = _dbSet
+                .Include(sd => sd.Product)
+                    .ThenInclude(p => p.Category)
+                .Include(sd => sd.Sale)
+                .Where(sd => sd.Sale.Status == SaleStatus.Tamamlandi);
+
+            if (startDate.HasValue && endDate.HasValue)
+            {
+                query = query.Where(sd => sd.Sale.SaleDate >= startDate.Value
+                                       && sd.Sale.SaleDate <= endDate.Value);
+            }
+
+            var salesByCategory = await query
+                .GroupBy(sd => new { sd.Product.CategoryId, sd.Product.Category.CategoryName })
+                .Select(g => new
+                {
+                    CategoryId = g.Key.CategoryId,
+                    CategoryName = g.Key.CategoryName,
+                    TotalRevenue = g.Sum(sd => sd.TotalAmount)
+                })
+                .OrderByDescending(x => x.TotalRevenue)
+                .ToListAsync();
+
+            return salesByCategory.Select(x => (x.CategoryId, x.CategoryName, x.TotalRevenue)).ToList();
         }
     }
 }
