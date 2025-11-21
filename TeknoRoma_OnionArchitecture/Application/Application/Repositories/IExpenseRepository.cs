@@ -154,6 +154,41 @@ namespace Application.Repositories
         /// Açık sorun sayısını döndürür
         /// </summary>
         Task<int> GetOpenIssuesCountAsync();
+
+        /// <summary>
+        /// Tarih aralığındaki servis kayıtlarını getirir
+        /// </summary>
+        Task<IReadOnlyList<TechnicalService>> GetByDateRangeAsync(DateTime startDate, DateTime endDate);
+
+        /// <summary>
+        /// Açık ve atanmamış sorunları getirir
+        /// </summary>
+        Task<IReadOnlyList<TechnicalService>> GetUnassignedAsync();
+
+        /// <summary>
+        /// Kritik öncelikli ve açık durumda olan sorunları getirir
+        /// </summary>
+        Task<IReadOnlyList<TechnicalService>> GetCriticalOpenIssuesAsync();
+
+        /// <summary>
+        /// Belirli süreyi aşmış çözülmemiş sorunları getirir
+        /// </summary>
+        Task<IReadOnlyList<TechnicalService>> GetOverdueIssuesAsync(int hours);
+
+        /// <summary>
+        /// Servis kaydını ilişkili verilerle getirir (Eager Loading)
+        /// </summary>
+        Task<TechnicalService> GetWithDetailsAsync(int serviceId);
+
+        /// <summary>
+        /// Ortalama çözüm süresini hesaplar (saat cinsinden)
+        /// </summary>
+        Task<double> GetAverageResolutionTimeAsync(DateTime? startDate = null, DateTime? endDate = null);
+
+        /// <summary>
+        /// Durum bazlı istatistikleri getirir
+        /// </summary>
+        Task<Dictionary<TechnicalServiceStatus, int>> GetStatusStatisticsAsync();
     }
 
     /// <summary>
