@@ -1,19 +1,14 @@
-﻿using Domain.Enums;
-using System.Reflection;
+using Domain.Enums;
 
 namespace Domain.Entities
 {
     /// <summary>
     /// Müşteri Entity
-    /// Gül Satar'ın istediği: "Tc Kimlik Numarasını girdiğim anda bilgiler otomatik gelmeli"
-    /// Haluk Bey'in istediği rapor: "Müşteri kitlesi yaş, cinsiyet analizi"
     /// </summary>
     public class Customer : BaseEntity
     {
         /// <summary>
-        /// TC Kimlik Numarası
-        /// UNIQUE constraint olacak (aynı TC ile birden fazla müşteri olamaz)
-        /// 11 haneli string
+        /// TC Kimlik Numarası (UNIQUE)
         /// </summary>
         public string IdentityNumber { get; set; } = null!;
 
@@ -29,19 +24,16 @@ namespace Domain.Entities
 
         /// <summary>
         /// Doğum Tarihi
-        /// NEDEN? Yaş analizi için (Haluk Bey'in raporu)
         /// </summary>
         public DateTime? BirthDate { get; set; }
 
         /// <summary>
         /// Cinsiyet
-        /// NEDEN? Demografik analiz için (Haluk Bey'in raporu)
         /// </summary>
         public Gender? Gender { get; set; }
 
         /// <summary>
         /// Email adresi
-        /// Kampanya ve bilgilendirme için
         /// </summary>
         public string? Email { get; set; }
 
@@ -62,25 +54,14 @@ namespace Domain.Entities
 
         /// <summary>
         /// Müşteri aktif mi?
-        /// Müşteri veri tabanından silmek yerine pasif ediyoruz (GDPR)
         /// </summary>
         public bool IsActive { get; set; } = true;
 
 
-        // ====== CALCULATED PROPERTY ======
-        // Database'e kaydedilmez, runtime'da hesaplanır
+        // ====== CALCULATED PROPERTIES ======
 
-        /// <summary>
-        /// Müşterinin tam adı (Ad + Soyad)
-        /// NEDEN NotMapped? Database'de sütun oluşturulmasın, runtime'da hesaplansın
-        /// Configuration'da [NotMapped] attribute ile işaretlenecek
-        /// </summary>
         public string FullName => $"{FirstName} {LastName}";
 
-        /// <summary>
-        /// Müşterinin yaşı
-        /// BirthDate'den hesaplanır
-        /// </summary>
         public int? Age => BirthDate.HasValue
             ? DateTime.Now.Year - BirthDate.Value.Year
             : null;
@@ -88,10 +69,6 @@ namespace Domain.Entities
 
         // ====== NAVIGATION PROPERTIES ======
 
-        /// <summary>
-        /// Müşterinin yaptığı satışlar
-        /// One-to-Many ilişki (Bir müşteri birden fazla alışveriş yapabilir)
-        /// </summary>
         public virtual ICollection<Sale> Sales { get; set; } = new List<Sale>();
     }
 }

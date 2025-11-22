@@ -1,11 +1,9 @@
-﻿
-
 namespace Domain.Entities
 {
     /// <summary>
     /// Kategori Entity
     /// Ürün kategorileri
-    /// Örn: "Bilgisayar Donanımları", "Cep Telefonları", "Kameralar", "Fotoğraf Makinaları"
+    /// Örn: "Bilgisayar Donanımları", "Cep Telefonları", "Kameralar"
     /// </summary>
     public class Category : BaseEntity
     {
@@ -21,18 +19,12 @@ namespace Domain.Entities
 
         /// <summary>
         /// Kategori aktif mi?
-        /// Artık kullanılmayan kategoriler için false
         /// </summary>
         public bool IsActive { get; set; } = true;
 
 
         // ====== NAVIGATION PROPERTIES ======
 
-        /// <summary>
-        /// Bu kategorideki ürünler
-        /// One-to-Many ilişki (Bir kategoride birden fazla ürün)
-        /// Haluk Bey'in istediği rapor: "Kategorilere göre ürünlerin listesi"
-        /// </summary>
         public virtual ICollection<Product> Products { get; set; } = new List<Product>();
     }
 }

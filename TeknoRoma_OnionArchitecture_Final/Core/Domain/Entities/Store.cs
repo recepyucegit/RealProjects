@@ -1,4 +1,4 @@
-﻿namespace Domain.Entities
+namespace Domain.Entities
 {
     /// <summary>
     /// Mağaza/Şube Entity
@@ -15,7 +15,6 @@
 
         /// <summary>
         /// Şehir
-        /// Enum yerine string çünkü yeni şehirler eklenebilir
         /// </summary>
         public string City { get; set; } = null!;
 
@@ -35,48 +34,22 @@
         public string Phone { get; set; } = null!;
 
         /// <summary>
-        /// Email adresi (raporlar için)
+        /// Email adresi
         /// </summary>
         public string Email { get; set; } = null!;
 
         /// <summary>
         /// Mağaza aktif mi?
-        /// Kapatılan mağazalar için false olur
         /// </summary>
         public bool IsActive { get; set; } = true;
 
 
         // ====== NAVIGATION PROPERTIES ======
-        // NEDEN? Entity Framework ilişkileri yönetmek için kullanır
-        // Lazy/Eager Loading için gerekli
 
-        /// <summary>
-        /// Bu mağazadaki çalışanlar
-        /// Bir mağazanın birden fazla çalışanı olabilir (One-to-Many)
-        /// VIRTUAL: Lazy Loading için (ihtiyaç olduğunda yüklenir)
-        /// </summary>
         public virtual ICollection<Employee> Employees { get; set; } = new List<Employee>();
-
-        /// <summary>
-        /// Bu mağazadaki departmanlar
-        /// Bir mağazada birden fazla departman olabilir
-        /// </summary>
         public virtual ICollection<Department> Departments { get; set; } = new List<Department>();
-
-        /// <summary>
-        /// Bu mağazada yapılan satışlar
-        /// Bir mağazada birden fazla satış olabilir
-        /// </summary>
         public virtual ICollection<Sale> Sales { get; set; } = new List<Sale>();
-
-        /// <summary>
-        /// Bu mağazanın giderleri
-        /// </summary>
         public virtual ICollection<Expense> Expenses { get; set; } = new List<Expense>();
-
-        /// <summary>
-        /// Bu mağazanın teknik servis kayıtları
-        /// </summary>
         public virtual ICollection<TechnicalService> TechnicalServices { get; set; } = new List<TechnicalService>();
     }
 }
