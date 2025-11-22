@@ -1,139 +1,66 @@
-<!--
-===================================================================================
-TEKNOROMA - INFRASTRUCTURE KATMANI PROJE DOSYASI
-===================================================================================
-
-BU DOSYANIN AMACI
------------------
-.csproj (C# Project) dosyası, projenin yapılandırma dosyasıdır.
-MSBuild tarafından projeyi derlemek için kullanılır.
-
-INFRASTRUCTURE KATMANI NEDİR?
------------------------------
-Onion Architecture'da en dış katmandır. Tüm dış bağımlılıklar burada bulunur:
-- Veritabanı erişimi (Entity Framework Core)
-- Dosya sistemi işlemleri
-- E-posta gönderimi
-- SMS servisleri
-- Dış API entegrasyonları
-
-NEDEN AYRI KATMAN?
-------------------
-1. Bağımlılık Yönetimi: EF Core gibi paketler sadece burada
-2. Değiştirilebilirlik: Veritabanını değiştirmek kolaylaşır
-3. Test Edilebilirlik: Mock'lanabilir implementasyonlar
-4. Temiz Mimari: İç katmanlar dış dünyadan bağımsız
-
-REFERANS SIRASI (Dependency Flow)
----------------------------------
-Domain ← Application ← Infrastructure
-  ↑          ↑              ↑
-  |          |              |
-İş kuralları  Servisler    EF Core, SQL Server
-(saf C#)      Interfaces   Implementasyonlar
-
-===================================================================================
--->
 <Project Sdk="Microsoft.NET.Sdk">
 
+  <!--
+  TEKNOROMA INFRASTRUCTURE KATMANI PROJE DOSYASI
+
+  Bu dosya, projenin yapilandirma dosyasidir.
+  MSBuild tarafindan projeyi derlemek icin kullanilir.
+
+  INFRASTRUCTURE KATMANI NEDIR?
+  Onion Architecture'da en dis katmandir. Tum dis bagimliliklar burada bulunur:
+  * Veritabani erisimi (Entity Framework Core)
+  * Dosya sistemi islemleri
+  * E_posta gonderimi
+  * SMS servisleri
+  * Dis API entegrasyonlari
+
+  REFERANS SIRASI (Dependency Flow):
+  Domain < Application < Infrastructure
+
+  ONION ARCHITECTURE KURALI:
+  * Dis katmanlar ic katmanlara bagimli olabilir
+  * Ic katmanlar dis katmanlara ASLA bagimli olmaz
+  * Domain hicbir seye bagimli degil (en ic)
+  * Application sadece Domain'e bagimli
+  * Infrastructure hem Domain hem Application'a bagimli
+  -->
+
   <PropertyGroup>
-    <!--
-    TargetFramework: Projenin hedeflediği .NET versiyonu
-    - net8.0: .NET 8 (LTS - Long Term Support)
-    - Kasım 2023'te yayınlandı, 2026'ya kadar desteklenir
-    -->
+    <!-- .NET 8 (LTS) hedefleniyor, 2026'ya kadar desteklenir -->
     <TargetFramework>net8.0</TargetFramework>
 
-    <!--
-    ImplicitUsings: Yaygın using'leri otomatik ekler
-    - System, System.Collections.Generic, System.Linq vb.
-    - Her dosyada tekrar yazmaya gerek kalmaz
-    -->
+    <!-- Yaygin using'leri otomatik ekler (System, Collections, Linq vb.) -->
     <ImplicitUsings>enable</ImplicitUsings>
 
-    <!--
-    Nullable: Nullable reference types özelliğini aktif eder
-    - string? : null olabilir
-    - string : null olamaz (derleyici uyarı verir)
-    - NullReferenceException hatalarını önler
-    -->
+    <!-- Nullable reference types aktif, NullReferenceException'lari onler -->
     <Nullable>enable</Nullable>
   </PropertyGroup>
 
-  <!--
-  ==========================================================================
-  NUGET PAKETLERİ
-  ==========================================================================
-  Entity Framework Core ve ilgili paketler.
-  Versiyon: 8.0.x (NET 8 ile uyumlu)
-  ==========================================================================
-  -->
+  <!-- NUGET PAKETLERI: Entity Framework Core 8.0 -->
   <ItemGroup>
-    <!--
-    Microsoft.EntityFrameworkCore
-    - EF Core'un temel paketi
-    - DbContext, DbSet, LINQ to Entities
-    - ORM (Object-Relational Mapping) sağlar
-    -->
+    <!-- EF Core temel paketi: DbContext, DbSet, LINQ to Entities -->
     <PackageReference Include="Microsoft.EntityFrameworkCore" Version="8.0.0" />
 
-    <!--
-    Microsoft.EntityFrameworkCore.SqlServer
-    - SQL Server veritabanı provider'ı
-    - SQL Server'a özel optimizasyonlar
-    - MSSQL veri tipleri desteği
-
-    ALTERNATİF PROVIDER'LAR:
-    - Npgsql.EntityFrameworkCore.PostgreSQL (PostgreSQL)
-    - Pomelo.EntityFrameworkCore.MySql (MySQL/MariaDB)
-    - Microsoft.EntityFrameworkCore.Sqlite (SQLite)
-    -->
+    <!-- SQL Server provider: MSSQL veritabani baglantisi -->
     <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="8.0.0" />
 
-    <!--
-    Microsoft.EntityFrameworkCore.Tools
-    - Migration komutları için gerekli
-    - Add-Migration, Update-Database, Remove-Migration
-    - Package Manager Console'da kullanılır
-
-    PrivateAssets="All":
-    - Bu paket sadece development'ta kullanılır
-    - Runtime'da dahil edilmez (production build'a girmez)
-    -->
+    <!-- Migration komutlari: Add_Migration, Update_Database -->
     <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="8.0.0">
       <PrivateAssets>All</PrivateAssets>
     </PackageReference>
 
-    <!--
-    Microsoft.EntityFrameworkCore.Design
-    - Scaffolding ve design-time servisleri
-    - dotnet ef komutları için gerekli
-    - Database-First yaklaşımı için
-    -->
+    <!-- Design_time servisleri: dotnet ef komutlari -->
     <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="8.0.0">
       <PrivateAssets>All</PrivateAssets>
     </PackageReference>
   </ItemGroup>
 
-  <!--
-  ==========================================================================
-  PROJE REFERANSLARI
-  ==========================================================================
-  Infrastructure katmanı, Domain ve Application'a bağımlıdır.
-
-  ONION ARCHITECTURE KURALI:
-  - Dış katmanlar iç katmanlara bağımlı olabilir
-  - İç katmanlar dış katmanlara ASLA bağımlı olmaz
-  - Domain hiçbir şeye bağımlı değil (en iç)
-  - Application sadece Domain'e bağımlı
-  - Infrastructure hem Domain hem Application'a bağımlı
-  ==========================================================================
-  -->
+  <!-- PROJE REFERANSLARI -->
   <ItemGroup>
-    <!-- Domain katmanı: Entity sınıfları -->
+    <!-- Domain katmani: Entity siniflari -->
     <ProjectReference Include="..\Core\Domain\Domain.csproj" />
 
-    <!-- Application katmanı: Interface'ler ve DTO'lar -->
+    <!-- Application katmani: Interface'ler ve DTO'lar -->
     <ProjectReference Include="..\Application\Application.csproj" />
   </ItemGroup>
 
