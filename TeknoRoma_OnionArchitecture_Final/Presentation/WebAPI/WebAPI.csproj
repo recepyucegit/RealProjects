@@ -54,7 +54,7 @@
     <ProjectReference Include="..\..\Infrastructure\Infrastructure.csproj" />
 
     <!-- Application katmani - Interfaces, DTOs, Services -->
-    <ProjectReference Include="..\..\Application\Application.csproj" />
+    <ProjectReference Include="..\..\Core\Application\Application.csproj" />
   </ItemGroup>
 
 </Project>
