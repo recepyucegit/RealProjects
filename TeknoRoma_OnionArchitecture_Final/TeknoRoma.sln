@@ -5,21 +5,21 @@ VisualStudioVersion = 17.0.31903.59
 MinimumVisualStudioVersion = 10.0.40219.1
 
 # ===================================================================================
-# CORE KATMANLARI
+# CORE KATMANLARI (En ic katmanlar - Is mantigi)
 # ===================================================================================
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Domain", "Core\Domain\Domain.csproj", "{A1B2C3D4-E5F6-7890-ABCD-EF1234567890}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Application", "Application\Application.csproj", "{B2C3D4E5-F6A7-8901-BCDE-F23456789012}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Application", "Core\Application\Application.csproj", "{B2C3D4E5-F6A7-8901-BCDE-F23456789012}"
 EndProject
 
 # ===================================================================================
-# INFRASTRUCTURE KATMANI
+# INFRASTRUCTURE KATMANI (Dis bagimliliklar - Veritabani, API'ler)
 # ===================================================================================
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Infrastructure", "Infrastructure\Infrastructure.csproj", "{C3D4E5F6-A7B8-9012-CDEF-345678901234}"
 EndProject
 
 # ===================================================================================
-# PRESENTATION KATMANI
+# PRESENTATION KATMANI (Kullanici arayuzu - Web API, MVC)
 # ===================================================================================
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WebAPI", "Presentation\WebAPI\WebAPI.csproj", "{D4E5F6A7-B8C9-0123-DEF0-456789012345}"
 EndProject

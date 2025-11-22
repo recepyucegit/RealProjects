@@ -61,7 +61,7 @@
     <ProjectReference Include="..\Core\Domain\Domain.csproj" />
 
     <!-- Application katmani: Interface'ler ve DTO'lar -->
-    <ProjectReference Include="..\Application\Application.csproj" />
+    <ProjectReference Include="..\Core\Application\Application.csproj" />
   </ItemGroup>
 
 </Project>
