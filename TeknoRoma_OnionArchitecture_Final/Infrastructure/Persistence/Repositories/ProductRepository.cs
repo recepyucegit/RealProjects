@@ -65,7 +65,9 @@ namespace Infrastructure.Repositories
         public async Task<IReadOnlyList<Product>> GetLowStockProductsAsync()
         {
             return await _dbSet
-                .Where(p => p.UnitsInStock <= p.ReorderLevel)
+                .Include(p => p.Category)
+                .Include(p => p.Supplier)
+                .Where(p => p.UnitsInStock <= p.CriticalStockLevel && !p.IsDeleted)
                 .ToListAsync();
         }
 
@@ -104,6 +106,51 @@ namespace Infrastructure.Repositories
 
             product.UnitsInStock = newStock;
             return true;
+        }
+
+        /// <summary>
+        /// Kategori ve Tedarikci ile birlikte tum urunleri getir
+        /// </summary>
+        public async Task<IReadOnlyList<Product>> GetAllWithCategoryAndSupplierAsync()
+        {
+            return await _dbSet
+                .Include(p => p.Category)
+                .Include(p => p.Supplier)
+                .Where(p => !p.IsDeleted)
+                .OrderBy(p => p.Name)
+                .ToListAsync();
+        }
+
+        /// <summary>
+        /// Detayli urun getir (ID ile)
+        /// </summary>
+        public async Task<Product?> GetByIdWithDetailsAsync(int id)
+        {
+            return await _dbSet
+                .Include(p => p.Category)
+                .Include(p => p.Supplier)
+                .Include(p => p.SaleDetails)
+                    .ThenInclude(sd => sd.Sale)
+                        .ThenInclude(s => s!.Customer)
+                .FirstOrDefaultAsync(p => p.Id == id && !p.IsDeleted);
+        }
+
+        /// <summary>
+        /// Sync update metodu
+        /// </summary>
+        public void Update(Product entity)
+        {
+            _context.Entry(entity).State = EntityState.Modified;
+        }
+
+        /// <summary>
+        /// Sync delete metodu (Soft Delete)
+        /// </summary>
+        public void Delete(Product entity)
+        {
+            entity.IsDeleted = true;
+            entity.DeletedDate = DateTime.Now;
+            _context.Entry(entity).State = EntityState.Modified;
         }
     }
 }

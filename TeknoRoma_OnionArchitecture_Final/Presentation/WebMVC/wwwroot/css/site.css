@@ -1,0 +1,800 @@
+/* ===================================================================================
+   TEKNOROMA - CUSTOM CSS STYLES
+   ===================================================================================
+
+   Modern admin panel tasarimi.
+   Bootstrap 5 uzerine ozel stiller.
+
+   RENK PALETI:
+   - Primary: #0d6efd (Mavi)
+   - Success: #198754 (Yesil)
+   - Warning: #ffc107 (Sari)
+   - Danger: #dc3545 (Kirmizi)
+   - Dark: #212529 (Koyu)
+
+   =================================================================================== */
+
+/* ===================================================================================
+   CSS DEGISKENLERI (Variables)
+   =================================================================================== */
+:root {
+    /* Ana renkler */
+    --primary-color: #0d6efd;
+    --primary-dark: #0b5ed7;
+    --secondary-color: #6c757d;
+    --success-color: #198754;
+    --warning-color: #ffc107;
+    --danger-color: #dc3545;
+    --info-color: #0dcaf0;
+
+    /* Layout olculeri */
+    --sidebar-width: 260px;
+    --sidebar-collapsed-width: 70px;
+    --navbar-height: 60px;
+    --footer-height: 50px;
+
+    /* Sidebar renkleri */
+    --sidebar-bg: linear-gradient(180deg, #1a1c23 0%, #2d3748 100%);
+    --sidebar-text: rgba(255, 255, 255, 0.8);
+    --sidebar-active: #0d6efd;
+
+    /* Golge */
+    --shadow-sm: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075);
+    --shadow-md: 0 0.5rem 1rem rgba(0, 0, 0, 0.15);
+    --shadow-lg: 0 1rem 3rem rgba(0, 0, 0, 0.175);
+
+    /* Gecis animasyonu */
+    --transition-base: all 0.3s ease;
+}
+
+/* ===================================================================================
+   GENEL STILLER
+   =================================================================================== */
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background-color: #f4f6f9;
+    min-height: 100vh;
+    overflow-x: hidden;
+}
+
+/* Scrollbar stilleri */
+::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+}
+
+::-webkit-scrollbar-track {
+    background: #f1f1f1;
+    border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb {
+    background: #c1c1c1;
+    border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: #a8a8a8;
+}
+
+/* ===================================================================================
+   NAVBAR (Ust Menu)
+   =================================================================================== */
+.navbar-main {
+    height: var(--navbar-height);
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    box-shadow: var(--shadow-md);
+    z-index: 1030;
+}
+
+.navbar-brand {
+    font-weight: 700;
+    font-size: 1.5rem;
+    letter-spacing: 1px;
+}
+
+.navbar-brand i {
+    background: rgba(255, 255, 255, 0.2);
+    padding: 8px;
+    border-radius: 8px;
+    margin-right: 10px;
+}
+
+/* Bildirim dropdown */
+.notification-dropdown {
+    width: 320px;
+    max-height: 400px;
+    overflow-y: auto;
+}
+
+.notification-item {
+    padding: 12px 16px;
+    border-bottom: 1px solid #eee;
+    transition: var(--transition-base);
+}
+
+.notification-item:hover {
+    background-color: #f8f9fa;
+}
+
+.notification-item.unread {
+    background-color: #e7f1ff;
+}
+
+/* ===================================================================================
+   SIDEBAR (Sol Menu)
+   =================================================================================== */
+.sidebar {
+    position: fixed;
+    top: var(--navbar-height);
+    left: 0;
+    width: var(--sidebar-width);
+    height: calc(100vh - var(--navbar-height));
+    background: var(--sidebar-bg);
+    overflow-y: auto;
+    overflow-x: hidden;
+    transition: var(--transition-base);
+    z-index: 1020;
+}
+
+.sidebar.collapsed {
+    width: var(--sidebar-collapsed-width);
+}
+
+.sidebar-header {
+    padding: 20px;
+    text-align: center;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.sidebar-header .logo {
+    width: 50px;
+    height: 50px;
+    background: var(--primary-color);
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 10px;
+    font-size: 24px;
+    color: white;
+}
+
+/* Sidebar menu */
+.sidebar-menu {
+    padding: 15px 0;
+}
+
+.menu-header {
+    color: rgba(255, 255, 255, 0.4);
+    font-size: 0.7rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    padding: 15px 20px 8px;
+}
+
+.sidebar.collapsed .menu-header {
+    display: none;
+}
+
+.menu-item {
+    position: relative;
+}
+
+.menu-link {
+    display: flex;
+    align-items: center;
+    padding: 12px 20px;
+    color: var(--sidebar-text);
+    text-decoration: none;
+    transition: var(--transition-base);
+    border-left: 3px solid transparent;
+}
+
+.menu-link:hover {
+    background: rgba(255, 255, 255, 0.05);
+    color: white;
+    border-left-color: var(--primary-color);
+}
+
+.menu-link.active {
+    background: rgba(13, 110, 253, 0.2);
+    color: white;
+    border-left-color: var(--primary-color);
+}
+
+.menu-link i {
+    width: 24px;
+    height: 24px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.1rem;
+    margin-right: 12px;
+    flex-shrink: 0;
+}
+
+.menu-link .menu-text {
+    flex-grow: 1;
+    white-space: nowrap;
+}
+
+.sidebar.collapsed .menu-text {
+    display: none;
+}
+
+/* Menu badge */
+.menu-badge {
+    background: var(--danger-color);
+    color: white;
+    font-size: 0.7rem;
+    padding: 2px 8px;
+    border-radius: 50px;
+    margin-left: auto;
+}
+
+.sidebar.collapsed .menu-badge {
+    position: absolute;
+    top: 8px;
+    right: 8px;
+    padding: 2px 5px;
+}
+
+/* ===================================================================================
+   MAIN CONTENT (Ana Icerik)
+   =================================================================================== */
+.main-content {
+    margin-left: var(--sidebar-width);
+    padding: 25px;
+    min-height: calc(100vh - var(--navbar-height));
+    transition: var(--transition-base);
+}
+
+.sidebar.collapsed ~ .main-content {
+    margin-left: var(--sidebar-collapsed-width);
+}
+
+/* Page header */
+.page-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 25px;
+    padding-bottom: 15px;
+    border-bottom: 1px solid #e9ecef;
+}
+
+.page-title {
+    font-size: 1.75rem;
+    font-weight: 600;
+    color: #2d3748;
+    margin: 0;
+}
+
+.page-title i {
+    color: var(--primary-color);
+    margin-right: 10px;
+}
+
+/* Breadcrumb */
+.breadcrumb-wrapper {
+    background: white;
+    padding: 12px 20px;
+    border-radius: 8px;
+    box-shadow: var(--shadow-sm);
+    margin-bottom: 20px;
+}
+
+/* ===================================================================================
+   KARTLAR (Cards)
+   =================================================================================== */
+.card {
+    border: none;
+    border-radius: 12px;
+    box-shadow: var(--shadow-sm);
+    transition: var(--transition-base);
+    overflow: hidden;
+}
+
+.card:hover {
+    box-shadow: var(--shadow-md);
+}
+
+.card-header {
+    background: white;
+    border-bottom: 1px solid #e9ecef;
+    padding: 16px 20px;
+    font-weight: 600;
+}
+
+.card-body {
+    padding: 20px;
+}
+
+/* Stat kartlari */
+.stat-card {
+    position: relative;
+    overflow: hidden;
+}
+
+.stat-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    right: 0;
+    width: 100px;
+    height: 100%;
+    background: linear-gradient(135deg, transparent 50%, rgba(0, 0, 0, 0.03) 50%);
+}
+
+.stat-card .stat-icon {
+    width: 56px;
+    height: 56px;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.5rem;
+    flex-shrink: 0;
+}
+
+.stat-card .stat-value {
+    font-size: 1.75rem;
+    font-weight: 700;
+    color: #2d3748;
+    line-height: 1.2;
+}
+
+.stat-card .stat-label {
+    color: #718096;
+    font-size: 0.875rem;
+    margin-bottom: 4px;
+}
+
+.stat-card .stat-change {
+    font-size: 0.8rem;
+    margin-top: 8px;
+}
+
+.stat-card .stat-change.positive {
+    color: var(--success-color);
+}
+
+.stat-card .stat-change.negative {
+    color: var(--danger-color);
+}
+
+/* Renk varyantlari */
+.stat-card.primary .stat-icon {
+    background: rgba(13, 110, 253, 0.1);
+    color: var(--primary-color);
+}
+
+.stat-card.success .stat-icon {
+    background: rgba(25, 135, 84, 0.1);
+    color: var(--success-color);
+}
+
+.stat-card.warning .stat-icon {
+    background: rgba(255, 193, 7, 0.1);
+    color: var(--warning-color);
+}
+
+.stat-card.danger .stat-icon {
+    background: rgba(220, 53, 69, 0.1);
+    color: var(--danger-color);
+}
+
+.stat-card.info .stat-icon {
+    background: rgba(13, 202, 240, 0.1);
+    color: var(--info-color);
+}
+
+/* ===================================================================================
+   TABLOLAR (Tables)
+   =================================================================================== */
+.table-container {
+    background: white;
+    border-radius: 12px;
+    box-shadow: var(--shadow-sm);
+    overflow: hidden;
+}
+
+.table {
+    margin-bottom: 0;
+}
+
+.table thead th {
+    background: #f8f9fa;
+    border-bottom: 2px solid #e9ecef;
+    color: #495057;
+    font-weight: 600;
+    font-size: 0.85rem;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    padding: 14px 16px;
+    white-space: nowrap;
+}
+
+.table tbody td {
+    padding: 14px 16px;
+    vertical-align: middle;
+    border-bottom: 1px solid #f1f3f4;
+}
+
+.table tbody tr:hover {
+    background-color: #f8f9fa;
+}
+
+.table tbody tr:last-child td {
+    border-bottom: none;
+}
+
+/* DataTables ozel stiller */
+.dataTables_wrapper .dataTables_length,
+.dataTables_wrapper .dataTables_filter {
+    margin-bottom: 15px;
+}
+
+.dataTables_wrapper .dataTables_length select,
+.dataTables_wrapper .dataTables_filter input {
+    border: 1px solid #e9ecef;
+    border-radius: 6px;
+    padding: 6px 12px;
+}
+
+.dataTables_wrapper .dataTables_paginate .paginate_button {
+    border-radius: 6px !important;
+    margin: 0 2px;
+}
+
+/* ===================================================================================
+   BUTONLAR (Buttons)
+   =================================================================================== */
+.btn {
+    border-radius: 8px;
+    font-weight: 500;
+    padding: 10px 20px;
+    transition: var(--transition-base);
+}
+
+.btn-primary {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    border: none;
+}
+
+.btn-primary:hover {
+    background: linear-gradient(135deg, #5a6fd6 0%, #6a4190 100%);
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+}
+
+.btn-success {
+    background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);
+    border: none;
+}
+
+.btn-success:hover {
+    background: linear-gradient(135deg, #0f8a80 0%, #32d970 100%);
+}
+
+.btn-outline-primary {
+    border: 2px solid var(--primary-color);
+}
+
+.btn-outline-primary:hover {
+    transform: translateY(-1px);
+}
+
+/* Icon butonlar */
+.btn-icon {
+    width: 40px;
+    height: 40px;
+    padding: 0;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 8px;
+}
+
+.btn-icon-sm {
+    width: 32px;
+    height: 32px;
+    font-size: 0.875rem;
+}
+
+/* ===================================================================================
+   FORMLAR (Forms)
+   =================================================================================== */
+.form-control,
+.form-select {
+    border-radius: 8px;
+    border: 1px solid #e2e8f0;
+    padding: 10px 16px;
+    transition: var(--transition-base);
+}
+
+.form-control:focus,
+.form-select:focus {
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 3px rgba(13, 110, 253, 0.15);
+}
+
+.form-label {
+    font-weight: 500;
+    color: #4a5568;
+    margin-bottom: 8px;
+}
+
+.input-group-text {
+    background: #f8f9fa;
+    border: 1px solid #e2e8f0;
+    border-radius: 8px;
+}
+
+/* Floating label */
+.form-floating > .form-control,
+.form-floating > .form-select {
+    height: calc(3.5rem + 2px);
+    padding: 1rem 1rem;
+}
+
+/* ===================================================================================
+   BADGES VE ETIKETLER
+   =================================================================================== */
+.badge {
+    font-weight: 500;
+    padding: 6px 12px;
+    border-radius: 6px;
+}
+
+.badge-status {
+    font-size: 0.75rem;
+    padding: 5px 10px;
+}
+
+.badge-status.active {
+    background: rgba(25, 135, 84, 0.1);
+    color: var(--success-color);
+}
+
+.badge-status.pending {
+    background: rgba(255, 193, 7, 0.1);
+    color: #b38600;
+}
+
+.badge-status.inactive {
+    background: rgba(220, 53, 69, 0.1);
+    color: var(--danger-color);
+}
+
+/* ===================================================================================
+   CHARTS (Grafikler)
+   =================================================================================== */
+.chart-container {
+    position: relative;
+    height: 300px;
+    width: 100%;
+}
+
+.chart-legend {
+    display: flex;
+    justify-content: center;
+    gap: 20px;
+    margin-top: 15px;
+}
+
+.chart-legend-item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 0.875rem;
+    color: #718096;
+}
+
+.chart-legend-color {
+    width: 12px;
+    height: 12px;
+    border-radius: 3px;
+}
+
+/* ===================================================================================
+   ALERTS VE BILDIRIMLER
+   =================================================================================== */
+.alert {
+    border: none;
+    border-radius: 10px;
+    padding: 16px 20px;
+    border-left: 4px solid;
+}
+
+.alert-success {
+    background: rgba(25, 135, 84, 0.1);
+    border-left-color: var(--success-color);
+    color: #0f5132;
+}
+
+.alert-warning {
+    background: rgba(255, 193, 7, 0.1);
+    border-left-color: var(--warning-color);
+    color: #664d03;
+}
+
+.alert-danger {
+    background: rgba(220, 53, 69, 0.1);
+    border-left-color: var(--danger-color);
+    color: #842029;
+}
+
+.alert-info {
+    background: rgba(13, 202, 240, 0.1);
+    border-left-color: var(--info-color);
+    color: #055160;
+}
+
+/* Toast bildirimleri */
+.toast-container {
+    position: fixed;
+    top: 80px;
+    right: 20px;
+    z-index: 1100;
+}
+
+.toast {
+    border: none;
+    border-radius: 10px;
+    box-shadow: var(--shadow-lg);
+}
+
+/* ===================================================================================
+   LOADING VE ANIMASYONLAR
+   =================================================================================== */
+.loading-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(255, 255, 255, 0.9);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 9999;
+}
+
+.spinner-border-lg {
+    width: 3rem;
+    height: 3rem;
+}
+
+/* Pulse animasyonu */
+@keyframes pulse {
+    0% { transform: scale(1); }
+    50% { transform: scale(1.05); }
+    100% { transform: scale(1); }
+}
+
+.pulse {
+    animation: pulse 2s infinite;
+}
+
+/* Fade animasyonu */
+.fade-in {
+    animation: fadeIn 0.5s ease-in;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+/* ===================================================================================
+   QUICK ACTIONS (Hizli Islemler)
+   =================================================================================== */
+.quick-action-card {
+    text-align: center;
+    padding: 25px 15px;
+    border-radius: 12px;
+    background: white;
+    border: 2px solid transparent;
+    transition: var(--transition-base);
+    cursor: pointer;
+    text-decoration: none;
+    color: inherit;
+    display: block;
+}
+
+.quick-action-card:hover {
+    border-color: var(--primary-color);
+    transform: translateY(-3px);
+    box-shadow: var(--shadow-md);
+}
+
+.quick-action-card i {
+    font-size: 2.5rem;
+    margin-bottom: 12px;
+    display: block;
+}
+
+.quick-action-card span {
+    font-weight: 500;
+    color: #4a5568;
+}
+
+/* ===================================================================================
+   RESPONSIVE TASARIM
+   =================================================================================== */
+@media (max-width: 992px) {
+    .sidebar {
+        transform: translateX(-100%);
+    }
+
+    .sidebar.show {
+        transform: translateX(0);
+    }
+
+    .main-content {
+        margin-left: 0;
+    }
+}
+
+@media (max-width: 768px) {
+    .page-header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 15px;
+    }
+
+    .stat-card .stat-value {
+        font-size: 1.5rem;
+    }
+
+    .table-responsive {
+        font-size: 0.875rem;
+    }
+}
+
+@media (max-width: 576px) {
+    .main-content {
+        padding: 15px;
+    }
+
+    .card-body {
+        padding: 15px;
+    }
+
+    .btn {
+        padding: 8px 16px;
+        font-size: 0.875rem;
+    }
+}
+
+/* ===================================================================================
+   DARK MODE (Karanlik Tema - Opsiyonel)
+   =================================================================================== */
+[data-theme="dark"] {
+    --sidebar-bg: linear-gradient(180deg, #0d0d0d 0%, #1a1a2e 100%);
+
+    body {
+        background-color: #121212;
+        color: #e4e4e4;
+    }
+
+    .card {
+        background: #1e1e1e;
+        border-color: #333;
+    }
+
+    .table thead th {
+        background: #262626;
+        color: #e4e4e4;
+    }
+
+    .form-control,
+    .form-select {
+        background: #2d2d2d;
+        border-color: #404040;
+        color: #e4e4e4;
+    }
+}

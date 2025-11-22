@@ -1,0 +1,232 @@
+@model IEnumerable<Domain.Entities.Product>
+@{
+    ViewData["Title"] = ViewData["Title"] ?? "Urunler";
+}
+
+@* ===================================================================================
+   TEKNOROMA - URUN LISTESI
+   ===================================================================================
+
+   Tum urunlerin DataTables ile gosterildigi liste sayfasi.
+   Arama, siralama, filtreleme ve sayfalama ozellikleri.
+
+   =================================================================================== *@
+
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h1 class="h3 mb-0">
+        <i class="bi bi-box-seam me-2"></i>@ViewData["Title"]
+    </h1>
+    <div>
+        <a href="/Products/LowStock" class="btn btn-outline-warning me-2">
+            <i class="bi bi-exclamation-triangle me-1"></i>Kritik Stok
+        </a>
+        <a href="/Products/Create" class="btn btn-primary">
+            <i class="bi bi-plus-lg me-1"></i>Yeni Urun
+        </a>
+    </div>
+</div>
+
+<!-- Filtre Kartlari -->
+<div class="row g-3 mb-4">
+    <div class="col-md-3">
+        <div class="card stat-card h-100 border-0 shadow-sm">
+            <div class="card-body text-center">
+                <i class="bi bi-box-seam text-primary fs-1 mb-2 d-block"></i>
+                <h3 class="mb-1">@Model.Count()</h3>
+                <small class="text-muted">Toplam Urun</small>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card stat-card h-100 border-0 shadow-sm">
+            <div class="card-body text-center">
+                <i class="bi bi-check-circle text-success fs-1 mb-2 d-block"></i>
+                <h3 class="mb-1">@Model.Count(p => p.IsActive)</h3>
+                <small class="text-muted">Aktif Urun</small>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card stat-card h-100 border-0 shadow-sm">
+            <div class="card-body text-center">
+                <i class="bi bi-exclamation-triangle text-warning fs-1 mb-2 d-block"></i>
+                <h3 class="mb-1">@Model.Count(p => p.UnitsInStock <= p.CriticalStockLevel && p.UnitsInStock > 0)</h3>
+                <small class="text-muted">Kritik Stok</small>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card stat-card h-100 border-0 shadow-sm">
+            <div class="card-body text-center">
+                <i class="bi bi-x-circle text-danger fs-1 mb-2 d-block"></i>
+                <h3 class="mb-1">@Model.Count(p => p.UnitsInStock <= 0)</h3>
+                <small class="text-muted">Tukenmis</small>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Urun Tablosu -->
+<div class="card shadow-sm">
+    <div class="card-header bg-transparent d-flex justify-content-between align-items-center">
+        <h5 class="mb-0"><i class="bi bi-table me-2"></i>Urun Listesi</h5>
+        <div class="btn-group btn-group-sm" role="group">
+            <button type="button" class="btn btn-outline-secondary" id="btnExportExcel">
+                <i class="bi bi-file-earmark-excel me-1"></i>Excel
+            </button>
+            <button type="button" class="btn btn-outline-secondary" id="btnExportPdf">
+                <i class="bi bi-file-earmark-pdf me-1"></i>PDF
+            </button>
+        </div>
+    </div>
+    <div class="card-body p-0">
+        <div class="table-responsive">
+            <table id="productsTable" class="table table-hover mb-0" style="width:100%">
+                <thead class="table-light">
+                    <tr>
+                        <th>Gorsel</th>
+                        <th>Barkod</th>
+                        <th>Urun Adi</th>
+                        <th>Kategori</th>
+                        <th>Fiyat</th>
+                        <th>Stok</th>
+                        <th>Durum</th>
+                        <th>Islemler</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var product in Model)
+                    {
+                        var stockClass = product.UnitsInStock <= 0 ? "bg-danger"
+                            : product.UnitsInStock <= product.CriticalStockLevel ? "bg-warning text-dark"
+                            : "bg-success";
+                        var statusClass = product.IsActive ? "bg-success" : "bg-secondary";
+
+                        <tr>
+                            <td>
+                                @if (!string.IsNullOrEmpty(product.ImageUrl))
+                                {
+                                    <img src="@product.ImageUrl" alt="@product.Name" class="rounded" style="width: 40px; height: 40px; object-fit: cover;">
+                                }
+                                else
+                                {
+                                    <div class="bg-light rounded d-flex align-items-center justify-content-center" style="width: 40px; height: 40px;">
+                                        <i class="bi bi-image text-muted"></i>
+                                    </div>
+                                }
+                            </td>
+                            <td>
+                                <code class="small">@product.Barcode</code>
+                            </td>
+                            <td>
+                                <a href="/Products/Details/@product.Id" class="text-decoration-none fw-medium">
+                                    @product.Name
+                                </a>
+                            </td>
+                            <td>
+                                <span class="badge bg-light text-dark">
+                                    @product.Category?.Name
+                                </span>
+                            </td>
+                            <td class="fw-medium">
+                                @product.UnitPrice.ToString("N2") TL
+                            </td>
+                            <td>
+                                <span class="badge @stockClass">
+                                    @product.UnitsInStock adet
+                                </span>
+                            </td>
+                            <td>
+                                <span class="badge @statusClass">
+                                    @(product.IsActive ? "Aktif" : "Pasif")
+                                </span>
+                            </td>
+                            <td>
+                                <div class="btn-group btn-group-sm" role="group">
+                                    <a href="/Products/Details/@product.Id" class="btn btn-outline-info" title="Detay">
+                                        <i class="bi bi-eye"></i>
+                                    </a>
+                                    <a href="/Products/Edit/@product.Id" class="btn btn-outline-primary" title="Duzenle">
+                                        <i class="bi bi-pencil"></i>
+                                    </a>
+                                    <button type="button" class="btn btn-outline-danger btn-delete"
+                                            data-id="@product.Id"
+                                            data-name="@product.Name"
+                                            title="Sil">
+                                        <i class="bi bi-trash"></i>
+                                    </button>
+                                </div>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+<script>
+    $(document).ready(function() {
+        // DataTables baslat
+        var table = $('#productsTable').DataTable({
+            responsive: true,
+            language: {
+                url: 'https://cdn.datatables.net/plug-ins/1.13.6/i18n/tr.json'
+            },
+            order: [[2, 'asc']], // Urun adina gore sirala
+            columnDefs: [
+                { orderable: false, targets: [0, 7] }, // Gorsel ve Islemler kolonlari siralanamaz
+                { className: 'text-center', targets: [0, 5, 6, 7] }
+            ],
+            pageLength: 25,
+            lengthMenu: [[10, 25, 50, 100, -1], [10, 25, 50, 100, "Tumu"]]
+        });
+
+        // Silme islemi
+        $(document).on('click', '.btn-delete', function() {
+            var id = $(this).data('id');
+            var name = $(this).data('name');
+
+            TeknoRoma.confirm(
+                'Urun Sil',
+                `<strong>${name}</strong> adli urunu silmek istediginize emin misiniz?<br><br>` +
+                '<span class="text-danger"><i class="bi bi-exclamation-triangle me-1"></i>Bu islem geri alinamaz!</span>',
+                function() {
+                    $.ajax({
+                        url: '/Products/Delete/' + id,
+                        type: 'POST',
+                        headers: {
+                            'RequestVerificationToken': $('input[name="__RequestVerificationToken"]').val()
+                        },
+                        success: function(result) {
+                            if (result.success) {
+                                TeknoRoma.toast(result.message, 'success');
+                                setTimeout(() => location.reload(), 1000);
+                            } else {
+                                TeknoRoma.toast(result.message, 'error');
+                            }
+                        },
+                        error: function() {
+                            TeknoRoma.toast('Bir hata olustu.', 'error');
+                        }
+                    });
+                }
+            );
+        });
+
+        // Excel export
+        $('#btnExportExcel').click(function() {
+            TeknoRoma.toast('Excel dosyasi hazirlaniyor...', 'info');
+            // TODO: Implement Excel export
+        });
+
+        // PDF export
+        $('#btnExportPdf').click(function() {
+            TeknoRoma.toast('PDF dosyasi hazirlaniyor...', 'info');
+            // TODO: Implement PDF export
+        });
+    });
+</script>
+@Html.AntiForgeryToken()
+}

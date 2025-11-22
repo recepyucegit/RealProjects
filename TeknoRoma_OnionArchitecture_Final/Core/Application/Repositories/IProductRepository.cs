@@ -131,5 +131,37 @@ namespace Application.Repositories
         /// </code>
         /// </summary>
         Task<bool> UpdateStockAsync(int productId, int quantity);
+
+        /// <summary>
+        /// Kategori ve Tedarikci ile Birlikte Tum Urunleri Getir
+        ///
+        /// Include ile eager loading yaparak navigation property'leri yukler.
+        /// Liste sayfasinda kullanilir.
+        /// </summary>
+        Task<IReadOnlyList<Product>> GetAllWithCategoryAndSupplierAsync();
+
+        /// <summary>
+        /// Detayli Urun Getir (ID ile)
+        ///
+        /// Urun detay sayfasi icin tum iliskili verileri yukler:
+        /// - Category
+        /// - Supplier
+        /// - SaleDetails (son satislar)
+        /// </summary>
+        Task<Product?> GetByIdWithDetailsAsync(int id);
+
+        /// <summary>
+        /// Sync Update Metodu
+        ///
+        /// EF Core change tracking kullanan sync versiyon
+        /// </summary>
+        void Update(Product entity);
+
+        /// <summary>
+        /// Sync Delete Metodu (Soft Delete)
+        ///
+        /// IsDeleted = true olarak isaretler
+        /// </summary>
+        void Delete(Product entity);
     }
 }
