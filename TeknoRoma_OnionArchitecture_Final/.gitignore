@@ -1,0 +1,29 @@
+# Build results
+bin/
+obj/
+
+# Visual Studio files
+.vs/
+*.user
+*.suo
+*.userosscache
+*.sln.docstates
+
+# Visual Studio Code files
+.vscode/
+
+# User-specific files
+*.rsuser
+*.userprefs
+
+# Temporary files
+*.tmp
+*.log
+*.cache
+
+# NuGet Packages
+*.nupkg
+packages/
+
+# Publish directory
+publish/
