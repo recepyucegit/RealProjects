@@ -37,7 +37,7 @@
   <ItemGroup>
     <!-- Katman referanslari -->
     <ProjectReference Include="..\..\Infrastructure\Infrastructure.csproj" />
-    <ProjectReference Include="..\..\Application\Application.csproj" />
+    <ProjectReference Include="..\..\Core\Application\Application.csproj" />
   </ItemGroup>
 
 </Project>
