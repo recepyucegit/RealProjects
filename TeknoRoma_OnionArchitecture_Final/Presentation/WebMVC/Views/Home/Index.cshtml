@@ -1,0 +1,248 @@
+@model DashboardViewModel
+@{
+    ViewData["Title"] = "Dashboard";
+}
+
+@* ===================================================================================
+   TEKNOROMA DASHBOARD
+   ===================================================================================
+
+   Ana sayfa - Ozet bilgiler ve hizli erisim.
+
+   SENARYO (Haluk - Sube Muduru):
+   Tek bakista subenin durumunu gorebilmeli:
+   - Gunluk/aylik ciro
+   - Kritik stok uyarilari
+   - Bekleyen isler
+   - Doviz kurlari
+
+   =================================================================================== *@
+
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h1 class="h3 mb-0">
+        <i class="bi bi-speedometer2 me-2"></i>Dashboard
+    </h1>
+    <small class="text-muted">
+        Son guncelleme: @Model.LastUpdated.ToString("dd.MM.yyyy HH:mm")
+    </small>
+</div>
+
+<!-- Ozet Kartlari -->
+<div class="row g-4 mb-4">
+    <!-- Gunluk Satis -->
+    <div class="col-xl-3 col-md-6">
+        <div class="card stat-card h-100">
+            <div class="card-body">
+                <div class="d-flex align-items-center">
+                    <div class="stat-icon bg-primary bg-opacity-10 text-primary me-3">
+                        <i class="bi bi-currency-lira"></i>
+                    </div>
+                    <div>
+                        <h6 class="text-muted mb-1">Bugunun Cirosu</h6>
+                        <h3 class="mb-0">@Model.TodaySalesTotal.ToString("N2") TL</h3>
+                    </div>
+                </div>
+            </div>
+            <div class="card-footer bg-transparent border-0">
+                <a href="/Sales" class="text-decoration-none small">
+                    Detaylari gor <i class="bi bi-arrow-right"></i>
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Aylik Satis -->
+    <div class="col-xl-3 col-md-6">
+        <div class="card stat-card h-100">
+            <div class="card-body">
+                <div class="d-flex align-items-center">
+                    <div class="stat-icon bg-success bg-opacity-10 text-success me-3">
+                        <i class="bi bi-graph-up-arrow"></i>
+                    </div>
+                    <div>
+                        <h6 class="text-muted mb-1">Aylik Ciro</h6>
+                        <h3 class="mb-0">@Model.MonthlySalesTotal.ToString("N2") TL</h3>
+                    </div>
+                </div>
+            </div>
+            <div class="card-footer bg-transparent border-0">
+                <a href="/Reports/MonthlySales" class="text-decoration-none small">
+                    Raporu gor <i class="bi bi-arrow-right"></i>
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Kritik Stok -->
+    <div class="col-xl-3 col-md-6">
+        <div class="card stat-card h-100 @(Model.LowStockProductCount > 0 ? "border-warning" : "")">
+            <div class="card-body">
+                <div class="d-flex align-items-center">
+                    <div class="stat-icon bg-warning bg-opacity-10 text-warning me-3 position-relative">
+                        <i class="bi bi-exclamation-triangle"></i>
+                        @if (Model.LowStockProductCount > 0)
+                        {
+                            <span class="alert-badge badge bg-danger rounded-pill">!</span>
+                        }
+                    </div>
+                    <div>
+                        <h6 class="text-muted mb-1">Kritik Stok</h6>
+                        <h3 class="mb-0">@Model.LowStockProductCount urun</h3>
+                    </div>
+                </div>
+            </div>
+            <div class="card-footer bg-transparent border-0">
+                <a href="/Products/LowStock" class="text-decoration-none small text-warning">
+                    Hemen kontrol et <i class="bi bi-arrow-right"></i>
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bekleyen Satislar -->
+    <div class="col-xl-3 col-md-6">
+        <div class="card stat-card h-100 @(Model.PendingSalesCount > 0 ? "border-info" : "")">
+            <div class="card-body">
+                <div class="d-flex align-items-center">
+                    <div class="stat-icon bg-info bg-opacity-10 text-info me-3 position-relative">
+                        <i class="bi bi-hourglass-split"></i>
+                        @if (Model.PendingSalesCount > 0)
+                        {
+                            <span class="alert-badge badge bg-info rounded-pill">@Model.PendingSalesCount</span>
+                        }
+                    </div>
+                    <div>
+                        <h6 class="text-muted mb-1">Bekleyen Satis</h6>
+                        <h3 class="mb-0">@Model.PendingSalesCount adet</h3>
+                    </div>
+                </div>
+            </div>
+            <div class="card-footer bg-transparent border-0">
+                <a href="/Sales/Pending" class="text-decoration-none small">
+                    Depoya git <i class="bi bi-arrow-right"></i>
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Ikinci Satir -->
+<div class="row g-4 mb-4">
+    <!-- Teknik Servis -->
+    <div class="col-xl-3 col-md-6">
+        <div class="card stat-card h-100 @(Model.OpenTicketsCount > 0 ? "border-danger" : "")">
+            <div class="card-body">
+                <div class="d-flex align-items-center">
+                    <div class="stat-icon bg-danger bg-opacity-10 text-danger me-3 position-relative">
+                        <i class="bi bi-wrench"></i>
+                        @if (Model.OpenTicketsCount > 0)
+                        {
+                            <span class="alert-badge badge bg-danger rounded-pill">@Model.OpenTicketsCount</span>
+                        }
+                    </div>
+                    <div>
+                        <h6 class="text-muted mb-1">Acik Talepler</h6>
+                        <h3 class="mb-0">@Model.OpenTicketsCount adet</h3>
+                    </div>
+                </div>
+            </div>
+            <div class="card-footer bg-transparent border-0">
+                <a href="/TechnicalServices" class="text-decoration-none small">
+                    Talepleri gor <i class="bi bi-arrow-right"></i>
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Odenmemis Giderler -->
+    <div class="col-xl-3 col-md-6">
+        <div class="card stat-card h-100">
+            <div class="card-body">
+                <div class="d-flex align-items-center">
+                    <div class="stat-icon bg-secondary bg-opacity-10 text-secondary me-3">
+                        <i class="bi bi-cash-stack"></i>
+                    </div>
+                    <div>
+                        <h6 class="text-muted mb-1">Odenmemis Gider</h6>
+                        <h3 class="mb-0">@Model.UnpaidExpensesCount adet</h3>
+                    </div>
+                </div>
+            </div>
+            <div class="card-footer bg-transparent border-0">
+                <a href="/Expenses/Unpaid" class="text-decoration-none small">
+                    Giderleri gor <i class="bi bi-arrow-right"></i>
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Doviz Kurlari -->
+    <div class="col-xl-6 col-md-12">
+        <div class="card stat-card h-100">
+            <div class="card-body">
+                <h6 class="text-muted mb-3">
+                    <i class="bi bi-currency-exchange me-2"></i>Guncel Doviz Kurlari (TCMB)
+                </h6>
+                <div class="row">
+                    <div class="col-6">
+                        <div class="d-flex align-items-center">
+                            <span class="badge bg-success me-2 fs-6">$</span>
+                            <div>
+                                <small class="text-muted d-block">USD/TRY</small>
+                                <strong class="fs-4">@Model.UsdRate.ToString("N4")</strong>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-6">
+                        <div class="d-flex align-items-center">
+                            <span class="badge bg-primary me-2 fs-6">€</span>
+                            <div>
+                                <small class="text-muted d-block">EUR/TRY</small>
+                                <strong class="fs-4">@Model.EurRate.ToString("N4")</strong>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Hizli Erisim -->
+<div class="row g-4">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-header bg-transparent">
+                <h5 class="mb-0"><i class="bi bi-lightning me-2"></i>Hizli Islemler</h5>
+            </div>
+            <div class="card-body">
+                <div class="row g-3">
+                    <div class="col-md-3 col-6">
+                        <a href="/Sales/Create" class="btn btn-outline-primary w-100 py-3">
+                            <i class="bi bi-cart-plus d-block fs-3 mb-1"></i>
+                            Yeni Satis
+                        </a>
+                    </div>
+                    <div class="col-md-3 col-6">
+                        <a href="/Products/Create" class="btn btn-outline-success w-100 py-3">
+                            <i class="bi bi-box-seam d-block fs-3 mb-1"></i>
+                            Yeni Urun
+                        </a>
+                    </div>
+                    <div class="col-md-3 col-6">
+                        <a href="/Customers/Create" class="btn btn-outline-info w-100 py-3">
+                            <i class="bi bi-person-plus d-block fs-3 mb-1"></i>
+                            Yeni Musteri
+                        </a>
+                    </div>
+                    <div class="col-md-3 col-6">
+                        <a href="/TechnicalServices/Create" class="btn btn-outline-warning w-100 py-3">
+                            <i class="bi bi-wrench d-block fs-3 mb-1"></i>
+                            Sorun Bildir
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
