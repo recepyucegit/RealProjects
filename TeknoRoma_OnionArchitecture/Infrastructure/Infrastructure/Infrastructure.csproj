@@ -9,10 +9,15 @@
   <ItemGroup>
     <PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="7.0.20" />
     <PackageReference Include="Microsoft.EntityFrameworkCore" Version="7.0.20" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="7.0.20" />
+    <PackageReference Include="Microsoft.Extensions.Caching.Memory" Version="7.0.0" />
   </ItemGroup>
 
   <ItemGroup>
+    <!-- Domain katmanına referans (Entity'ler için) -->
     <ProjectReference Include="..\..\Core\Domain\Domain.csproj" />
+    <!-- Application katmanına referans (Repository Interface'ler için) -->
+    <ProjectReference Include="..\..\Application\Application\Application.csproj" />
   </ItemGroup>
 
 </Project>

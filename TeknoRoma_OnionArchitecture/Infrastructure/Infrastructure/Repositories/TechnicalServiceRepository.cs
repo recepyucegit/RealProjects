@@ -50,7 +50,6 @@ namespace Infrastructure.Repositories
 
         /// <summary>
         /// Duruma göre servis kayıtlarını getirir
-        /// Özgün Kablocu: "Açık sorunları görüp öncelik sırasına göre çözmeliyim"
         /// </summary>
         public async Task<IReadOnlyList<TechnicalService>> GetByStatusAsync(TechnicalServiceStatus status)
         {
@@ -127,7 +126,6 @@ namespace Infrastructure.Repositories
 
         /// <summary>
         /// Müşteri sorunlarını getirir
-        /// IsCustomerIssue = true
         /// </summary>
         public async Task<IReadOnlyList<TechnicalService>> GetCustomerIssuesAsync()
         {
@@ -144,7 +142,6 @@ namespace Infrastructure.Repositories
 
         /// <summary>
         /// Sistem sorunlarını getirir
-        /// IsCustomerIssue = false
         /// </summary>
         public async Task<IReadOnlyList<TechnicalService>> GetSystemIssuesAsync()
         {
@@ -303,7 +300,7 @@ namespace Infrastructure.Repositories
 
         /// <summary>
         /// Yeni servis numarası oluşturur
-        /// Format: TS-2024-00001, TS-2024-00002, ...
+        /// Format: TS-2024-00001
         /// </summary>
         public async Task<string> GenerateServiceNumberAsync()
         {
