@@ -1,0 +1,43 @@
+<Project Sdk="Microsoft.NET.Sdk.Web">
+
+  <!--
+  ===================================================================================
+  TEKNOROMA MVC WEB UYGULAMASI
+  ===================================================================================
+
+  Merkez sube ve yonetim paneli icin ASP.NET Core MVC uygulamasi.
+
+  KULLANIM ALANLARI:
+  * Sube Muduru - Tum yonetim islemleri
+  * Kasa Satis - Satis ekrani (POS)
+  * Depo - Stok takibi, bekleyen satislar
+  * Muhasebe - Gider yonetimi, raporlar
+  * Teknik Servis - Ticket yonetimi
+
+  OZELLIKLER:
+  * Bootstrap 5 tabanli responsive tasarim
+  * DataTables ile gelismis tablolar
+  * Chart.js ile grafikler
+  * SignalR ile canli bildirimler (opsiyonel)
+  * Identity ile kimlik dogrulama
+  ===================================================================================
+  -->
+
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <!-- Serilog loglama -->
+    <PackageReference Include="Serilog.AspNetCore" Version="8.0.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <!-- Katman referanslari -->
+    <ProjectReference Include="..\..\Infrastructure\Infrastructure.csproj" />
+    <ProjectReference Include="..\..\Application\Application.csproj" />
+  </ItemGroup>
+
+</Project>
