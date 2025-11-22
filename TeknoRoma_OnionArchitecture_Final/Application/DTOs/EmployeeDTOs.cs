@@ -33,7 +33,7 @@ public class CreateEmployeeDto
     public string Email { get; set; } = null!;
     public string? Address { get; set; }
     public Gender Gender { get; set; }
-    public UserRole Role { get; set; } = UserRole.Employee;
+    public UserRole Role { get; set; } = UserRole.KasaSatis;
     public decimal Salary { get; set; }
     public DateTime HireDate { get; set; } = DateTime.Now;
     public int? StoreId { get; set; }
