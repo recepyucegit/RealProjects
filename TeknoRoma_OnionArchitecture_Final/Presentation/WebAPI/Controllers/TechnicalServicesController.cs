@@ -232,7 +232,7 @@ namespace WebAPI.Controllers
             if (status == TechnicalServiceStatus.Tamamlandi ||
                 status == TechnicalServiceStatus.Cozulemedi)
             {
-                ticket.CompletedDate = DateTime.Now;
+                ticket.ResolvedDate = DateTime.Now;
             }
 
             await _unitOfWork.TechnicalServices.UpdateAsync(ticket);

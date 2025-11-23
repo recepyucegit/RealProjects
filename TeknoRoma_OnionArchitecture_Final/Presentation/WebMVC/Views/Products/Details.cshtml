@@ -71,7 +71,7 @@
                             <tr>
                                 <th class="text-muted">Tedarikci:</th>
                                 <td>
-                                    <i class="bi bi-truck me-1"></i>@Model.Supplier?.Name
+                                    <i class="bi bi-truck me-1"></i>@Model.Supplier?.CompanyName
                                 </td>
                             </tr>
                         </table>
@@ -145,7 +145,7 @@
                                         </td>
                                         <td>@detail.Sale?.Customer?.FirstName @detail.Sale?.Customer?.LastName</td>
                                         <td>@detail.Quantity adet</td>
-                                        <td class="fw-medium">@detail.LineTotal.ToString("N2") TL</td>
+                                        <td class="fw-medium">@detail.TotalAmount.ToString("N2") TL</td>
                                         <td>@detail.Sale?.SaleDate.ToString("dd.MM.yyyy HH:mm")</td>
                                     </tr>
                                 }
@@ -203,7 +203,7 @@
                 </div>
                 <div class="d-flex justify-content-between mb-3">
                     <span class="text-muted">Toplam Satis Tutari:</span>
-                    <strong>@((Model.SaleDetails?.Sum(d => d.LineTotal) ?? 0).ToString("N2")) TL</strong>
+                    <strong>@((Model.SaleDetails?.Sum(d => d.TotalAmount) ?? 0).ToString("N2")) TL</strong>
                 </div>
                 <div class="d-flex justify-content-between mb-3">
                     <span class="text-muted">Stok Degeri:</span>

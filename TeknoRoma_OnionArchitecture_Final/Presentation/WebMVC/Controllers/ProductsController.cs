@@ -118,9 +118,9 @@ namespace WebMVC.Controllers
                     SupplierId = model.SupplierId,
                     IsActive = model.IsActive,
                     ImageUrl = model.ImageUrl,
-                    StockStatus = model.UnitsInStock <= 0 ? StockStatus.OutOfStock
-                        : model.UnitsInStock <= model.CriticalStockLevel ? StockStatus.LowStock
-                        : StockStatus.InStock
+                    StockStatus = model.UnitsInStock <= 0 ? StockStatus.Tukendi
+                        : model.UnitsInStock <= model.CriticalStockLevel ? StockStatus.Kritik
+                        : StockStatus.Yeterli
                 };
 
                 await _unitOfWork.Products.AddAsync(product);
@@ -210,9 +210,9 @@ namespace WebMVC.Controllers
                 product.SupplierId = model.SupplierId;
                 product.IsActive = model.IsActive;
                 product.ImageUrl = model.ImageUrl;
-                product.StockStatus = model.UnitsInStock <= 0 ? StockStatus.OutOfStock
-                    : model.UnitsInStock <= model.CriticalStockLevel ? StockStatus.LowStock
-                    : StockStatus.InStock;
+                product.StockStatus = model.UnitsInStock <= 0 ? StockStatus.Tukendi
+                    : model.UnitsInStock <= model.CriticalStockLevel ? StockStatus.Kritik
+                    : StockStatus.Yeterli;
 
                 _unitOfWork.Products.Update(product);
                 await _unitOfWork.SaveChangesAsync();
@@ -280,9 +280,9 @@ namespace WebMVC.Controllers
                 }
 
                 product.UnitsInStock = quantity;
-                product.StockStatus = quantity <= 0 ? StockStatus.OutOfStock
-                    : quantity <= product.CriticalStockLevel ? StockStatus.LowStock
-                    : StockStatus.InStock;
+                product.StockStatus = quantity <= 0 ? StockStatus.Tukendi
+                    : quantity <= product.CriticalStockLevel ? StockStatus.Kritik
+                    : StockStatus.Yeterli;
 
                 _unitOfWork.Products.Update(product);
                 await _unitOfWork.SaveChangesAsync();

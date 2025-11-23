@@ -317,11 +317,11 @@ namespace WebAPI.Controllers
                     }
 
                     // Stok kontrolu
-                    if (product.Stock < item.Quantity)
+                    if (product.UnitsInStock < item.Quantity)
                     {
                         await _unitOfWork.RollbackTransactionAsync();
                         return BadRequestResponse(
-                            $"Yetersiz stok: {product.Name}. Mevcut: {product.Stock}, Istenen: {item.Quantity}");
+                            $"Yetersiz stok: {product.Name}. Mevcut: {product.UnitsInStock}, Istenen: {item.Quantity}");
                     }
 
                     // Satis detayi olustur
@@ -329,13 +329,15 @@ namespace WebAPI.Controllers
                     {
                         SaleId = createdSale.Id,
                         ProductId = item.ProductId,
+                        ProductName = product.Name,
                         Quantity = item.Quantity,
                         UnitPrice = product.UnitPrice,
-                        TotalPrice = product.UnitPrice * item.Quantity
+                        Subtotal = product.UnitPrice * item.Quantity,
+                        TotalAmount = product.UnitPrice * item.Quantity
                     };
 
                     await _unitOfWork.SaleDetails.AddAsync(saleDetail);
-                    totalAmount += saleDetail.TotalPrice;
+                    totalAmount += saleDetail.TotalAmount;
 
                     // Stok dusumu
                     await _unitOfWork.Products.UpdateStockAsync(item.ProductId, -item.Quantity);
