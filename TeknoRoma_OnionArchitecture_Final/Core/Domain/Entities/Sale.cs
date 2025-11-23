@@ -91,9 +91,9 @@ namespace Domain.Entities
         ///
         /// NOT:
         /// - Anonim satışlar için nullable yapılabilir
-        /// - Şu anki tasarımda zorunlu
+        /// - Şu anki tasarımda opsiyonel (int?)
         /// </summary>
-        public int CustomerId { get; set; }
+        public int? CustomerId { get; set; }
 
         /// <summary>
         /// Çalışan ID (Foreign Key)
@@ -292,10 +292,10 @@ namespace Domain.Entities
         /// - Birden fazla satış aynı müşteriye yapılabilir
         ///
         /// KULLANIM:
-        /// var customerName = sale.Customer.FullName;
-        /// var customerPhone = sale.Customer.Phone;
+        /// var customerName = sale.Customer?.FullName;
+        /// var customerPhone = sale.Customer?.Phone;
         /// </summary>
-        public virtual Customer Customer { get; set; } = null!;
+        public virtual Customer? Customer { get; set; }
 
         /// <summary>
         /// Satışı Yapan Çalışan (Navigation Property)
