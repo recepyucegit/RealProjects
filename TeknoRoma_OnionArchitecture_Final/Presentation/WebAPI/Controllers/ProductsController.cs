@@ -235,7 +235,7 @@ namespace WebAPI.Controllers
             existing.UnitPrice = product.UnitPrice;
             existing.CategoryId = product.CategoryId;
             existing.SupplierId = product.SupplierId;
-            existing.CriticalStock = product.CriticalStock;
+            existing.CriticalStockLevel = product.CriticalStockLevel;
 
             await _unitOfWork.Products.UpdateAsync(existing);
             await _unitOfWork.SaveChangesAsync();

@@ -80,12 +80,13 @@ namespace WebAPI.Middlewares
 
             var (statusCode, errorType, message) = exception switch
             {
+                // Null parametre hatalari (ArgumentException'dan once olmali)
+                ArgumentNullException nullEx =>
+                    (HttpStatusCode.BadRequest, "ValidationError", nullEx.Message),
+
                 // Validation hatalari
                 ArgumentException argEx =>
                     (HttpStatusCode.BadRequest, "ValidationError", argEx.Message),
-
-                ArgumentNullException nullEx =>
-                    (HttpStatusCode.BadRequest, "ValidationError", nullEx.Message),
 
                 // Yetkilendirme hatalari
                 UnauthorizedAccessException =>
