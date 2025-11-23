@@ -208,6 +208,136 @@
     </div>
 </div>
 
+<!-- Grafikler Satiri -->
+<div class="row g-4 mb-4">
+    <!-- Haftalik Satis Grafigi -->
+    <div class="col-xl-8 col-lg-7">
+        <div class="card h-100">
+            <div class="card-header bg-transparent d-flex justify-content-between align-items-center">
+                <h5 class="mb-0">
+                    <i class="bi bi-graph-up me-2"></i>Son 7 Gun Satis Trendi
+                </h5>
+                <div class="btn-group btn-group-sm" role="group">
+                    <button type="button" class="btn btn-outline-secondary active" data-chart-type="line">Cizgi</button>
+                    <button type="button" class="btn btn-outline-secondary" data-chart-type="bar">Cubuk</button>
+                </div>
+            </div>
+            <div class="card-body">
+                <canvas id="salesChart" height="280"></canvas>
+            </div>
+        </div>
+    </div>
+
+    <!-- Kategori Dagilimi -->
+    <div class="col-xl-4 col-lg-5">
+        <div class="card h-100">
+            <div class="card-header bg-transparent">
+                <h5 class="mb-0">
+                    <i class="bi bi-pie-chart me-2"></i>Kategori Dagilimi
+                </h5>
+            </div>
+            <div class="card-body d-flex align-items-center justify-content-center">
+                <canvas id="categoryChart" height="280"></canvas>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Son Satislar ve Kritik Stok -->
+<div class="row g-4 mb-4">
+    <!-- Son Satislar -->
+    <div class="col-xl-8 col-lg-7">
+        <div class="card h-100">
+            <div class="card-header bg-transparent d-flex justify-content-between align-items-center">
+                <h5 class="mb-0">
+                    <i class="bi bi-receipt me-2"></i>Son Satislar
+                </h5>
+                <a href="/Sales" class="btn btn-sm btn-outline-primary">Tumunu Gor</a>
+            </div>
+            <div class="card-body p-0">
+                <div class="table-responsive">
+                    <table class="table table-hover mb-0">
+                        <thead class="table-light">
+                            <tr>
+                                <th>#</th>
+                                <th>Musteri</th>
+                                <th>Tutar</th>
+                                <th>Tarih</th>
+                                <th>Durum</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @if (Model.RecentSales.Any())
+                            {
+                                @foreach (var sale in Model.RecentSales)
+                                {
+                                    <tr>
+                                        <td><a href="/Sales/Details/@sale.Id" class="text-primary">#@sale.Id</a></td>
+                                        <td>@sale.CustomerName</td>
+                                        <td class="fw-medium">@sale.Total.ToString("N2") TL</td>
+                                        <td>@sale.Date.ToString("dd.MM HH:mm")</td>
+                                        <td><span class="badge @sale.StatusClass">@sale.Status</span></td>
+                                    </tr>
+                                }
+                            }
+                            else
+                            {
+                                <tr>
+                                    <td colspan="5" class="text-center text-muted py-4">
+                                        <i class="bi bi-inbox fs-1 d-block mb-2"></i>
+                                        Henuz satis yapilmamis
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Kritik Stok Listesi -->
+    <div class="col-xl-4 col-lg-5">
+        <div class="card h-100">
+            <div class="card-header bg-transparent d-flex justify-content-between align-items-center">
+                <h5 class="mb-0">
+                    <i class="bi bi-exclamation-triangle text-warning me-2"></i>Kritik Stok
+                </h5>
+                <a href="/Products/LowStock" class="btn btn-sm btn-outline-warning">Tumunu Gor</a>
+            </div>
+            <div class="card-body p-0">
+                <div class="list-group list-group-flush">
+                    @if (Model.LowStockProducts.Any())
+                    {
+                        @foreach (var product in Model.LowStockProducts.Take(5))
+                        {
+                            <a href="/Products/Edit/@product.Id" class="list-group-item list-group-item-action">
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <div>
+                                        <h6 class="mb-1">@product.ProductName</h6>
+                                        <small class="text-muted">@product.CategoryName</small>
+                                    </div>
+                                    <div class="text-end">
+                                        <span class="badge bg-danger">@product.CurrentStock adet</span>
+                                        <small class="d-block text-muted">Min: @product.MinimumStock</small>
+                                    </div>
+                                </div>
+                            </a>
+                        }
+                    }
+                    else
+                    {
+                        <div class="text-center text-muted py-4">
+                            <i class="bi bi-check-circle fs-1 text-success d-block mb-2"></i>
+                            Kritik stok yok
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
 <!-- Hizli Erisim -->
 <div class="row g-4">
     <div class="col-12">
@@ -246,3 +376,167 @@
         </div>
     </div>
 </div>
+
+@section Scripts {
+<script>
+    // =========================================================================
+    // DASHBOARD CHARTS - TeknoRoma
+    // =========================================================================
+
+    document.addEventListener('DOMContentLoaded', function() {
+        // Chart.js varsayilan ayarlari
+        Chart.defaults.font.family = "'Inter', sans-serif";
+        Chart.defaults.color = '#6c757d';
+
+        // =====================================================================
+        // HAFTALIK SATIS GRAFIGI
+        // =====================================================================
+        const salesCtx = document.getElementById('salesChart').getContext('2d');
+
+        // Ornek veri - Gercek veri JSON ile gelecek
+        const salesLabels = @Html.Raw(Json.Serialize(Model.Last7DaysSales.Select(x => x.Date)));
+        const salesData = @Html.Raw(Json.Serialize(Model.Last7DaysSales.Select(x => x.Total)));
+        const salesCount = @Html.Raw(Json.Serialize(Model.Last7DaysSales.Select(x => x.SaleCount)));
+
+        // Eger veri yoksa ornek veri goster
+        const defaultLabels = ['Pazartesi', 'Sali', 'Carsamba', 'Persembe', 'Cuma', 'Cumartesi', 'Pazar'];
+        const defaultData = [12500, 18200, 15800, 22400, 19600, 28500, 24100];
+
+        const chartLabels = salesLabels.length > 0 ? salesLabels : defaultLabels;
+        const chartData = salesData.length > 0 ? salesData : defaultData;
+
+        let salesChart = new Chart(salesCtx, {
+            type: 'line',
+            data: {
+                labels: chartLabels,
+                datasets: [{
+                    label: 'Gunluk Ciro (TL)',
+                    data: chartData,
+                    borderColor: '#667eea',
+                    backgroundColor: 'rgba(102, 126, 234, 0.1)',
+                    borderWidth: 3,
+                    fill: true,
+                    tension: 0.4,
+                    pointBackgroundColor: '#667eea',
+                    pointBorderColor: '#fff',
+                    pointBorderWidth: 2,
+                    pointRadius: 5,
+                    pointHoverRadius: 7
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        display: false
+                    },
+                    tooltip: {
+                        backgroundColor: 'rgba(0, 0, 0, 0.8)',
+                        padding: 12,
+                        titleFont: { size: 14, weight: 'bold' },
+                        bodyFont: { size: 13 },
+                        callbacks: {
+                            label: function(context) {
+                                return context.parsed.y.toLocaleString('tr-TR') + ' TL';
+                            }
+                        }
+                    }
+                },
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        grid: {
+                            color: 'rgba(0, 0, 0, 0.05)'
+                        },
+                        ticks: {
+                            callback: function(value) {
+                                return value.toLocaleString('tr-TR') + ' TL';
+                            }
+                        }
+                    },
+                    x: {
+                        grid: {
+                            display: false
+                        }
+                    }
+                }
+            }
+        });
+
+        // Grafik tipi degistirme
+        document.querySelectorAll('[data-chart-type]').forEach(btn => {
+            btn.addEventListener('click', function() {
+                document.querySelectorAll('[data-chart-type]').forEach(b => b.classList.remove('active'));
+                this.classList.add('active');
+
+                const newType = this.dataset.chartType;
+                salesChart.config.type = newType;
+                salesChart.update();
+            });
+        });
+
+        // =====================================================================
+        // KATEGORI DAGILIMI PASTA GRAFIGI
+        // =====================================================================
+        const categoryCtx = document.getElementById('categoryChart').getContext('2d');
+
+        const categoryLabels = @Html.Raw(Json.Serialize(Model.CategorySales.Select(x => x.CategoryName)));
+        const categoryData = @Html.Raw(Json.Serialize(Model.CategorySales.Select(x => x.Total)));
+
+        // Eger veri yoksa ornek veri goster
+        const defaultCatLabels = ['Telefon', 'Bilgisayar', 'Aksesuar', 'TV', 'Beyaz Esya'];
+        const defaultCatData = [35, 25, 20, 12, 8];
+
+        const catChartLabels = categoryLabels.length > 0 ? categoryLabels : defaultCatLabels;
+        const catChartData = categoryData.length > 0 ? categoryData : defaultCatData;
+
+        new Chart(categoryCtx, {
+            type: 'doughnut',
+            data: {
+                labels: catChartLabels,
+                datasets: [{
+                    data: catChartData,
+                    backgroundColor: [
+                        '#667eea',
+                        '#28a745',
+                        '#17a2b8',
+                        '#ffc107',
+                        '#dc3545',
+                        '#6c757d',
+                        '#fd7e14'
+                    ],
+                    borderWidth: 2,
+                    borderColor: '#fff'
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        position: 'bottom',
+                        labels: {
+                            padding: 15,
+                            usePointStyle: true,
+                            pointStyle: 'circle'
+                        }
+                    },
+                    tooltip: {
+                        backgroundColor: 'rgba(0, 0, 0, 0.8)',
+                        padding: 12,
+                        callbacks: {
+                            label: function(context) {
+                                const total = context.dataset.data.reduce((a, b) => a + b, 0);
+                                const percentage = ((context.parsed / total) * 100).toFixed(1);
+                                return context.label + ': %' + percentage;
+                            }
+                        }
+                    }
+                },
+                cutout: '60%'
+            }
+        });
+    });
+</script>
+}

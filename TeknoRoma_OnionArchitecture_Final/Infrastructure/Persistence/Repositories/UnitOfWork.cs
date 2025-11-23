@@ -66,25 +66,25 @@ namespace Infrastructure.Repositories
         /// Lazy initialization: Ilk erisimde olusturulur
         /// </summary>
         public ISimpleRepository<Category> Categories =>
-            _categories ??= new EfRepository<Category>(_context);
+            _categories ??= new SimpleRepository<Category>(_context);
 
         /// <summary>
         /// Tedarikci Repository
         /// </summary>
         public ISimpleRepository<Supplier> Suppliers =>
-            _suppliers ??= new EfRepository<Supplier>(_context);
+            _suppliers ??= new SimpleRepository<Supplier>(_context);
 
         /// <summary>
         /// Magaza Repository
         /// </summary>
         public ISimpleRepository<Store> Stores =>
-            _stores ??= new EfRepository<Store>(_context);
+            _stores ??= new SimpleRepository<Store>(_context);
 
         /// <summary>
         /// Departman Repository
         /// </summary>
         public ISimpleRepository<Department> Departments =>
-            _departments ??= new EfRepository<Department>(_context);
+            _departments ??= new SimpleRepository<Department>(_context);
 
         // =================================================================
         // OZEL REPOSITORY'LER

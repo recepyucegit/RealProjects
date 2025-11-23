@@ -241,8 +241,13 @@ namespace Application.Repositories
     /// <typeparam name="T">Basit entity tipi</typeparam>
     public interface ISimpleRepository<T> : IRepository<T> where T : BaseEntity
     {
-        // IRepository'deki tüm metodları miras alır
-        // Marker interface - ek metod yok
+        /// <summary>
+        /// Aktif Kayitlari Getir
+        ///
+        /// IsActive = true ve IsDeleted = false olan kayitlar.
+        /// Dropdown listeler ve secim alanlari icin kullanilir.
+        /// </summary>
+        Task<IReadOnlyList<T>> GetAllActiveAsync();
     }
 }
 

@@ -1,0 +1,260 @@
+@model WebMVC.Models.ProductViewModel
+@{
+    ViewData["Title"] = "Urun Duzenle";
+}
+
+@* ===================================================================================
+   TEKNOROMA - URUN DUZENLEME
+   =================================================================================== *@
+
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h1 class="h3 mb-0">
+        <i class="bi bi-pencil-square me-2"></i>@ViewData["Title"]
+    </h1>
+    <div>
+        <a href="/Products/Details/@Model.Id" class="btn btn-outline-info me-2">
+            <i class="bi bi-eye me-1"></i>Detay
+        </a>
+        <a href="/Products" class="btn btn-outline-secondary">
+            <i class="bi bi-arrow-left me-1"></i>Geri Don
+        </a>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-lg-8">
+        <div class="card shadow-sm">
+            <div class="card-header bg-transparent">
+                <h5 class="mb-0"><i class="bi bi-box-seam me-2"></i>Urun Bilgileri</h5>
+            </div>
+            <div class="card-body">
+                <form asp-action="Edit" method="post">
+                    <input type="hidden" asp-for="Id" />
+                    <div asp-validation-summary="ModelOnly" class="alert alert-danger" role="alert"></div>
+
+                    <!-- Temel Bilgiler -->
+                    <div class="row mb-4">
+                        <div class="col-12">
+                            <h6 class="text-muted mb-3"><i class="bi bi-info-circle me-2"></i>Temel Bilgiler</h6>
+                        </div>
+                        <div class="col-md-8 mb-3">
+                            <label asp-for="Name" class="form-label"></label>
+                            <input asp-for="Name" class="form-control" />
+                            <span asp-validation-for="Name" class="text-danger small"></span>
+                        </div>
+                        <div class="col-md-4 mb-3">
+                            <label asp-for="Barcode" class="form-label"></label>
+                            <input asp-for="Barcode" class="form-control" />
+                            <span asp-validation-for="Barcode" class="text-danger small"></span>
+                        </div>
+                        <div class="col-12 mb-3">
+                            <label asp-for="Description" class="form-label"></label>
+                            <textarea asp-for="Description" class="form-control" rows="3"></textarea>
+                            <span asp-validation-for="Description" class="text-danger small"></span>
+                        </div>
+                    </div>
+
+                    <!-- Fiyat ve Stok -->
+                    <div class="row mb-4">
+                        <div class="col-12">
+                            <h6 class="text-muted mb-3"><i class="bi bi-currency-lira me-2"></i>Fiyat ve Stok</h6>
+                        </div>
+                        <div class="col-md-4 mb-3">
+                            <label asp-for="UnitPrice" class="form-label"></label>
+                            <div class="input-group">
+                                <input asp-for="UnitPrice" class="form-control" />
+                                <span class="input-group-text">TL</span>
+                            </div>
+                            <span asp-validation-for="UnitPrice" class="text-danger small"></span>
+                        </div>
+                        <div class="col-md-4 mb-3">
+                            <label asp-for="UnitsInStock" class="form-label"></label>
+                            <input asp-for="UnitsInStock" class="form-control" type="number" min="0" />
+                            <span asp-validation-for="UnitsInStock" class="text-danger small"></span>
+                        </div>
+                        <div class="col-md-4 mb-3">
+                            <label asp-for="CriticalStockLevel" class="form-label"></label>
+                            <input asp-for="CriticalStockLevel" class="form-control" type="number" min="1" />
+                            <span asp-validation-for="CriticalStockLevel" class="text-danger small"></span>
+                        </div>
+                    </div>
+
+                    <!-- Kategori ve Tedarikci -->
+                    <div class="row mb-4">
+                        <div class="col-12">
+                            <h6 class="text-muted mb-3"><i class="bi bi-tags me-2"></i>Kategori ve Tedarikci</h6>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label asp-for="CategoryId" class="form-label"></label>
+                            <select asp-for="CategoryId" asp-items="@ViewBag.Categories" class="form-select">
+                                <option value="">-- Kategori Secin --</option>
+                            </select>
+                            <span asp-validation-for="CategoryId" class="text-danger small"></span>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label asp-for="SupplierId" class="form-label"></label>
+                            <select asp-for="SupplierId" asp-items="@ViewBag.Suppliers" class="form-select">
+                                <option value="">-- Tedarikci Secin --</option>
+                            </select>
+                            <span asp-validation-for="SupplierId" class="text-danger small"></span>
+                        </div>
+                    </div>
+
+                    <!-- Gorsel ve Durum -->
+                    <div class="row mb-4">
+                        <div class="col-12">
+                            <h6 class="text-muted mb-3"><i class="bi bi-image me-2"></i>Gorsel ve Durum</h6>
+                        </div>
+                        <div class="col-md-8 mb-3">
+                            <label asp-for="ImageUrl" class="form-label"></label>
+                            <input asp-for="ImageUrl" class="form-control" />
+                            <span asp-validation-for="ImageUrl" class="text-danger small"></span>
+                        </div>
+                        <div class="col-md-4 mb-3">
+                            <label class="form-label d-block">&nbsp;</label>
+                            <div class="form-check form-switch">
+                                <input asp-for="IsActive" class="form-check-input" type="checkbox" />
+                                <label asp-for="IsActive" class="form-check-label">Aktif</label>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Butonlar -->
+                    <div class="d-flex justify-content-between pt-3 border-top">
+                        <button type="button" class="btn btn-outline-danger" id="btnDelete">
+                            <i class="bi bi-trash me-1"></i>Sil
+                        </button>
+                        <div class="d-flex gap-2">
+                            <a href="/Products" class="btn btn-outline-secondary">
+                                <i class="bi bi-x-lg me-1"></i>Iptal
+                            </a>
+                            <button type="submit" class="btn btn-primary">
+                                <i class="bi bi-check-lg me-1"></i>Kaydet
+                            </button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Onizleme -->
+    <div class="col-lg-4">
+        <div class="card shadow-sm">
+            <div class="card-header bg-transparent">
+                <h5 class="mb-0"><i class="bi bi-eye me-2"></i>Mevcut Urun</h5>
+            </div>
+            <div class="card-body text-center">
+                <div class="mb-3">
+                    @if (!string.IsNullOrEmpty(Model.ImageUrl))
+                    {
+                        <img src="@Model.ImageUrl" class="img-fluid rounded" style="max-height: 150px;" alt="@Model.Name">
+                    }
+                    else
+                    {
+                        <div class="bg-light rounded d-flex align-items-center justify-content-center mx-auto" style="width: 150px; height: 150px;">
+                            <i class="bi bi-image text-muted fs-1"></i>
+                        </div>
+                    }
+                </div>
+                <h5 class="mb-1">@Model.Name</h5>
+                <p class="text-muted small mb-2">
+                    <code>@Model.Barcode</code>
+                </p>
+                <h4 class="text-primary mb-3">@Model.UnitPrice.ToString("N2") TL</h4>
+                @{
+                    var stockClass = Model.UnitsInStock <= 0 ? "bg-danger"
+                        : Model.UnitsInStock <= Model.CriticalStockLevel ? "bg-warning text-dark"
+                        : "bg-success";
+                }
+                <span class="badge @stockClass">@Model.UnitsInStock adet</span>
+            </div>
+        </div>
+
+        <!-- Hizli Stok Guncelleme -->
+        <div class="card shadow-sm mt-3">
+            <div class="card-header bg-transparent">
+                <h5 class="mb-0"><i class="bi bi-boxes me-2"></i>Hizli Stok Guncelleme</h5>
+            </div>
+            <div class="card-body">
+                <div class="input-group">
+                    <input type="number" id="quickStock" class="form-control" value="@Model.UnitsInStock" min="0">
+                    <button type="button" class="btn btn-success" id="btnUpdateStock">
+                        <i class="bi bi-check me-1"></i>Guncelle
+                    </button>
+                </div>
+                <small class="text-muted d-block mt-2">Stok miktarini hizlica guncelleyin.</small>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+<script>
+    $(document).ready(function() {
+        // Silme islemi
+        $('#btnDelete').click(function() {
+            var id = @Model.Id;
+            var name = '@Model.Name';
+
+            TeknoRoma.confirm(
+                'Urun Sil',
+                `<strong>${name}</strong> adli urunu silmek istediginize emin misiniz?<br><br>` +
+                '<span class="text-danger"><i class="bi bi-exclamation-triangle me-1"></i>Bu islem geri alinamaz!</span>',
+                function() {
+                    $.ajax({
+                        url: '/Products/Delete/' + id,
+                        type: 'POST',
+                        headers: {
+                            'RequestVerificationToken': $('input[name="__RequestVerificationToken"]').val()
+                        },
+                        success: function(result) {
+                            if (result.success) {
+                                TeknoRoma.toast(result.message, 'success');
+                                setTimeout(() => window.location.href = '/Products', 1000);
+                            } else {
+                                TeknoRoma.toast(result.message, 'error');
+                            }
+                        },
+                        error: function() {
+                            TeknoRoma.toast('Bir hata olustu.', 'error');
+                        }
+                    });
+                }
+            );
+        });
+
+        // Hizli stok guncelleme
+        $('#btnUpdateStock').click(function() {
+            var id = @Model.Id;
+            var quantity = parseInt($('#quickStock').val());
+
+            if (isNaN(quantity) || quantity < 0) {
+                TeknoRoma.toast('Gecersiz stok miktari.', 'error');
+                return;
+            }
+
+            $.ajax({
+                url: '/Products/UpdateStock/' + id,
+                type: 'POST',
+                data: { quantity: quantity },
+                headers: {
+                    'RequestVerificationToken': $('input[name="__RequestVerificationToken"]').val()
+                },
+                success: function(result) {
+                    if (result.success) {
+                        TeknoRoma.toast(result.message, 'success');
+                        $('#UnitsInStock').val(quantity);
+                    } else {
+                        TeknoRoma.toast(result.message, 'error');
+                    }
+                },
+                error: function() {
+                    TeknoRoma.toast('Bir hata olustu.', 'error');
+                }
+            });
+        });
+    });
+</script>
+@Html.AntiForgeryToken()
+}

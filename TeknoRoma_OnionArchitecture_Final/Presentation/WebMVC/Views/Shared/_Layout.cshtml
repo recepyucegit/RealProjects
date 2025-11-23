@@ -1,15 +1,9 @@
 @* ===================================================================================
-   TEKNOROMA MVC - ANA LAYOUT
+   TEKNOROMA MVC - PROFESYONEL ADMIN LAYOUT
    ===================================================================================
 
-   Tum sayfalarin miras aldigi ana sablon.
-   Bootstrap 5 tabanli responsive tasarim.
-
-   YAPISI:
-   - Navbar (ust menu)
-   - Sidebar (sol menu - rol bazli)
-   - Content area (sayfa icerigi)
-   - Footer
+   Modern ve responsive admin panel tasarimi.
+   Bootstrap 5 + Custom CSS + JavaScript
 
    =================================================================================== *@
 <!DOCTYPE html>
@@ -17,273 +11,363 @@
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="description" content="TeknoRoma Elektronik Market Yonetim Sistemi" />
     <title>@ViewData["Title"] - TeknoRoma</title>
+
+    <!-- Favicon -->
+    <link rel="icon" type="image/png" href="~/favicon.png" />
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 
     <!-- Bootstrap 5 CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+
     <!-- Bootstrap Icons -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css" rel="stylesheet">
+
     <!-- DataTables CSS -->
     <link href="https://cdn.datatables.net/1.13.6/css/dataTables.bootstrap5.min.css" rel="stylesheet">
+    <link href="https://cdn.datatables.net/responsive/2.5.0/css/responsive.bootstrap5.min.css" rel="stylesheet">
 
-    <style>
-        :root {
-            --sidebar-width: 250px;
-            --navbar-height: 56px;
-            --primary-color: #0d6efd;
-            --sidebar-bg: #212529;
-        }
+    <!-- Custom CSS -->
+    <link href="~/css/site.css" rel="stylesheet" />
 
-        body {
-            min-height: 100vh;
-            background-color: #f8f9fa;
-        }
-
-        /* Sidebar */
-        .sidebar {
-            position: fixed;
-            top: var(--navbar-height);
-            left: 0;
-            width: var(--sidebar-width);
-            height: calc(100vh - var(--navbar-height));
-            background-color: var(--sidebar-bg);
-            overflow-y: auto;
-            z-index: 100;
-            padding-top: 1rem;
-        }
-
-        .sidebar .nav-link {
-            color: rgba(255, 255, 255, 0.8);
-            padding: 0.75rem 1rem;
-            border-radius: 0.25rem;
-            margin: 0.2rem 0.5rem;
-        }
-
-        .sidebar .nav-link:hover {
-            color: #fff;
-            background-color: rgba(255, 255, 255, 0.1);
-        }
-
-        .sidebar .nav-link.active {
-            color: #fff;
-            background-color: var(--primary-color);
-        }
-
-        .sidebar .nav-link i {
-            margin-right: 0.5rem;
-            width: 20px;
-        }
-
-        .sidebar-heading {
-            color: rgba(255, 255, 255, 0.5);
-            font-size: 0.75rem;
-            text-transform: uppercase;
-            padding: 1rem 1rem 0.5rem;
-            letter-spacing: 0.05em;
-        }
-
-        /* Main content */
-        .main-content {
-            margin-left: var(--sidebar-width);
-            padding: 1.5rem;
-            min-height: calc(100vh - var(--navbar-height));
-        }
-
-        /* Navbar */
-        .navbar {
-            height: var(--navbar-height);
-            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-        }
-
-        /* Cards */
-        .stat-card {
-            border: none;
-            border-radius: 0.5rem;
-            box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075);
-            transition: transform 0.2s;
-        }
-
-        .stat-card:hover {
-            transform: translateY(-2px);
-        }
-
-        .stat-card .stat-icon {
-            width: 48px;
-            height: 48px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            border-radius: 0.5rem;
-            font-size: 1.5rem;
-        }
-
-        /* Alert badges */
-        .alert-badge {
-            position: absolute;
-            top: -5px;
-            right: -5px;
-            padding: 0.25rem 0.5rem;
-            font-size: 0.75rem;
-        }
-
-        /* Responsive */
-        @@media (max-width: 768px) {
-            .sidebar {
-                transform: translateX(-100%);
-            }
-            .main-content {
-                margin-left: 0;
-            }
-        }
-    </style>
     @await RenderSectionAsync("Styles", required: false)
 </head>
 <body>
-    <!-- Navbar -->
-    <nav class="navbar navbar-expand-lg navbar-dark bg-primary fixed-top">
-        <div class="container-fluid">
-            <a class="navbar-brand fw-bold" href="/">
-                <i class="bi bi-shop me-2"></i>TeknoRoma
+    <!-- =========================================================================
+         NAVBAR (Ust Menu)
+         ========================================================================= -->
+    <nav class="navbar navbar-expand-lg navbar-dark navbar-main fixed-top">
+        <div class="container-fluid px-4">
+            <!-- Logo -->
+            <a class="navbar-brand d-flex align-items-center" href="/">
+                <i class="bi bi-cpu"></i>
+                <span>TeknoRoma</span>
             </a>
 
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
-                <span class="navbar-toggler-icon"></span>
+            <!-- Mobil Menu Toggle -->
+            <button class="btn btn-link text-white d-lg-none mobile-menu-toggle" type="button">
+                <i class="bi bi-list fs-4"></i>
             </button>
 
-            <div class="collapse navbar-collapse" id="navbarNav">
-                <ul class="navbar-nav ms-auto">
-                    <!-- Bildirimler -->
-                    <li class="nav-item dropdown me-2">
-                        <a class="nav-link position-relative" href="#" data-bs-toggle="dropdown">
-                            <i class="bi bi-bell fs-5"></i>
-                            <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
-                                3
-                            </span>
-                        </a>
-                        <ul class="dropdown-menu dropdown-menu-end">
-                            <li><h6 class="dropdown-header">Bildirimler</h6></li>
-                            <li><a class="dropdown-item" href="/Products/LowStock">
-                                <i class="bi bi-exclamation-triangle text-warning me-2"></i>Kritik stok uyarisi
-                            </a></li>
-                            <li><a class="dropdown-item" href="/TechnicalServices">
-                                <i class="bi bi-wrench text-info me-2"></i>Yeni teknik talep
-                            </a></li>
-                        </ul>
-                    </li>
+            <!-- Sag Taraf -->
+            <div class="d-flex align-items-center ms-auto">
+                <!-- Arama -->
+                <div class="d-none d-md-block me-3">
+                    <div class="input-group input-group-sm">
+                        <input type="text" class="form-control bg-white bg-opacity-10 border-0 text-white"
+                               placeholder="Ara... (F2)" style="width: 200px;">
+                        <button class="btn btn-light btn-sm" type="button">
+                            <i class="bi bi-search"></i>
+                        </button>
+                    </div>
+                </div>
 
-                    <!-- Kullanici -->
-                    <li class="nav-item dropdown">
-                        <a class="nav-link dropdown-toggle" href="#" data-bs-toggle="dropdown">
-                            <i class="bi bi-person-circle me-1"></i>
-                            <span>Kullanici</span>
+                <!-- Bildirimler -->
+                <div class="dropdown me-3">
+                    <a class="nav-link text-white position-relative" href="#" data-bs-toggle="dropdown">
+                        <i class="bi bi-bell fs-5"></i>
+                        <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger"
+                              style="font-size: 0.65rem;">
+                            3
+                        </span>
+                    </a>
+                    <div class="dropdown-menu dropdown-menu-end notification-dropdown shadow-lg">
+                        <div class="dropdown-header d-flex justify-content-between align-items-center">
+                            <span class="fw-bold">Bildirimler</span>
+                            <a href="#" class="text-primary small">Tumunu Oku</a>
+                        </div>
+                        <div class="dropdown-divider"></div>
+                        <a class="dropdown-item notification-item unread" href="/Products/LowStock">
+                            <div class="d-flex">
+                                <div class="flex-shrink-0">
+                                    <span class="badge bg-warning rounded-circle p-2">
+                                        <i class="bi bi-exclamation-triangle"></i>
+                                    </span>
+                                </div>
+                                <div class="flex-grow-1 ms-3">
+                                    <p class="mb-1 fw-medium">Kritik Stok Uyarisi</p>
+                                    <small class="text-muted">5 urun kritik seviyede</small>
+                                </div>
+                            </div>
                         </a>
-                        <ul class="dropdown-menu dropdown-menu-end">
-                            <li><a class="dropdown-item" href="#"><i class="bi bi-person me-2"></i>Profil</a></li>
-                            <li><a class="dropdown-item" href="#"><i class="bi bi-gear me-2"></i>Ayarlar</a></li>
-                            <li><hr class="dropdown-divider"></li>
-                            <li><a class="dropdown-item" href="#"><i class="bi bi-box-arrow-right me-2"></i>Cikis</a></li>
-                        </ul>
-                    </li>
-                </ul>
+                        <a class="dropdown-item notification-item unread" href="/Sales/Pending">
+                            <div class="d-flex">
+                                <div class="flex-shrink-0">
+                                    <span class="badge bg-info rounded-circle p-2">
+                                        <i class="bi bi-cart"></i>
+                                    </span>
+                                </div>
+                                <div class="flex-grow-1 ms-3">
+                                    <p class="mb-1 fw-medium">Yeni Satis</p>
+                                    <small class="text-muted">Depoya urun hazirlama bildirimi</small>
+                                </div>
+                            </div>
+                        </a>
+                        <a class="dropdown-item notification-item" href="/TechnicalServices">
+                            <div class="d-flex">
+                                <div class="flex-shrink-0">
+                                    <span class="badge bg-danger rounded-circle p-2">
+                                        <i class="bi bi-wrench"></i>
+                                    </span>
+                                </div>
+                                <div class="flex-grow-1 ms-3">
+                                    <p class="mb-1 fw-medium">Teknik Servis Talebi</p>
+                                    <small class="text-muted">Yeni acik talep eklendi</small>
+                                </div>
+                            </div>
+                        </a>
+                        <div class="dropdown-divider"></div>
+                        <a class="dropdown-item text-center py-2" href="#">
+                            <small>Tum Bildirimleri Gor</small>
+                        </a>
+                    </div>
+                </div>
+
+                <!-- Kullanici Menu -->
+                <div class="dropdown">
+                    <a class="nav-link dropdown-toggle text-white d-flex align-items-center" href="#" data-bs-toggle="dropdown">
+                        <div class="avatar me-2">
+                            <div class="bg-white bg-opacity-25 rounded-circle d-flex align-items-center justify-content-center"
+                                 style="width: 36px; height: 36px;">
+                                <i class="bi bi-person fs-5"></i>
+                            </div>
+                        </div>
+                        <div class="d-none d-md-block">
+                            <span class="d-block small fw-medium">Haluk SAYGIN</span>
+                            <span class="d-block small opacity-75" style="font-size: 0.7rem;">Sube Muduru</span>
+                        </div>
+                    </a>
+                    <ul class="dropdown-menu dropdown-menu-end shadow">
+                        <li>
+                            <div class="dropdown-header">
+                                <strong>Haluk SAYGIN</strong>
+                                <br><small class="text-muted">haluk.saygin@teknoroma.com</small>
+                            </div>
+                        </li>
+                        <li><hr class="dropdown-divider"></li>
+                        <li><a class="dropdown-item" href="#"><i class="bi bi-person me-2"></i>Profil</a></li>
+                        <li><a class="dropdown-item" href="#"><i class="bi bi-gear me-2"></i>Ayarlar</a></li>
+                        <li><a class="dropdown-item" href="#"><i class="bi bi-question-circle me-2"></i>Yardim</a></li>
+                        <li><hr class="dropdown-divider"></li>
+                        <li><a class="dropdown-item text-danger" href="#"><i class="bi bi-box-arrow-right me-2"></i>Cikis Yap</a></li>
+                    </ul>
+                </div>
             </div>
         </div>
     </nav>
 
-    <!-- Sidebar -->
+    <!-- =========================================================================
+         SIDEBAR (Sol Menu)
+         ========================================================================= -->
     <nav class="sidebar">
-        <div class="sidebar-heading">Ana Menu</div>
-        <ul class="nav flex-column">
-            <li class="nav-item">
-                <a class="nav-link @(ViewContext.RouteData.Values["controller"]?.ToString() == "Home" ? "active" : "")" href="/">
-                    <i class="bi bi-speedometer2"></i>Dashboard
-                </a>
-            </li>
-        </ul>
+        <!-- Sidebar Toggle -->
+        <div class="p-3 d-none d-lg-block">
+            <button class="btn btn-sm btn-outline-light w-100 sidebar-toggle">
+                <i class="bi bi-chevron-left"></i>
+                <span class="ms-2">Menu</span>
+            </button>
+        </div>
 
-        <div class="sidebar-heading">Satis</div>
-        <ul class="nav flex-column">
-            <li class="nav-item">
-                <a class="nav-link @(ViewContext.RouteData.Values["controller"]?.ToString() == "Sales" ? "active" : "")" href="/Sales">
-                    <i class="bi bi-cart3"></i>Satislar
+        <div class="sidebar-menu">
+            <!-- Ana Menu -->
+            <div class="menu-header">Ana Menu</div>
+            <div class="menu-item">
+                <a href="/" class="menu-link @(ViewContext.RouteData.Values["controller"]?.ToString() == "Home" ? "active" : "")">
+                    <i class="bi bi-speedometer2"></i>
+                    <span class="menu-text">Dashboard</span>
                 </a>
-            </li>
-            <li class="nav-item">
-                <a class="nav-link @(ViewContext.RouteData.Values["controller"]?.ToString() == "Customers" ? "active" : "")" href="/Customers">
-                    <i class="bi bi-people"></i>Musteriler
-                </a>
-            </li>
-        </ul>
+            </div>
 
-        <div class="sidebar-heading">Stok</div>
-        <ul class="nav flex-column">
-            <li class="nav-item">
-                <a class="nav-link @(ViewContext.RouteData.Values["controller"]?.ToString() == "Products" ? "active" : "")" href="/Products">
-                    <i class="bi bi-box-seam"></i>Urunler
+            <!-- Satis -->
+            <div class="menu-header">Satis Islemleri</div>
+            <div class="menu-item">
+                <a href="/Sales" class="menu-link @(ViewContext.RouteData.Values["controller"]?.ToString() == "Sales" ? "active" : "")">
+                    <i class="bi bi-cart3"></i>
+                    <span class="menu-text">Satislar</span>
+                    <span class="menu-badge">12</span>
                 </a>
-            </li>
-            <li class="nav-item">
-                <a class="nav-link" href="/Products/LowStock">
-                    <i class="bi bi-exclamation-triangle"></i>Kritik Stok
+            </div>
+            <div class="menu-item">
+                <a href="/Sales/Create" class="menu-link">
+                    <i class="bi bi-cart-plus"></i>
+                    <span class="menu-text">Yeni Satis</span>
                 </a>
-            </li>
-        </ul>
+            </div>
+            <div class="menu-item">
+                <a href="/Customers" class="menu-link @(ViewContext.RouteData.Values["controller"]?.ToString() == "Customers" ? "active" : "")">
+                    <i class="bi bi-people"></i>
+                    <span class="menu-text">Musteriler</span>
+                </a>
+            </div>
 
-        <div class="sidebar-heading">Yonetim</div>
-        <ul class="nav flex-column">
-            <li class="nav-item">
-                <a class="nav-link @(ViewContext.RouteData.Values["controller"]?.ToString() == "Employees" ? "active" : "")" href="/Employees">
-                    <i class="bi bi-person-badge"></i>Calisanlar
+            <!-- Stok -->
+            <div class="menu-header">Stok Yonetimi</div>
+            <div class="menu-item">
+                <a href="/Products" class="menu-link @(ViewContext.RouteData.Values["controller"]?.ToString() == "Products" ? "active" : "")">
+                    <i class="bi bi-box-seam"></i>
+                    <span class="menu-text">Urunler</span>
                 </a>
-            </li>
-            <li class="nav-item">
-                <a class="nav-link @(ViewContext.RouteData.Values["controller"]?.ToString() == "Expenses" ? "active" : "")" href="/Expenses">
-                    <i class="bi bi-cash-stack"></i>Giderler
+            </div>
+            <div class="menu-item">
+                <a href="/Products/LowStock" class="menu-link">
+                    <i class="bi bi-exclamation-triangle"></i>
+                    <span class="menu-text">Kritik Stok</span>
+                    <span class="menu-badge bg-warning text-dark">5</span>
                 </a>
-            </li>
-            <li class="nav-item">
-                <a class="nav-link @(ViewContext.RouteData.Values["controller"]?.ToString() == "TechnicalServices" ? "active" : "")" href="/TechnicalServices">
-                    <i class="bi bi-wrench"></i>Teknik Servis
+            </div>
+            <div class="menu-item">
+                <a href="/Categories" class="menu-link">
+                    <i class="bi bi-tags"></i>
+                    <span class="menu-text">Kategoriler</span>
                 </a>
-            </li>
-        </ul>
+            </div>
+            <div class="menu-item">
+                <a href="/Suppliers" class="menu-link">
+                    <i class="bi bi-truck"></i>
+                    <span class="menu-text">Tedarikciler</span>
+                </a>
+            </div>
 
-        <div class="sidebar-heading">Raporlar</div>
-        <ul class="nav flex-column">
-            <li class="nav-item">
-                <a class="nav-link @(ViewContext.RouteData.Values["controller"]?.ToString() == "Reports" ? "active" : "")" href="/Reports">
-                    <i class="bi bi-graph-up"></i>Raporlar
+            <!-- Yonetim -->
+            <div class="menu-header">Yonetim</div>
+            <div class="menu-item">
+                <a href="/Employees" class="menu-link @(ViewContext.RouteData.Values["controller"]?.ToString() == "Employees" ? "active" : "")">
+                    <i class="bi bi-person-badge"></i>
+                    <span class="menu-text">Calisanlar</span>
                 </a>
-            </li>
-        </ul>
+            </div>
+            <div class="menu-item">
+                <a href="/Expenses" class="menu-link @(ViewContext.RouteData.Values["controller"]?.ToString() == "Expenses" ? "active" : "")">
+                    <i class="bi bi-cash-stack"></i>
+                    <span class="menu-text">Giderler</span>
+                </a>
+            </div>
+            <div class="menu-item">
+                <a href="/TechnicalServices" class="menu-link @(ViewContext.RouteData.Values["controller"]?.ToString() == "TechnicalServices" ? "active" : "")">
+                    <i class="bi bi-wrench"></i>
+                    <span class="menu-text">Teknik Servis</span>
+                    <span class="menu-badge">3</span>
+                </a>
+            </div>
+
+            <!-- Raporlar -->
+            <div class="menu-header">Raporlar</div>
+            <div class="menu-item">
+                <a href="/Reports" class="menu-link @(ViewContext.RouteData.Values["controller"]?.ToString() == "Reports" ? "active" : "")">
+                    <i class="bi bi-graph-up"></i>
+                    <span class="menu-text">Raporlar</span>
+                </a>
+            </div>
+            <div class="menu-item">
+                <a href="/Reports/Sales" class="menu-link">
+                    <i class="bi bi-file-earmark-bar-graph"></i>
+                    <span class="menu-text">Satis Raporu</span>
+                </a>
+            </div>
+            <div class="menu-item">
+                <a href="/Reports/Stock" class="menu-link">
+                    <i class="bi bi-file-earmark-text"></i>
+                    <span class="menu-text">Stok Raporu</span>
+                </a>
+            </div>
+
+            <!-- Ayarlar -->
+            <div class="menu-header">Sistem</div>
+            <div class="menu-item">
+                <a href="/Stores" class="menu-link">
+                    <i class="bi bi-shop"></i>
+                    <span class="menu-text">Magazalar</span>
+                </a>
+            </div>
+            <div class="menu-item">
+                <a href="/Settings" class="menu-link">
+                    <i class="bi bi-gear"></i>
+                    <span class="menu-text">Ayarlar</span>
+                </a>
+            </div>
+        </div>
+
+        <!-- Sidebar Footer -->
+        <div class="mt-auto p-3 border-top border-secondary">
+            <div class="d-flex align-items-center text-white-50 small">
+                <i class="bi bi-clock me-2"></i>
+                <span id="currentTime">--:--</span>
+            </div>
+        </div>
     </nav>
 
-    <!-- Main Content -->
+    <!-- =========================================================================
+         MAIN CONTENT
+         ========================================================================= -->
     <main class="main-content" style="margin-top: var(--navbar-height);">
-        <!-- Alerts -->
+        <!-- Toast Container -->
+        <div class="toast-container position-fixed top-0 end-0 p-3" style="z-index: 1100;"></div>
+
+        <!-- Alert Messages -->
         @if (TempData["Success"] != null)
         {
             <div class="alert alert-success alert-dismissible fade show" role="alert">
-                <i class="bi bi-check-circle me-2"></i>@TempData["Success"]
+                <i class="bi bi-check-circle me-2"></i>
+                @TempData["Success"]
                 <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
             </div>
         }
         @if (TempData["Error"] != null)
         {
             <div class="alert alert-danger alert-dismissible fade show" role="alert">
-                <i class="bi bi-exclamation-circle me-2"></i>@TempData["Error"]
+                <i class="bi bi-exclamation-circle me-2"></i>
+                @TempData["Error"]
+                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            </div>
+        }
+        @if (TempData["Warning"] != null)
+        {
+            <div class="alert alert-warning alert-dismissible fade show" role="alert">
+                <i class="bi bi-exclamation-triangle me-2"></i>
+                @TempData["Warning"]
                 <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
             </div>
         }
 
+        <!-- Page Content -->
         @RenderBody()
     </main>
 
-    <!-- Scripts -->
+    <!-- =========================================================================
+         SCRIPTS
+         ========================================================================= -->
+    <!-- jQuery -->
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+
+    <!-- Bootstrap Bundle -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
-    <script src="https://code.jquery.com/jquery-3.7.0.min.js"></script>
+
+    <!-- DataTables -->
     <script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
     <script src="https://cdn.datatables.net/1.13.6/js/dataTables.bootstrap5.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.datatables.net/responsive/2.5.0/js/dataTables.responsive.min.js"></script>
+
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+
+    <!-- Custom JS -->
+    <script src="~/js/site.js"></script>
+
+    <!-- Saat guncelleme -->
+    <script>
+        function updateTime() {
+            const now = new Date();
+            const timeStr = now.toLocaleTimeString('tr-TR', { hour: '2-digit', minute: '2-digit' });
+            document.getElementById('currentTime').textContent = timeStr;
+        }
+        updateTime();
+        setInterval(updateTime, 60000);
+    </script>
 
     @await RenderSectionAsync("Scripts", required: false)
 </body>
