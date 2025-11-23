@@ -275,6 +275,20 @@ namespace Domain.Entities
         /// </summary>
         public DateTime? PaymentDate { get; set; }
 
+        /// <summary>
+        /// Vade Tarihi (Opsiyonel)
+        ///
+        /// AÇIKLAMA:
+        /// - Giderin ödenmesi gereken son tarih
+        /// - Vadeli ödemeler için kullanılır
+        /// - Nakit akış planlaması için önemli
+        ///
+        /// NULLABLE (DateTime?):
+        /// - Peşin ödemelerde null olabilir
+        /// - Vadeli ödemelerde set edilir
+        /// </summary>
+        public DateTime? DueDate { get; set; }
+
         // ====================================================================
         // NAVIGATION PROPERTIES
         // ====================================================================
