@@ -266,8 +266,8 @@ namespace WebAPI.Controllers
                 return NotFoundResponse($"ID: {id} olan urun bulunamadi");
 
             // Stok negatife dusemez kontrolu
-            if (product.Stock + quantityChange < 0)
-                return BadRequestResponse("Yetersiz stok. Mevcut: " + product.Stock);
+            if (product.UnitsInStock + quantityChange < 0)
+                return BadRequestResponse("Yetersiz stok. Mevcut: " + product.UnitsInStock);
 
             await _unitOfWork.Products.UpdateStockAsync(id, quantityChange);
             await _unitOfWork.SaveChangesAsync();
@@ -276,9 +276,9 @@ namespace WebAPI.Controllers
             var updated = await _unitOfWork.Products.GetByIdAsync(id);
 
             _logger.LogInformation("Stok guncellendi: {ProductId} - Degisim: {Change}, Yeni stok: {Stock}",
-                id, quantityChange, updated?.Stock);
+                id, quantityChange, updated?.UnitsInStock);
 
-            return Success(updated, $"Stok guncellendi. Yeni miktar: {updated?.Stock}");
+            return Success(updated, $"Stok guncellendi. Yeni miktar: {updated?.UnitsInStock}");
         }
 
         // =====================================================================
