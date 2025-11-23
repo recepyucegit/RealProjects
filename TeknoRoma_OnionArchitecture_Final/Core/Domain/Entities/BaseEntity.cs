@@ -117,5 +117,19 @@ namespace Domain.Entities
         /// - DeletedBy: Kimin sildiği bilgisi tutulabilir
         /// </summary>
         public bool IsDeleted { get; set; }
+
+        /// <summary>
+        /// Kaydın silinme tarihi ve saati (Soft Delete için)
+        ///
+        /// AÇIKLAMA:
+        /// - Kayıt soft delete yapıldığında set edilir
+        /// - IsDeleted = true ise bu alan dolu olmalı
+        /// - Hard delete yapılmadığı sürece kayıt korunur
+        ///
+        /// DateTime? (NULLABLE) AÇIKLAMASI:
+        /// - "?" işareti bu alanın null olabileceğini belirtir
+        /// - Silinmemiş kayıtlarda null kalır
+        /// </summary>
+        public DateTime? DeletedDate { get; set; }
     }
 }

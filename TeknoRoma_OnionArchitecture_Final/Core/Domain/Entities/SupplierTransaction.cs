@@ -245,6 +245,20 @@ namespace Domain.Entities
         /// </summary>
         public DateTime? PaymentDate { get; set; }
 
+        /// <summary>
+        /// Vade Tarihi (Opsiyonel)
+        ///
+        /// AÇIKLAMA:
+        /// - Tedarikçiye ödemenin yapılması gereken son tarih
+        /// - B2B alımlarda genellikle 30-60-90 gün vade
+        /// - Nakit akış planlaması için kritik
+        ///
+        /// NULLABLE (DateTime?):
+        /// - Peşin alımlarda null olabilir
+        /// - Vadeli alımlarda mutlaka set edilmeli
+        /// </summary>
+        public DateTime? DueDate { get; set; }
+
         // ====================================================================
         // NAVIGATION PROPERTIES
         // ====================================================================

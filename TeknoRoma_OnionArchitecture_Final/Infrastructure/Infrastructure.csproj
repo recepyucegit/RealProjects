@@ -53,6 +53,9 @@
     <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="8.0.0">
       <PrivateAssets>All</PrivateAssets>
     </PackageReference>
+
+    <!-- HttpClientFactory: AddHttpClient icin gerekli -->
+    <PackageReference Include="Microsoft.Extensions.Http" Version="8.0.0" />
   </ItemGroup>
 
   <!-- PROJE REFERANSLARI -->
