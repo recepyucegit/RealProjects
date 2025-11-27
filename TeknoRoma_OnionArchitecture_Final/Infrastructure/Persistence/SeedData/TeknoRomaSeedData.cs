@@ -470,5 +470,259 @@ namespace Infrastructure.Persistence.SeedData
             _cachedProducts = products;
             return products;
         }
+
+        // ====================================================================
+        // SATIŞ SEED DATA
+        // ====================================================================
+
+        /// <summary>
+        /// Satış kayıtlarını oluşturur (son 6 ayın satışları)
+        /// </summary>
+        public static List<Sale> GetSales()
+        {
+            Randomizer.Seed = new Random(RandomSeed);
+            var customers = GetCustomers();
+            var employees = GetEmployees();
+            var stores = GetStores();
+            var sales = new List<Sale>();
+
+            // Son 6 ay için satışlar oluştur (yaklaşık 1000 satış)
+            for (int i = 0; i < 1000; i++)
+            {
+                var faker = new Faker<Sale>("tr")
+                    .RuleFor(s => s.Id, f => _saleIdCounter++)
+                    .RuleFor(s => s.SaleNumber, f => $"S-2024-{_saleIdCounter:00000}")
+                    .RuleFor(s => s.SaleDate, f => f.Date.Between(DateTime.Now.AddMonths(-6), DateTime.Now))
+                    .RuleFor(s => s.CustomerId, f => f.PickRandom(customers).Id)
+                    .RuleFor(s => s.EmployeeId, f => f.PickRandom(employees).Id)
+                    .RuleFor(s => s.StoreId, f => f.PickRandom(stores).Id)
+                    .RuleFor(s => s.PaymentType, f => f.PickRandom<PaymentType>())
+                    .RuleFor(s => s.Status, f => f.PickRandom(SaleStatus.Tamamlandi, SaleStatus.Tamamlandi, SaleStatus.Tamamlandi, SaleStatus.Iptal)) // %75 tamamlandı
+                    .RuleFor(s => s.SubTotal, f => 0) // SaleDetail eklenince hesaplanacak
+                    .RuleFor(s => s.TaxAmount, f => 0)
+                    .RuleFor(s => s.TotalAmount, f => 0)
+                    .RuleFor(s => s.CreatedDate, f => f.Date.Recent(180));
+
+                sales.Add(faker.Generate());
+            }
+
+            return sales;
+        }
+
+        /// <summary>
+        /// Satış detaylarını oluşturur (her satışta 1-5 ürün)
+        /// </summary>
+        public static List<SaleDetail> GetSaleDetails()
+        {
+            Randomizer.Seed = new Random(RandomSeed);
+            var sales = GetSales();
+            var products = GetProducts();
+            var saleDetails = new List<SaleDetail>();
+
+            foreach (var sale in sales)
+            {
+                // Her satışta 1-5 arası ürün
+                var itemCount = new Random(sale.Id).Next(1, 6);
+                var selectedProducts = new Faker().PickRandom(products, itemCount).ToList();
+
+                foreach (var product in selectedProducts)
+                {
+                    var quantity = new Random(sale.Id + product.Id).Next(1, 4); // 1-3 adet
+                    var unitPrice = product.UnitPrice;
+                    var lineTotal = quantity * unitPrice;
+
+                    saleDetails.Add(new SaleDetail
+                    {
+                        Id = _saleDetailIdCounter++,
+                        SaleId = sale.Id,
+                        ProductId = product.Id,
+                        ProductName = product.Name,
+                        Quantity = quantity,
+                        UnitPrice = unitPrice,
+                        LineTotal = lineTotal,
+                        CreatedDate = sale.SaleDate
+                    });
+                }
+            }
+
+            return saleDetails;
+        }
+
+        // ====================================================================
+        // GİDER SEED DATA
+        // ====================================================================
+
+        /// <summary>
+        /// Gider kayıtlarını oluşturur (aylık giderler)
+        /// </summary>
+        public static List<Expense> GetExpenses()
+        {
+            Randomizer.Seed = new Random(RandomSeed);
+            var stores = GetStores();
+            var employees = GetEmployees();
+            var expenses = new List<Expense>();
+
+            // Son 12 ay için giderler
+            for (int month = 1; month <= 12; month++)
+            {
+                var expenseDate = DateTime.Now.AddMonths(-month);
+
+                // Her mağaza için aylık giderler
+                foreach (var store in stores)
+                {
+                    // Kira gideri
+                    expenses.Add(new Expense
+                    {
+                        Id = _expenseIdCounter++,
+                        ExpenseNumber = $"G-2024-{_expenseIdCounter:00000}",
+                        Description = $"{store.Name} - Aylık Kira",
+                        ExpenseDate = expenseDate,
+                        Amount = new Faker().Random.Decimal(15000, 50000),
+                        Currency = Currency.TRY,
+                        ExpenseType = ExpenseType.Fatura,
+                        StoreId = store.Id,
+                        IsPaid = true,
+                        PaymentDate = expenseDate.AddDays(5),
+                        CreatedDate = expenseDate
+                    });
+
+                    // Elektrik gideri
+                    expenses.Add(new Expense
+                    {
+                        Id = _expenseIdCounter++,
+                        ExpenseNumber = $"G-2024-{_expenseIdCounter:00000}",
+                        Description = $"{store.Name} - Elektrik Faturası",
+                        ExpenseDate = expenseDate,
+                        Amount = new Faker().Random.Decimal(3000, 8000),
+                        Currency = Currency.TRY,
+                        ExpenseType = ExpenseType.Fatura,
+                        StoreId = store.Id,
+                        IsPaid = true,
+                        PaymentDate = expenseDate.AddDays(7),
+                        CreatedDate = expenseDate
+                    });
+                }
+
+                // Teknik altyapı giderleri (toplam için)
+                expenses.Add(new Expense
+                {
+                    Id = _expenseIdCounter++,
+                    ExpenseNumber = $"G-2024-{_expenseIdCounter:00000}",
+                    Description = "Azure Cloud Services - Aylık Abonelik",
+                    ExpenseDate = expenseDate,
+                    Amount = 500, // USD
+                    Currency = Currency.USD,
+                    ExchangeRate = 32.5m,
+                    ExpenseType = ExpenseType.TeknikAltyapiGideri,
+                    IsPaid = true,
+                    PaymentDate = expenseDate.AddDays(3),
+                    CreatedDate = expenseDate
+                });
+            }
+
+            return expenses.Take(500).ToList(); // 500 gider kaydı ile sınırla
+        }
+
+        // ====================================================================
+        // TEDARİKÇİ İŞLEM SEED DATA
+        // ====================================================================
+
+        /// <summary>
+        /// Tedarikçi işlemlerini oluşturur (ürün alımları)
+        /// </summary>
+        public static List<SupplierTransaction> GetSupplierTransactions()
+        {
+            Randomizer.Seed = new Random(RandomSeed);
+            var suppliers = GetSuppliers();
+            var products = GetProducts();
+            var employees = GetEmployees();
+            var transactions = new List<SupplierTransaction>();
+
+            // Son 12 ay için tedarikçi alımları
+            for (int i = 0; i < 200; i++)
+            {
+                var product = new Faker().PickRandom(products);
+                var quantity = new Faker().Random.Number(10, 100);
+                var unitPrice = product.UnitPrice * 0.7m; // %30 kar marjı
+                var totalAmount = quantity * unitPrice;
+
+                transactions.Add(new SupplierTransaction
+                {
+                    Id = _supplierTransactionIdCounter++,
+                    TransactionNumber = $"TH-2024-{_supplierTransactionIdCounter:00000}",
+                    TransactionDate = new Faker().Date.Between(DateTime.Now.AddMonths(-12), DateTime.Now.AddMonths(-1)),
+                    SupplierId = product.SupplierId,
+                    ProductId = product.Id,
+                    Quantity = quantity,
+                    UnitPrice = unitPrice,
+                    TotalAmount = totalAmount,
+                    DocumentNumber = new Faker().Random.ReplaceNumbers("FAT-####-######"),
+                    IsPaid = new Faker().Random.Bool(0.8f), // %80 ödenmiş
+                    PaymentDate = new Faker().Random.Bool(0.8f) ? (DateTime?)new Faker().Date.Recent(30) : null,
+                    EmployeeId = new Faker().PickRandom(employees.Where(e => e.Role == UserRole.Depo)).Id,
+                    CreatedDate = new Faker().Date.Recent(365)
+                });
+            }
+
+            return transactions;
+        }
+
+        // ====================================================================
+        // TEKNİK SERVİS SEED DATA
+        // ====================================================================
+
+        /// <summary>
+        /// Teknik servis kayıtlarını oluşturur
+        /// </summary>
+        public static List<TechnicalService> GetTechnicalServices()
+        {
+            Randomizer.Seed = new Random(RandomSeed);
+            var customers = GetCustomers();
+            var products = GetProducts();
+            var employees = GetEmployees();
+            var stores = GetStores();
+            var services = new List<TechnicalService>();
+
+            var issueTitles = new[]
+            {
+                "Cihaz açılmıyor",
+                "Ekran kırık",
+                "Şarj olmuyor",
+                "Ses gelmiyor",
+                "Kamera çalışmıyor",
+                "Wi-Fi bağlanmıyor",
+                "Donma sorunu",
+                "Batarya şişmiş"
+            };
+
+            // 100 teknik servis kaydı
+            for (int i = 0; i < 100; i++)
+            {
+                var reportDate = new Faker().Date.Between(DateTime.Now.AddMonths(-6), DateTime.Now);
+                var isResolved = new Faker().Random.Bool(0.7f); // %70 çözülmüş
+
+                services.Add(new TechnicalService
+                {
+                    Id = _technicalServiceIdCounter++,
+                    ServiceNumber = $"TS-2024-{_technicalServiceIdCounter:00000}",
+                    Title = new Faker().PickRandom(issueTitles),
+                    Description = new Faker("tr").Lorem.Paragraph(),
+                    ReportedDate = reportDate,
+                    Priority = new Faker().Random.Number(1, 4),
+                    Status = isResolved ? TechnicalServiceStatus.Tamamlandi : new Faker().PickRandom<TechnicalServiceStatus>(),
+                    IsCustomerIssue = new Faker().Random.Bool(0.8f), // %80 müşteri sorunu
+                    CustomerId = new Faker().Random.Bool(0.8f) ? new Faker().PickRandom(customers).Id : (int?)null,
+                    ProductId = new Faker().Random.Bool(0.8f) ? new Faker().PickRandom(products).Id : (int?)null,
+                    ReportedByEmployeeId = new Faker().PickRandom(employees).Id,
+                    AssignedToEmployeeId = new Faker().PickRandom(employees.Where(e => e.Role == UserRole.TeknikServis)).Id,
+                    StoreId = new Faker().PickRandom(stores).Id,
+                    Resolution = isResolved ? new Faker("tr").Lorem.Sentence() : null,
+                    ResolvedDate = isResolved ? (DateTime?)reportDate.AddDays(new Faker().Random.Number(1, 10)) : null,
+                    CreatedDate = reportDate
+                });
+            }
+
+            return services;
+        }
     }
 }
