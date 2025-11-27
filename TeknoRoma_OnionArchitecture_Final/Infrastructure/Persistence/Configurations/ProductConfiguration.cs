@@ -23,6 +23,7 @@
 // ===================================================================================
 
 using Domain.Entities;
+using Infrastructure.Persistence.SeedData;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
@@ -127,6 +128,11 @@ namespace Infrastructure.Persistence.Configurations
             // =================================================================
             // Silinmis urunler otomatik filtrelenir
             builder.HasQueryFilter(p => !p.IsDeleted);
+
+            // =================================================================
+            // SEED DATA
+            // =================================================================
+            builder.HasData(TeknoRomaSeedData.GetProducts());
         }
     }
 }
