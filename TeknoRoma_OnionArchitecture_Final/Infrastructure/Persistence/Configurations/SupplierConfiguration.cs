@@ -8,6 +8,7 @@
 // ===================================================================================
 
 using Domain.Entities;
+using Infrastructure.Persistence.SeedData;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
@@ -78,6 +79,11 @@ namespace Infrastructure.Persistence.Configurations
             // GLOBAL QUERY FILTER
             // =================================================================
             builder.HasQueryFilter(s => !s.IsDeleted);
+
+            // =================================================================
+            // SEED DATA
+            // =================================================================
+            builder.HasData(TeknoRomaSeedData.GetSuppliers());
         }
     }
 }

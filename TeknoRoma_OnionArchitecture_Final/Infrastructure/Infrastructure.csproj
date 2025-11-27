@@ -56,6 +56,9 @@
 
     <!-- HttpClientFactory: AddHttpClient icin gerekli -->
     <PackageReference Include="Microsoft.Extensions.Http" Version="8.0.0" />
+
+    <!-- Bogus: Fake data generator - Seed data olusturmak icin -->
+    <PackageReference Include="Bogus" Version="35.6.1" />
   </ItemGroup>
 
   <!-- PROJE REFERANSLARI -->
