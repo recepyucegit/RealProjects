@@ -498,7 +498,7 @@ namespace Infrastructure.Persistence.SeedData
                     .RuleFor(s => s.StoreId, f => f.PickRandom(stores).Id)
                     .RuleFor(s => s.PaymentType, f => f.PickRandom<PaymentType>())
                     .RuleFor(s => s.Status, f => f.PickRandom(SaleStatus.Tamamlandi, SaleStatus.Tamamlandi, SaleStatus.Tamamlandi, SaleStatus.Iptal)) // %75 tamamlandı
-                    .RuleFor(s => s.SubTotal, f => 0) // SaleDetail eklenince hesaplanacak
+                    .RuleFor(s => s.Subtotal, f => 0) // SaleDetail eklenince hesaplanacak
                     .RuleFor(s => s.TaxAmount, f => 0)
                     .RuleFor(s => s.TotalAmount, f => 0)
                     .RuleFor(s => s.CreatedDate, f => f.Date.Recent(180));
@@ -539,7 +539,10 @@ namespace Infrastructure.Persistence.SeedData
                         ProductName = product.Name,
                         Quantity = quantity,
                         UnitPrice = unitPrice,
-                        LineTotal = lineTotal,
+                        Subtotal = lineTotal,
+                        DiscountPercentage = 0,
+                        DiscountAmount = 0,
+                        TotalAmount = lineTotal,
                         CreatedDate = sale.SaleDate
                     });
                 }
@@ -656,10 +659,9 @@ namespace Infrastructure.Persistence.SeedData
                     Quantity = quantity,
                     UnitPrice = unitPrice,
                     TotalAmount = totalAmount,
-                    DocumentNumber = new Faker().Random.ReplaceNumbers("FAT-####-######"),
+                    InvoiceNumber = new Faker().Random.ReplaceNumbers("FAT-####-######"),
                     IsPaid = new Faker().Random.Bool(0.8f), // %80 ödenmiş
                     PaymentDate = new Faker().Random.Bool(0.8f) ? (DateTime?)new Faker().Date.Recent(30) : null,
-                    EmployeeId = new Faker().PickRandom(employees.Where(e => e.Role == UserRole.Depo)).Id,
                     CreatedDate = new Faker().Date.Recent(365)
                 });
             }
@@ -712,7 +714,6 @@ namespace Infrastructure.Persistence.SeedData
                     Status = isResolved ? TechnicalServiceStatus.Tamamlandi : new Faker().PickRandom<TechnicalServiceStatus>(),
                     IsCustomerIssue = new Faker().Random.Bool(0.8f), // %80 müşteri sorunu
                     CustomerId = new Faker().Random.Bool(0.8f) ? new Faker().PickRandom(customers).Id : (int?)null,
-                    ProductId = new Faker().Random.Bool(0.8f) ? new Faker().PickRandom(products).Id : (int?)null,
                     ReportedByEmployeeId = new Faker().PickRandom(employees).Id,
                     AssignedToEmployeeId = new Faker().PickRandom(employees.Where(e => e.Role == UserRole.TeknikServis)).Id,
                     StoreId = new Faker().PickRandom(stores).Id,
