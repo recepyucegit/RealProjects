@@ -389,6 +389,13 @@ namespace Infrastructure.Persistence.SeedData
             var suppliers = GetSuppliers(); // Cache'den al
             var products = new List<Product>();
 
+            // Kategori veya supplier yoksa boş liste döndür
+            if (!categories.Any() || !suppliers.Any())
+            {
+                _cachedProducts = products;
+                return products;
+            }
+
             // Kategori bazında ürün isimleri
             var productTemplates = new Dictionary<string, string[]>
             {
@@ -486,6 +493,10 @@ namespace Infrastructure.Persistence.SeedData
             var stores = GetStores();
             var sales = new List<Sale>();
 
+            // Gerekli veriler yoksa boş liste döndür
+            if (!customers.Any() || !employees.Any() || !stores.Any())
+                return sales;
+
             // Son 6 ay için satışlar oluştur (yaklaşık 1000 satış)
             for (int i = 0; i < 1000; i++)
             {
@@ -519,10 +530,15 @@ namespace Infrastructure.Persistence.SeedData
             var products = GetProducts();
             var saleDetails = new List<SaleDetail>();
 
+            // Ürün yoksa boş liste döndür
+            if (!products.Any())
+                return saleDetails;
+
             foreach (var sale in sales)
             {
-                // Her satışta 1-5 arası ürün
-                var itemCount = new Random(sale.Id).Next(1, 6);
+                // Her satışta 1-5 arası ürün (ama ürün sayısından fazla seçme)
+                var maxItems = Math.Min(5, products.Count);
+                var itemCount = new Random(sale.Id).Next(1, maxItems + 1);
                 var selectedProducts = new Faker().PickRandom(products, itemCount).ToList();
 
                 foreach (var product in selectedProducts)
@@ -564,6 +580,10 @@ namespace Infrastructure.Persistence.SeedData
             var stores = GetStores();
             var employees = GetEmployees();
             var expenses = new List<Expense>();
+
+            // Store yoksa boş liste döndür
+            if (!stores.Any())
+                return expenses;
 
             // Son 12 ay için giderler
             for (int month = 1; month <= 12; month++)
@@ -652,6 +672,10 @@ namespace Infrastructure.Persistence.SeedData
             var employees = GetEmployees();
             var transactions = new List<SupplierTransaction>();
 
+            // Ürün yoksa boş liste döndür
+            if (!products.Any())
+                return transactions;
+
             // Son 12 ay için tedarikçi alımları
             for (int i = 0; i < 200; i++)
             {
@@ -696,6 +720,10 @@ namespace Infrastructure.Persistence.SeedData
             var employees = GetEmployees();
             var stores = GetStores();
             var services = new List<TechnicalService>();
+
+            // Gerekli veriler yoksa boş liste döndür
+            if (!customers.Any() || !employees.Any() || !stores.Any())
+                return services;
 
             // Teknik servis çalışanlarını önceden filtrele (boş array kontrolü için)
             var techServiceEmployees = employees.Where(e => e.Role == UserRole.TeknikServis).ToList();
