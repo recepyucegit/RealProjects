@@ -260,7 +260,7 @@ namespace Infrastructure.Persistence.SeedData
                 .RuleFor(s => s.Address, f => f.Address.FullAddress())
                 .RuleFor(s => s.City, f => f.PickRandom("İstanbul", "İzmir", "Ankara", "Bursa"))
                 .RuleFor(s => s.Country, f => "Türkiye")
-                .RuleFor(s => s.TaxNumber, f => f.Random.Number(1000000000, 9999999999).ToString())
+                .RuleFor(s => s.TaxNumber, f => f.Random.ReplaceNumbers("##########"))
                 .RuleFor(s => s.IsActive, f => true)
                 .RuleFor(s => s.CreatedDate, f => DateTime.Now.AddMonths(-12));
 
@@ -491,7 +491,7 @@ namespace Infrastructure.Persistence.SeedData
             {
                 var faker = new Faker<Sale>("tr")
                     .RuleFor(s => s.Id, f => _saleIdCounter++)
-                    .RuleFor(s => s.SaleNumber, f => $"S-2024-{_saleIdCounter:00000}")
+                    .RuleFor(s => s.SaleNumber, (f, s) => $"S-2024-{s.Id:00000}")
                     .RuleFor(s => s.SaleDate, f => f.Date.Between(DateTime.Now.AddMonths(-6), DateTime.Now))
                     .RuleFor(s => s.CustomerId, f => f.PickRandom(customers).Id)
                     .RuleFor(s => s.EmployeeId, f => f.PickRandom(employees).Id)
@@ -574,10 +574,11 @@ namespace Infrastructure.Persistence.SeedData
                 foreach (var store in stores)
                 {
                     // Kira gideri
+                    var rentExpenseId = _expenseIdCounter++;
                     expenses.Add(new Expense
                     {
-                        Id = _expenseIdCounter++,
-                        ExpenseNumber = $"G-2024-{_expenseIdCounter:00000}",
+                        Id = rentExpenseId,
+                        ExpenseNumber = $"G-2024-{rentExpenseId:00000}",
                         Description = $"{store.Name} - Aylık Kira",
                         ExpenseDate = expenseDate,
                         Amount = new Faker().Random.Decimal(15000, 50000),
@@ -590,10 +591,11 @@ namespace Infrastructure.Persistence.SeedData
                     });
 
                     // Elektrik gideri
+                    var electricityExpenseId = _expenseIdCounter++;
                     expenses.Add(new Expense
                     {
-                        Id = _expenseIdCounter++,
-                        ExpenseNumber = $"G-2024-{_expenseIdCounter:00000}",
+                        Id = electricityExpenseId,
+                        ExpenseNumber = $"G-2024-{electricityExpenseId:00000}",
                         Description = $"{store.Name} - Elektrik Faturası",
                         ExpenseDate = expenseDate,
                         Amount = new Faker().Random.Decimal(3000, 8000),
@@ -607,10 +609,11 @@ namespace Infrastructure.Persistence.SeedData
                 }
 
                 // Teknik altyapı giderleri (toplam için)
+                var cloudExpenseId = _expenseIdCounter++;
                 expenses.Add(new Expense
                 {
-                    Id = _expenseIdCounter++,
-                    ExpenseNumber = $"G-2024-{_expenseIdCounter:00000}",
+                    Id = cloudExpenseId,
+                    ExpenseNumber = $"G-2024-{cloudExpenseId:00000}",
                     Description = "Azure Cloud Services - Aylık Abonelik",
                     ExpenseDate = expenseDate,
                     Amount = 500, // USD
@@ -648,11 +651,12 @@ namespace Infrastructure.Persistence.SeedData
                 var quantity = new Faker().Random.Number(10, 100);
                 var unitPrice = product.UnitPrice * 0.7m; // %30 kar marjı
                 var totalAmount = quantity * unitPrice;
+                var transactionId = _supplierTransactionIdCounter++;
 
                 transactions.Add(new SupplierTransaction
                 {
-                    Id = _supplierTransactionIdCounter++,
-                    TransactionNumber = $"TH-2024-{_supplierTransactionIdCounter:00000}",
+                    Id = transactionId,
+                    TransactionNumber = $"TH-2024-{transactionId:00000}",
                     TransactionDate = new Faker().Date.Between(DateTime.Now.AddMonths(-12), DateTime.Now.AddMonths(-1)),
                     SupplierId = product.SupplierId,
                     ProductId = product.Id,
@@ -702,11 +706,12 @@ namespace Infrastructure.Persistence.SeedData
             {
                 var reportDate = new Faker().Date.Between(DateTime.Now.AddMonths(-6), DateTime.Now);
                 var isResolved = new Faker().Random.Bool(0.7f); // %70 çözülmüş
+                var serviceId = _technicalServiceIdCounter++;
 
                 services.Add(new TechnicalService
                 {
-                    Id = _technicalServiceIdCounter++,
-                    ServiceNumber = $"TS-2024-{_technicalServiceIdCounter:00000}",
+                    Id = serviceId,
+                    ServiceNumber = $"TS-2024-{serviceId:00000}",
                     Title = new Faker().PickRandom(issueTitles),
                     Description = new Faker("tr").Lorem.Paragraph(),
                     ReportedDate = reportDate,
