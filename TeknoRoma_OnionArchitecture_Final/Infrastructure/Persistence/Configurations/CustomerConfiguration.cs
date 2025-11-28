@@ -8,7 +8,6 @@
 // ===================================================================================
 
 using Domain.Entities;
-using Infrastructure.Persistence.SeedData;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
@@ -81,7 +80,6 @@ namespace Infrastructure.Persistence.Configurations
             // =================================================================
             // SEED DATA
             // =================================================================
-            builder.HasData(TeknoRomaSeedData.GetCustomers());
         }
     }
 }

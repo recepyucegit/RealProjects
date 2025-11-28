@@ -55,6 +55,7 @@
 
 using Domain.Entities;
 using Domain.Enums;
+using Infrastructure.Persistence.SeedData;
 using Microsoft.EntityFrameworkCore;
 
 namespace Infrastructure.Persistence
@@ -435,6 +436,49 @@ namespace Infrastructure.Persistence
             // - TechnicalServiceConfiguration.cs
             // =================================================================
             modelBuilder.ApplyConfigurationsFromAssembly(typeof(AppDbContext).Assembly);
+
+            // =================================================================
+            // SEED DATA - BAŞLANGIÇ VERİLERİ
+            // =================================================================
+            // Seed data'lar doğru sırayla eklenmelidir (bağımlılık sırasına göre)
+            //
+            // SIRALAMA KURALLARI:
+            // 1. Önce bağımlılığı olmayan tablolar (Category, Store, Supplier, Customer)
+            // 2. Sonra bunlara bağımlı tablolar (Department, Employee, Product)
+            // 3. En son işlemsel tablolar (Sale, SaleDetail, Expense, vb.)
+            //
+            // NOT: Her metot boş array kontrolü yapar, hata vermez
+            // =================================================================
+
+            // Bağımlılığı olmayan tablolar
+            modelBuilder.Entity<Category>().HasData(TeknoRomaSeedData.GetCategories());
+            modelBuilder.Entity<Store>().HasData(TeknoRomaSeedData.GetStores());
+            modelBuilder.Entity<Supplier>().HasData(TeknoRomaSeedData.GetSuppliers());
+            modelBuilder.Entity<Customer>().HasData(TeknoRomaSeedData.GetCustomers());
+
+            // Store'a bağımlı tablolar
+            modelBuilder.Entity<Department>().HasData(TeknoRomaSeedData.GetDepartments());
+
+            // Store ve Department'a bağımlı
+            modelBuilder.Entity<Employee>().HasData(TeknoRomaSeedData.GetEmployees());
+
+            // Category ve Supplier'a bağımlı
+            modelBuilder.Entity<Product>().HasData(TeknoRomaSeedData.GetProducts());
+
+            // Customer, Employee, Store'a bağımlı
+            modelBuilder.Entity<Sale>().HasData(TeknoRomaSeedData.GetSales());
+
+            // Sale ve Product'a bağımlı
+            modelBuilder.Entity<SaleDetail>().HasData(TeknoRomaSeedData.GetSaleDetails());
+
+            // Store'a bağımlı
+            modelBuilder.Entity<Expense>().HasData(TeknoRomaSeedData.GetExpenses());
+
+            // Supplier ve Product'a bağımlı
+            modelBuilder.Entity<SupplierTransaction>().HasData(TeknoRomaSeedData.GetSupplierTransactions());
+
+            // Customer, Employee, Store'a bağımlı
+            modelBuilder.Entity<TechnicalService>().HasData(TeknoRomaSeedData.GetTechnicalServices());
         }
 
         // =====================================================================
