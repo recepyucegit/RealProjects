@@ -55,6 +55,7 @@
 
 using Domain.Entities;
 using Domain.Enums;
+using Infrastructure.Persistence.SeedData;
 using Microsoft.EntityFrameworkCore;
 
 namespace Infrastructure.Persistence
@@ -439,9 +440,9 @@ namespace Infrastructure.Persistence
             // =================================================================
             // SEED DATA - BAŞLANGIÇ VERİLERİ
             // =================================================================
-            // TODO: Seed data eklenecek (şimdilik devre dışı)
-            // Önce veritabanı yapısını oluşturalım, sonra adım adım seed data ekleyelim
+            // Adım 1: Category (10 kayıt - bağımlılık yok)
             // =================================================================
+            modelBuilder.Entity<Category>().HasData(TeknoRomaSeedData.GetCategories());
         }
 
         // =====================================================================
