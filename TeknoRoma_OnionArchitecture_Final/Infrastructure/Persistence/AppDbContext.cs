@@ -454,6 +454,13 @@ namespace Infrastructure.Persistence
 
             // Adım 4: Product (Category ve Supplier'a bağımlı)
             modelBuilder.Entity<Product>().HasData(TeknoRomaSeedData.GetProducts());        // ~70 ürün
+
+            // Adım 5: İşlemsel veriler (Transactional data)
+            modelBuilder.Entity<Sale>().HasData(TeknoRomaSeedData.GetSales());                              // 1,000 satış
+            modelBuilder.Entity<SaleDetail>().HasData(TeknoRomaSeedData.GetSaleDetails());                  // ~2,500 satış kalemi
+            modelBuilder.Entity<Expense>().HasData(TeknoRomaSeedData.GetExpenses());                        // 500 gider
+            modelBuilder.Entity<SupplierTransaction>().HasData(TeknoRomaSeedData.GetSupplierTransactions()); // 200 tedarikçi işlemi
+            modelBuilder.Entity<TechnicalService>().HasData(TeknoRomaSeedData.GetTechnicalServices());      // 100 teknik servis
             // =================================================================
         }
 
