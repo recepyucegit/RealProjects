@@ -61,6 +61,11 @@ namespace Infrastructure.Persistence.SeedData
         private static List<Customer>? _cachedCustomers;
         private static List<Employee>? _cachedEmployees;
         private static List<Product>? _cachedProducts;
+        private static List<Sale>? _cachedSales;
+        private static List<SaleDetail>? _cachedSaleDetails;
+        private static List<Expense>? _cachedExpenses;
+        private static List<SupplierTransaction>? _cachedSupplierTransactions;
+        private static List<TechnicalService>? _cachedTechnicalServices;
 
         // ====================================================================
         // ID TRACKER'LAR - Foreign Key İlişkileri İçin
@@ -487,6 +492,9 @@ namespace Infrastructure.Persistence.SeedData
         /// </summary>
         public static List<Sale> GetSales()
         {
+            if (_cachedSales != null)
+                return _cachedSales;
+
             Randomizer.Seed = new Random(RandomSeed);
             var customers = GetCustomers();
             var employees = GetEmployees();
@@ -495,7 +503,10 @@ namespace Infrastructure.Persistence.SeedData
 
             // Gerekli veriler yoksa boş liste döndür
             if (!customers.Any() || !employees.Any() || !stores.Any())
+            {
+                _cachedSales = sales;
                 return sales;
+            }
 
             // Son 6 ay için satışlar oluştur (yaklaşık 1000 satış)
             for (int i = 0; i < 1000; i++)
@@ -517,6 +528,7 @@ namespace Infrastructure.Persistence.SeedData
                 sales.Add(faker.Generate());
             }
 
+            _cachedSales = sales;
             return sales;
         }
 
@@ -525,6 +537,9 @@ namespace Infrastructure.Persistence.SeedData
         /// </summary>
         public static List<SaleDetail> GetSaleDetails()
         {
+            if (_cachedSaleDetails != null)
+                return _cachedSaleDetails;
+
             Randomizer.Seed = new Random(RandomSeed);
             var sales = GetSales();
             var products = GetProducts();
@@ -532,7 +547,10 @@ namespace Infrastructure.Persistence.SeedData
 
             // Ürün yoksa boş liste döndür
             if (!products.Any())
+            {
+                _cachedSaleDetails = saleDetails;
                 return saleDetails;
+            }
 
             foreach (var sale in sales)
             {
@@ -564,6 +582,7 @@ namespace Infrastructure.Persistence.SeedData
                 }
             }
 
+            _cachedSaleDetails = saleDetails;
             return saleDetails;
         }
 
@@ -576,6 +595,9 @@ namespace Infrastructure.Persistence.SeedData
         /// </summary>
         public static List<Expense> GetExpenses()
         {
+            if (_cachedExpenses != null)
+                return _cachedExpenses;
+
             Randomizer.Seed = new Random(RandomSeed);
             var stores = GetStores();
             var employees = GetEmployees();
@@ -583,7 +605,10 @@ namespace Infrastructure.Persistence.SeedData
 
             // Store yoksa boş liste döndür
             if (!stores.Any())
+            {
+                _cachedExpenses = expenses;
                 return expenses;
+            }
 
             // Son 12 ay için giderler
             for (int month = 1; month <= 12; month++)
@@ -654,7 +679,8 @@ namespace Infrastructure.Persistence.SeedData
                 });
             }
 
-            return expenses.Take(500).ToList(); // 500 gider kaydı ile sınırla
+            _cachedExpenses = expenses.Take(500).ToList(); // 500 gider kaydı ile sınırla
+            return _cachedExpenses;
         }
 
         // ====================================================================
@@ -666,6 +692,9 @@ namespace Infrastructure.Persistence.SeedData
         /// </summary>
         public static List<SupplierTransaction> GetSupplierTransactions()
         {
+            if (_cachedSupplierTransactions != null)
+                return _cachedSupplierTransactions;
+
             Randomizer.Seed = new Random(RandomSeed);
             var suppliers = GetSuppliers();
             var products = GetProducts();
@@ -674,7 +703,10 @@ namespace Infrastructure.Persistence.SeedData
 
             // Ürün yoksa boş liste döndür
             if (!products.Any())
+            {
+                _cachedSupplierTransactions = transactions;
                 return transactions;
+            }
 
             // Son 12 ay için tedarikçi alımları
             for (int i = 0; i < 200; i++)
@@ -702,6 +734,7 @@ namespace Infrastructure.Persistence.SeedData
                 });
             }
 
+            _cachedSupplierTransactions = transactions;
             return transactions;
         }
 
@@ -714,6 +747,9 @@ namespace Infrastructure.Persistence.SeedData
         /// </summary>
         public static List<TechnicalService> GetTechnicalServices()
         {
+            if (_cachedTechnicalServices != null)
+                return _cachedTechnicalServices;
+
             Randomizer.Seed = new Random(RandomSeed);
             var customers = GetCustomers();
             var products = GetProducts();
@@ -723,7 +759,10 @@ namespace Infrastructure.Persistence.SeedData
 
             // Gerekli veriler yoksa boş liste döndür
             if (!customers.Any() || !employees.Any() || !stores.Any())
+            {
+                _cachedTechnicalServices = services;
                 return services;
+            }
 
             // Teknik servis çalışanlarını önceden filtrele (boş array kontrolü için)
             var techServiceEmployees = employees.Where(e => e.Role == UserRole.TeknikServis).ToList();
@@ -779,6 +818,7 @@ namespace Infrastructure.Persistence.SeedData
                 });
             }
 
+            _cachedTechnicalServices = services;
             return services;
         }
     }
