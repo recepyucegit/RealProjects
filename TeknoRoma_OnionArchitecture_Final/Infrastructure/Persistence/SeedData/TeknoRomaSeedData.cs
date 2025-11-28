@@ -575,14 +575,16 @@ namespace Infrastructure.Persistence.SeedData
                 {
                     // Kira gideri
                     var rentExpenseId = _expenseIdCounter++;
+                    var rentAmount = new Faker().Random.Decimal(15000, 50000);
                     expenses.Add(new Expense
                     {
                         Id = rentExpenseId,
                         ExpenseNumber = $"G-2024-{rentExpenseId:00000}",
                         Description = $"{store.Name} - Aylık Kira",
                         ExpenseDate = expenseDate,
-                        Amount = new Faker().Random.Decimal(15000, 50000),
+                        Amount = rentAmount,
                         Currency = Currency.TRY,
+                        AmountInTRY = rentAmount, // TRY ise Amount ile aynı
                         ExpenseType = ExpenseType.Fatura,
                         StoreId = store.Id,
                         IsPaid = true,
@@ -592,14 +594,16 @@ namespace Infrastructure.Persistence.SeedData
 
                     // Elektrik gideri
                     var electricityExpenseId = _expenseIdCounter++;
+                    var electricityAmount = new Faker().Random.Decimal(3000, 8000);
                     expenses.Add(new Expense
                     {
                         Id = electricityExpenseId,
                         ExpenseNumber = $"G-2024-{electricityExpenseId:00000}",
                         Description = $"{store.Name} - Elektrik Faturası",
                         ExpenseDate = expenseDate,
-                        Amount = new Faker().Random.Decimal(3000, 8000),
+                        Amount = electricityAmount,
                         Currency = Currency.TRY,
+                        AmountInTRY = electricityAmount, // TRY ise Amount ile aynı
                         ExpenseType = ExpenseType.Fatura,
                         StoreId = store.Id,
                         IsPaid = true,
@@ -608,18 +612,22 @@ namespace Infrastructure.Persistence.SeedData
                     });
                 }
 
-                // Teknik altyapı giderleri (toplam için)
+                // Teknik altyapı giderleri (genel gider - ilk store'a ata)
                 var cloudExpenseId = _expenseIdCounter++;
+                var cloudAmountUSD = 500m;
+                var exchangeRate = 32.5m;
                 expenses.Add(new Expense
                 {
                     Id = cloudExpenseId,
                     ExpenseNumber = $"G-2024-{cloudExpenseId:00000}",
                     Description = "Azure Cloud Services - Aylık Abonelik",
                     ExpenseDate = expenseDate,
-                    Amount = 500, // USD
+                    Amount = cloudAmountUSD, // USD
                     Currency = Currency.USD,
-                    ExchangeRate = 32.5m,
+                    ExchangeRate = exchangeRate,
+                    AmountInTRY = cloudAmountUSD * exchangeRate, // USD'yi TRY'ye çevir
                     ExpenseType = ExpenseType.TeknikAltyapiGideri,
+                    StoreId = stores.First().Id, // Genel gider - merkez mağazaya ata
                     IsPaid = true,
                     PaymentDate = expenseDate.AddDays(3),
                     CreatedDate = expenseDate
@@ -689,6 +697,9 @@ namespace Infrastructure.Persistence.SeedData
             var stores = GetStores();
             var services = new List<TechnicalService>();
 
+            // Teknik servis çalışanlarını önceden filtrele (boş array kontrolü için)
+            var techServiceEmployees = employees.Where(e => e.Role == UserRole.TeknikServis).ToList();
+
             var issueTitles = new[]
             {
                 "Cihaz açılmıyor",
@@ -708,6 +719,18 @@ namespace Infrastructure.Persistence.SeedData
                 var isResolved = new Faker().Random.Bool(0.7f); // %70 çözülmüş
                 var serviceId = _technicalServiceIdCounter++;
 
+                // AssignedToEmployeeId için güvenli seçim
+                int? assignedEmployeeId = null;
+                if (techServiceEmployees.Any())
+                {
+                    assignedEmployeeId = new Faker().PickRandom(techServiceEmployees).Id;
+                }
+                else if (employees.Any())
+                {
+                    // Teknik servis çalışanı yoksa herhangi bir çalışan seç
+                    assignedEmployeeId = new Faker().PickRandom(employees).Id;
+                }
+
                 services.Add(new TechnicalService
                 {
                     Id = serviceId,
@@ -720,7 +743,7 @@ namespace Infrastructure.Persistence.SeedData
                     IsCustomerIssue = new Faker().Random.Bool(0.8f), // %80 müşteri sorunu
                     CustomerId = new Faker().Random.Bool(0.8f) ? new Faker().PickRandom(customers).Id : (int?)null,
                     ReportedByEmployeeId = new Faker().PickRandom(employees).Id,
-                    AssignedToEmployeeId = new Faker().PickRandom(employees.Where(e => e.Role == UserRole.TeknikServis)).Id,
+                    AssignedToEmployeeId = assignedEmployeeId,
                     StoreId = new Faker().PickRandom(stores).Id,
                     Resolution = isResolved ? new Faker("tr").Lorem.Sentence() : null,
                     ResolvedDate = isResolved ? (DateTime?)reportDate.AddDays(new Faker().Random.Number(1, 10)) : null,
