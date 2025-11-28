@@ -447,6 +447,10 @@ namespace Infrastructure.Persistence
             modelBuilder.Entity<Store>().HasData(TeknoRomaSeedData.GetStores());        // 55 mağaza
             modelBuilder.Entity<Supplier>().HasData(TeknoRomaSeedData.GetSuppliers());  // 20 tedarikçi
             modelBuilder.Entity<Customer>().HasData(TeknoRomaSeedData.GetCustomers());  // 500 müşteri
+
+            // Adım 3: Department, Employee (Store'a bağımlı)
+            modelBuilder.Entity<Department>().HasData(TeknoRomaSeedData.GetDepartments());  // 30 departman
+            modelBuilder.Entity<Employee>().HasData(TeknoRomaSeedData.GetEmployees());      // 258 çalışan
             // =================================================================
         }
 
