@@ -441,8 +441,13 @@ namespace Infrastructure.Persistence
             // SEED DATA - BAŞLANGIÇ VERİLERİ
             // =================================================================
             // Adım 1: Category (10 kayıt - bağımlılık yok)
-            // =================================================================
             modelBuilder.Entity<Category>().HasData(TeknoRomaSeedData.GetCategories());
+
+            // Adım 2: Store, Supplier, Customer (bağımlılık yok)
+            modelBuilder.Entity<Store>().HasData(TeknoRomaSeedData.GetStores());        // 55 mağaza
+            modelBuilder.Entity<Supplier>().HasData(TeknoRomaSeedData.GetSuppliers());  // 20 tedarikçi
+            modelBuilder.Entity<Customer>().HasData(TeknoRomaSeedData.GetCustomers());  // 500 müşteri
+            // =================================================================
         }
 
         // =====================================================================
