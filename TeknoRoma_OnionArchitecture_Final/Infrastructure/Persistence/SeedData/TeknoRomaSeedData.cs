@@ -199,6 +199,9 @@ namespace Infrastructure.Persistence.SeedData
             if (_cachedDepartments != null)
                 return _cachedDepartments;
 
+            // ID counter'ı sıfırla (her çağrıda aynı ID'leri kullanmak için)
+            _departmentIdCounter = 1;
+
             var stores = GetStores(); // Cache'den al
             var departments = new List<Department>();
             var departmentTypes = new[]
