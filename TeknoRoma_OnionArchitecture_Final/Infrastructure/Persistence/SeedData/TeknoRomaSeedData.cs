@@ -327,7 +327,7 @@ namespace Infrastructure.Persistence.SeedData
                 .RuleFor(c => c.FirstName, f => f.Name.FirstName())
                 .RuleFor(c => c.LastName, f => f.Name.LastName())
                 .RuleFor(c => c.BirthDate, f => f.Date.Past(50, DateTime.Now.AddYears(-18))) // 18-68 yaş arası
-                .RuleFor(c => c.Gender, f => f.PickRandom<Gender?>())
+                .RuleFor(c => c.Gender, f => f.Random.Bool() ? Gender.Erkek : Gender.Kadin) // Rastgele Erkek veya Kadın
                 .RuleFor(c => c.Email, f => f.Internet.Email())
                 .RuleFor(c => c.Phone, f => f.Phone.PhoneNumber("05## ### ## ##"))
                 .RuleFor(c => c.Address, f => f.Address.FullAddress())
