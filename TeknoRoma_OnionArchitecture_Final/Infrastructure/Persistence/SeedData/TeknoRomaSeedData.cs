@@ -234,7 +234,9 @@ namespace Infrastructure.Persistence.SeedData
                 // Kalan departmanları dağıt
                 if (departmentIndex < TotalDepartmentCount)
                 {
-                    var deptType = departmentTypes[departmentIndex % departmentTypes.Length];
+                    // İlk departman (Satış) zaten eklendi, diğerlerinden seç (1-4 arası)
+                    var typeIndex = (departmentIndex % (departmentTypes.Length - 1)) + 1;
+                    var deptType = departmentTypes[typeIndex];
                     departments.Add(new Department
                     {
                         Id = _departmentIdCounter++,
