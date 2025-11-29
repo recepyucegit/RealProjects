@@ -440,27 +440,15 @@ namespace Infrastructure.Persistence
             // =================================================================
             // SEED DATA - BAŞLANGIÇ VERİLERİ
             // =================================================================
-            // Adım 1: Category (10 kayıt - bağımlılık yok)
+            // ADIM 1: Category (10 kayıt - bağımlılık yok)
+            // Tek tek test ederek ilerleyeceğiz
             modelBuilder.Entity<Category>().HasData(TeknoRomaSeedData.GetCategories());
 
+            // TODO: Diğer seed datalar sırasıyla eklenecek
             // Adım 2: Store, Supplier, Customer (bağımlılık yok)
-            modelBuilder.Entity<Store>().HasData(TeknoRomaSeedData.GetStores());        // 55 mağaza
-            modelBuilder.Entity<Supplier>().HasData(TeknoRomaSeedData.GetSuppliers());  // 20 tedarikçi
-            modelBuilder.Entity<Customer>().HasData(TeknoRomaSeedData.GetCustomers());  // 500 müşteri
-
             // Adım 3: Department, Employee (Store'a bağımlı)
-            modelBuilder.Entity<Department>().HasData(TeknoRomaSeedData.GetDepartments());  // 30 departman
-            modelBuilder.Entity<Employee>().HasData(TeknoRomaSeedData.GetEmployees());      // 258 çalışan
-
             // Adım 4: Product (Category ve Supplier'a bağımlı)
-            modelBuilder.Entity<Product>().HasData(TeknoRomaSeedData.GetProducts());        // ~70 ürün
-
-            // Adım 5: İşlemsel veriler (Transactional data)
-            modelBuilder.Entity<Sale>().HasData(TeknoRomaSeedData.GetSales());                              // 1,000 satış
-            modelBuilder.Entity<SaleDetail>().HasData(TeknoRomaSeedData.GetSaleDetails());                  // ~2,500 satış kalemi
-            modelBuilder.Entity<Expense>().HasData(TeknoRomaSeedData.GetExpenses());                        // 500 gider
-            modelBuilder.Entity<SupplierTransaction>().HasData(TeknoRomaSeedData.GetSupplierTransactions()); // 200 tedarikçi işlemi
-            modelBuilder.Entity<TechnicalService>().HasData(TeknoRomaSeedData.GetTechnicalServices());      // 100 teknik servis
+            // Adım 5: İşlemsel veriler (Sale, SaleDetail, Expense, vb.)
             // =================================================================
         }
 
