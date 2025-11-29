@@ -440,12 +440,15 @@ namespace Infrastructure.Persistence
             // =================================================================
             // SEED DATA - BAŞLANGIÇ VERİLERİ
             // =================================================================
-            // ADIM 1: Category (10 kayıt - bağımlılık yok)
-            // Tek tek test ederek ilerleyeceğiz
+            // ADIM 1: Category (10 kayıt - bağımlılık yok) ✅ TEST EDİLDİ
             modelBuilder.Entity<Category>().HasData(TeknoRomaSeedData.GetCategories());
 
-            // TODO: Diğer seed datalar sırasıyla eklenecek
-            // Adım 2: Store, Supplier, Customer (bağımlılık yok)
+            // ADIM 2: Store, Supplier, Customer (bağımlılık yok) 🔄 TEST EDİLİYOR
+            modelBuilder.Entity<Store>().HasData(TeknoRomaSeedData.GetStores());        // 55 mağaza
+            modelBuilder.Entity<Supplier>().HasData(TeknoRomaSeedData.GetSuppliers());  // 20 tedarikçi
+            modelBuilder.Entity<Customer>().HasData(TeknoRomaSeedData.GetCustomers());  // 500 müşteri
+
+            // TODO: Sonraki adımlar
             // Adım 3: Department, Employee (Store'a bağımlı)
             // Adım 4: Product (Category ve Supplier'a bağımlı)
             // Adım 5: İşlemsel veriler (Sale, SaleDetail, Expense, vb.)
