@@ -443,11 +443,13 @@ namespace Infrastructure.Persistence
             // ADIM 1: Category (10 kayıt) ✅ TEST EDİLDİ
             modelBuilder.Entity<Category>().HasData(TeknoRomaSeedData.GetCategories());
 
-            // ADIM 2: Store (55 mağaza) 🔄 TEST EDİLİYOR
+            // ADIM 2: Store (55 mağaza) ✅ TEST EDİLDİ
             modelBuilder.Entity<Store>().HasData(TeknoRomaSeedData.GetStores());
 
+            // ADIM 3: Supplier (20 tedarikçi) 🔄 TEST EDİLİYOR
+            modelBuilder.Entity<Supplier>().HasData(TeknoRomaSeedData.GetSuppliers());
+
             // TODO: Sonraki adımlar - TEK TEK EKLENECEK
-            // Adım 3: Supplier (20 tedarikçi)
             // Adım 4: Customer (500 müşteri)
             // Adım 5: Department (30 departman)
             // Adım 6: Employee (258 çalışan)
