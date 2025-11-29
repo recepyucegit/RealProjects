@@ -409,6 +409,9 @@ namespace Infrastructure.Persistence.SeedData
             if (_cachedProducts != null)
                 return _cachedProducts;
 
+            // ID counter'ı sıfırla (her çağrıda aynı ID'leri kullanmak için)
+            _productIdCounter = 1;
+
             Randomizer.Seed = new Random(RandomSeed);
             var categories = GetCategories(); // Direkt çağır (zaten her seferinde aynı değerleri döndürüyor)
             var suppliers = GetSuppliers(); // Cache'den al

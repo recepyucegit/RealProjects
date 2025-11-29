@@ -455,12 +455,14 @@ namespace Infrastructure.Persistence
             // ADIM 5: Department (30 departman - Store'a bağımlı) ✅ TEST EDİLDİ
             modelBuilder.Entity<Department>().HasData(TeknoRomaSeedData.GetDepartments());
 
-            // ADIM 6: Employee (258 çalışan - Store ve Department'a bağımlı) 🔄 TEST EDİLİYOR
+            // ADIM 6: Employee (258 çalışan - Store ve Department'a bağımlı) ✅ TEST EDİLDİ
             modelBuilder.Entity<Employee>().HasData(TeknoRomaSeedData.GetEmployees());
 
-            // TODO: Sonraki adımlar - TEK TEK EKLENECEK
-            // Adım 7: Product (~70 ürün - Category ve Supplier'a bağımlı)
-            // Adım 8: İşlemsel veriler (Sale, SaleDetail, Expense, vb.)
+            // ADIM 7: Product (~70 ürün - Category ve Supplier'a bağımlı) 🔄 TEST EDİLİYOR
+            modelBuilder.Entity<Product>().HasData(TeknoRomaSeedData.GetProducts());
+
+            // TODO: Sonraki adım
+            // Adım 8: İşlemsel veriler (Sale, SaleDetail, Expense, SupplierTransaction, TechnicalService)
             // =================================================================
         }
 
