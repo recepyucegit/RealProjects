@@ -95,6 +95,9 @@ namespace Infrastructure.Persistence.SeedData
         /// </summary>
         public static List<Category> GetCategories()
         {
+            // ID counter'ı sıfırla (her çağrıda aynı ID'leri kullanmak için)
+            _categoryIdCounter = 1;
+
             // Kategoriler sabit, Bogus kullanmaya gerek yok
             var categories = new List<Category>
             {
@@ -125,6 +128,9 @@ namespace Infrastructure.Persistence.SeedData
         {
             if (_cachedStores != null)
                 return _cachedStores;
+
+            // ID counter'ı sıfırla (her çağrıda aynı ID'leri kullanmak için)
+            _storeIdCounter = 1;
 
             Randomizer.Seed = new Random(RandomSeed);
 
@@ -255,6 +261,9 @@ namespace Infrastructure.Persistence.SeedData
             if (_cachedSuppliers != null)
                 return _cachedSuppliers;
 
+            // ID counter'ı sıfırla (her çağrıda aynı ID'leri kullanmak için)
+            _supplierIdCounter = 1;
+
             Randomizer.Seed = new Random(RandomSeed);
             var faker = new Faker<Supplier>("tr")
                 .RuleFor(s => s.Id, f => _supplierIdCounter++)
@@ -307,6 +316,9 @@ namespace Infrastructure.Persistence.SeedData
         {
             if (_cachedCustomers != null)
                 return _cachedCustomers;
+
+            // ID counter'ı sıfırla (her çağrıda aynı ID'leri kullanmak için)
+            _customerIdCounter = 1;
 
             Randomizer.Seed = new Random(RandomSeed);
             var faker = new Faker<Customer>("tr")
