@@ -446,11 +446,13 @@ namespace Infrastructure.Persistence
             // ADIM 2: Store (55 mağaza) ✅ TEST EDİLDİ
             modelBuilder.Entity<Store>().HasData(TeknoRomaSeedData.GetStores());
 
-            // ADIM 3: Supplier (20 tedarikçi) 🔄 TEST EDİLİYOR
+            // ADIM 3: Supplier (20 tedarikçi) ✅ TEST EDİLDİ
             modelBuilder.Entity<Supplier>().HasData(TeknoRomaSeedData.GetSuppliers());
 
+            // ADIM 4: Customer (500 müşteri) 🔄 TEST EDİLİYOR
+            modelBuilder.Entity<Customer>().HasData(TeknoRomaSeedData.GetCustomers());
+
             // TODO: Sonraki adımlar - TEK TEK EKLENECEK
-            // Adım 4: Customer (500 müşteri)
             // Adım 5: Department (30 departman)
             // Adım 6: Employee (258 çalışan)
             // Adım 7: Product (~70 ürün)
