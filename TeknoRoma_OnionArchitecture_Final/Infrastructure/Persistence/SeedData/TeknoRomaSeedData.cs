@@ -518,6 +518,9 @@ namespace Infrastructure.Persistence.SeedData
             if (_cachedSales != null)
                 return _cachedSales;
 
+            // ID counter'ı sıfırla (her çağrıda aynı ID'leri kullanmak için)
+            _saleIdCounter = 1;
+
             Randomizer.Seed = new Random(RandomSeed);
             var customers = GetCustomers();
             var employees = GetEmployees();
