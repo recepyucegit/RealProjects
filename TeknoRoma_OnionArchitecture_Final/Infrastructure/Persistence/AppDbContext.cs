@@ -464,11 +464,13 @@ namespace Infrastructure.Persistence
             // ADIM 8: İşlemsel Veriler - Sale (1,000 satış) ✅ TEST EDİLDİ
             modelBuilder.Entity<Sale>().HasData(TeknoRomaSeedData.GetSales());
 
-            // ADIM 9: SaleDetail (~2,500 satış kalemi - Sale ve Product'a bağımlı) 🔄 TEST EDİLİYOR
+            // ADIM 9: SaleDetail (~2,500 satış kalemi - Sale ve Product'a bağımlı) ✅ TEST EDİLDİ
             modelBuilder.Entity<SaleDetail>().HasData(TeknoRomaSeedData.GetSaleDetails());
 
+            // ADIM 10: Expense (500 gider - Employee ve Store'a bağımlı) 🔄 TEST EDİLİYOR
+            modelBuilder.Entity<Expense>().HasData(TeknoRomaSeedData.GetExpenses());
+
             // TODO: Kalan işlemsel veriler - TEK TEK EKLENECEK
-            // Adım 10: Expense (500 gider - Employee ve Store'a bağımlı)
             // Adım 11: SupplierTransaction (200 işlem - Supplier ve Product'a bağımlı)
             // Adım 12: TechnicalService (100 servis - Employee, Customer, Store'a bağımlı)
             // =================================================================
