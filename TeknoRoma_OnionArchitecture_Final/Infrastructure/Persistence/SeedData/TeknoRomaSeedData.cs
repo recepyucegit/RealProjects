@@ -566,6 +566,9 @@ namespace Infrastructure.Persistence.SeedData
             if (_cachedSaleDetails != null)
                 return _cachedSaleDetails;
 
+            // ID counter'ı sıfırla (her çağrıda aynı ID'leri kullanmak için)
+            _saleDetailIdCounter = 1;
+
             Randomizer.Seed = new Random(RandomSeed);
             var sales = GetSales();
             var products = GetProducts();
