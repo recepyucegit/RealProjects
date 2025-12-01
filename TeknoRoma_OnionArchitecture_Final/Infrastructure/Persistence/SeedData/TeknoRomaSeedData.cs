@@ -727,6 +727,9 @@ namespace Infrastructure.Persistence.SeedData
             if (_cachedSupplierTransactions != null)
                 return _cachedSupplierTransactions;
 
+            // ID counter'ı sıfırla (her çağrıda aynı ID'leri kullanmak için)
+            _supplierTransactionIdCounter = 1;
+
             Randomizer.Seed = new Random(RandomSeed);
             var suppliers = GetSuppliers();
             var products = GetProducts();
