@@ -71,6 +71,12 @@ namespace Presentation.WebMVC.Controllers
                 // Başarılı giriş!
                 // TODO: SignInManager.PasswordSignInAsync kullanılacak
 
+                // Session'a kullanıcı bilgilerini kaydet
+                // GEÇICI: ASP.NET Identity kurulunca burası değişecek
+                HttpContext.Session.SetString("UserEmail", model.Email);
+                HttpContext.Session.SetString("UserName", "Admin Kullanıcı");
+                HttpContext.Session.SetString("UserRole", "Yönetici");
+
                 // ReturnUrl varsa oraya git, yoksa Home/Index'e
                 if (!string.IsNullOrEmpty(returnUrl) && Url.IsLocalUrl(returnUrl))
                 {
@@ -98,6 +104,9 @@ namespace Presentation.WebMVC.Controllers
         public async Task<IActionResult> Logout()
         {
             // TODO: SignInManager.SignOutAsync() kullanılacak
+
+            // Session'ı temizle
+            HttpContext.Session.Clear();
 
             return RedirectToAction("Login", "Account");
         }
