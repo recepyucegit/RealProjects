@@ -22,7 +22,10 @@ Modern ve responsive tasarım için Bootstrap 5 kullanılıyor
 
 @{
     ViewData["Title"] = "Giriş Yap";
-    Layout = "_Layout"; // Shared/_Layout.cshtml kullanılacak
+    // ⚠️ ÖNEMLİ: Login sayfası için minimal layout kullan
+    // _Layout.cshtml → Navbar, Sidebar, User Info gösterir (giriş yapmış kullanıcılar)
+    // _LoginLayout.cshtml → Sadece form (giriş yapmamış kullanıcılar) ✅
+    Layout = "_LoginLayout";
 }
 
 <div class="container mt-5">
