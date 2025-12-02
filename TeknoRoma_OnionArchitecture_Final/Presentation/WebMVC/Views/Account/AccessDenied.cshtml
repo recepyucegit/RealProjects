@@ -1,0 +1,51 @@
+@*
+===================================================================================
+TEKNOROMA - ERİŞİM REDDEDİLDİ SAYFASI
+===================================================================================
+
+KULLANIM SENARYOSU:
+Kullanıcı yetkisi olmayan bir sayfaya erişmeye çalıştığında gösterilir
+
+ÖRNEK:
+- Normal kullanıcı Admin paneline gitmeye çalışır
+- [Authorize(Roles = "Admin")] attribute'ü bu sayfaya yönlendirir
+===================================================================================
+*@
+
+@{
+    ViewData["Title"] = "Erişim Reddedildi";
+}
+
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-6 text-center">
+            <div class="card shadow">
+                <div class="card-body py-5">
+                    @* HATA İKONU *@
+                    <div class="mb-4">
+                        <i class="bi bi-shield-lock text-danger" style="font-size: 5rem;"></i>
+                    </div>
+
+                    @* BAŞLIK *@
+                    <h1 class="card-title text-danger mb-3">Erişim Reddedildi</h1>
+
+                    @* AÇIKLAMA *@
+                    <p class="card-text text-muted mb-4">
+                        Bu sayfaya erişim yetkiniz bulunmamaktadır.<br />
+                        Gerekli yetkilendirme için sistem yöneticinizle iletişime geçiniz.
+                    </p>
+
+                    @* GERİ DÖN BUTTON *@
+                    <div class="d-grid gap-2 col-6 mx-auto">
+                        <a asp-controller="Home" asp-action="Index" class="btn btn-primary">
+                            <i class="bi bi-house-door"></i> Ana Sayfaya Dön
+                        </a>
+                        <a asp-controller="Account" asp-action="Logout" class="btn btn-outline-secondary">
+                            <i class="bi bi-box-arrow-right"></i> Çıkış Yap
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

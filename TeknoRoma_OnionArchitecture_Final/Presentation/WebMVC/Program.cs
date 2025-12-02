@@ -91,10 +91,12 @@ try
     app.UseAuthentication();
     app.UseAuthorization();
 
-    // Default route
+    // Default route - Kullanıcılar ilk olarak Login sayfasını görsün
+    // DEĞIŞIKLIK: Home/Index yerine Account/Login
+    // SEBEP: Kimlik doğrulama gerektiren bir uygulama, giriş sayfası ile başlamalı
     app.MapControllerRoute(
         name: "default",
-        pattern: "{controller=Home}/{action=Index}/{id?}");
+        pattern: "{controller=Account}/{action=Login}/{id?}");
 
     // Area route (Admin, Reports gibi)
     app.MapControllerRoute(
