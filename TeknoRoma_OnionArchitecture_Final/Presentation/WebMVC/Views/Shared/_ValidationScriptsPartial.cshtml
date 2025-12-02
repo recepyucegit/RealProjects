@@ -1,0 +1,81 @@
+@*
+===================================================================================
+TEKNOROMA - VALIDATION SCRIPTS PARTIAL VIEW
+===================================================================================
+
+AMAÇ:
+Client-side form validation için gerekli JavaScript kütüphanelerini yükler
+
+KULLANIM:
+Login, Register, Edit gibi form sayfalarında:
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}
+
+KÜTÜPHANELER:
+1. jQuery Validation - Form validation kuralları
+2. jQuery Validation Unobtrusive - Data Annotations'ları otomatik validation'a çevirir
+
+NASIL ÇALIŞIR?
+- [Required], [EmailAddress] gibi attribute'ler HTML5 data-val-* attribute'larına çevrilir
+- jQuery Validation bu attribute'leri okuyarak otomatik validation yapar
+- Form submit olmadan kullanıcı hatalarını görebilir (UX iyileştirir)
+
+ÖRNEK:
+[Required(ErrorMessage = "Email zorunludur")]
+public string Email { get; set; }
+
+↓ HTML'e dönüşür:
+
+<input type="email" data-val="true"
+       data-val-required="Email zorunludur" />
+
+↓ jQuery Validation okur ve hata gösterir:
+
+"Email zorunludur" (kullanıcı boş bırakırsa)
+
+===================================================================================
+*@
+
+@* JQUERY VALIDATION CORE LIBRARY *@
+@* Form validation kuralları ve metotları *@
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.19.5/jquery.validate.min.js"
+        integrity="sha512-rstIgDs0xPgmG6RX1Aba4KV5cWJbAMcvRCVmglpam9SoHZiUCyQVDdH2LPlxoHtrv17XWblE/V/PP+Tr04hbtA=="
+        crossorigin="anonymous"
+        referrerpolicy="no-referrer"></script>
+
+@* JQUERY VALIDATION UNOBTRUSIVE *@
+@* ASP.NET Core Data Annotations'ları otomatik validation'a çevirir *@
+@* Bu sayede [Required], [EmailAddress] vb. attribute'ler çalışır *@
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validation-unobtrusive/4.0.0/jquery.validate.unobtrusive.min.js"
+        integrity="sha512-xq+Vm8jC94ynOikewaQXMEkJIOBp7iArs3IhFWSWdRT3Pq8wFz46p+ZDFAR7kHnSFf+zUv52B3prRYnbDRdgog=="
+        crossorigin="anonymous"
+        referrerpolicy="no-referrer"></script>
+
+@* TÜRKÇE MESAJLAR (Opsiyonel) *@
+@* Varsayılan İngilizce hata mesajlarını Türkçeleştirir *@
+<script>
+    // jQuery Validation Türkçe mesajlar
+    if (jQuery.validator) {
+        jQuery.extend(jQuery.validator.messages, {
+            required: "Bu alan zorunludur.",
+            remote: "Lütfen bu alanı düzeltin.",
+            email: "Geçerli bir e-posta adresi giriniz.",
+            url: "Geçerli bir URL giriniz.",
+            date: "Geçerli bir tarih giriniz.",
+            dateISO: "Geçerli bir tarih giriniz (ISO formatında).",
+            number: "Geçerli bir sayı giriniz.",
+            digits: "Sadece rakam giriniz.",
+            creditcard: "Geçerli bir kredi kartı numarası giriniz.",
+            equalTo: "Aynı değeri tekrar giriniz.",
+            extension: "Geçerli bir uzantıya sahip dosya seçiniz.",
+            maxlength: jQuery.validator.format("En fazla {0} karakter girebilirsiniz."),
+            minlength: jQuery.validator.format("En az {0} karakter girmelisiniz."),
+            rangelength: jQuery.validator.format("En az {0} ve en fazla {1} karakter arasında bir değer girmelisiniz."),
+            range: jQuery.validator.format("{0} ile {1} arasında bir değer giriniz."),
+            max: jQuery.validator.format("{0} değerine eşit ya da daha küçük bir değer giriniz."),
+            min: jQuery.validator.format("{0} değerine eşit ya da daha büyük bir değer giriniz."),
+            step: jQuery.validator.format("{0} veya katlarını giriniz.")
+        });
+    }
+</script>
