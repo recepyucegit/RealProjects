@@ -1,0 +1,154 @@
+@model TeknoRoma.Business.DTOs.UpdateProductDto
+
+@{
+    ViewData["Title"] = "Ürün Düzenle";
+}
+
+<div class="mb-3">
+    <a asp-action="Index" class="btn btn-secondary">
+        <i class="fas fa-arrow-left"></i> Geri
+    </a>
+</div>
+
+<div class="card">
+    <div class="card-header bg-warning">
+        <h3 class="mb-0"><i class="fas fa-edit"></i> Ürün Düzenle - @Model?.Name</h3>
+    </div>
+    <div class="card-body">
+        <form asp-action="Edit" method="post">
+            @Html.AntiForgeryToken()
+            <input type="hidden" asp-for="Id" />
+
+            <div class="row">
+                <!-- Sol Kolon -->
+                <div class="col-md-6">
+                    <!-- Ürün Adı -->
+                    <div class="mb-3">
+                        <label asp-for="Name" class="form-label">
+                            <i class="fas fa-tag"></i> Ürün Adı <span class="text-danger">*</span>
+                        </label>
+                        <input asp-for="Name" class="form-control" placeholder="Örn: iPhone 15 Pro Max">
+                        <span asp-validation-for="Name" class="text-danger"></span>
+                    </div>
+
+                    <!-- Açıklama -->
+                    <div class="mb-3">
+                        <label asp-for="Description" class="form-label">
+                            <i class="fas fa-align-left"></i> Açıklama
+                        </label>
+                        <textarea asp-for="Description" class="form-control" rows="4" placeholder="Ürün açıklaması..."></textarea>
+                        <span asp-validation-for="Description" class="text-danger"></span>
+                    </div>
+
+                    <!-- Fiyat -->
+                    <div class="mb-3">
+                        <label asp-for="Price" class="form-label">
+                            <i class="fas fa-dollar-sign"></i> Fiyat <span class="text-danger">*</span>
+                        </label>
+                        <input asp-for="Price" type="number" step="0.01" class="form-control" placeholder="0.00">
+                        <span asp-validation-for="Price" class="text-danger"></span>
+                    </div>
+
+                    <!-- İndirimli Fiyat -->
+                    <div class="mb-3">
+                        <label asp-for="DiscountPrice" class="form-label">
+                            <i class="fas fa-percentage"></i> İndirimli Fiyat
+                        </label>
+                        <input asp-for="DiscountPrice" type="number" step="0.01" class="form-control" placeholder="İndirim yoksa boş bırakın">
+                        <span asp-validation-for="DiscountPrice" class="text-danger"></span>
+                        <small class="form-text text-muted">İndirimli fiyat normal fiyattan düşük olmalıdır.</small>
+                    </div>
+                </div>
+
+                <!-- Sağ Kolon -->
+                <div class="col-md-6">
+                    <!-- Stok -->
+                    <div class="mb-3">
+                        <label asp-for="Stock" class="form-label">
+                            <i class="fas fa-warehouse"></i> Stok Miktarı <span class="text-danger">*</span>
+                        </label>
+                        <input asp-for="Stock" type="number" class="form-control" placeholder="0">
+                        <span asp-validation-for="Stock" class="text-danger"></span>
+                    </div>
+
+                    <!-- Resim URL -->
+                    <div class="mb-3">
+                        <label asp-for="ImageUrl" class="form-label">
+                            <i class="fas fa-image"></i> Resim URL
+                        </label>
+                        <input asp-for="ImageUrl" class="form-control" placeholder="https://...">
+                        <span asp-validation-for="ImageUrl" class="text-danger"></span>
+                    </div>
+
+                    <!-- Kategori -->
+                    <div class="mb-3">
+                        <label asp-for="CategoryId" class="form-label">
+                            <i class="fas fa-th-large"></i> Kategori <span class="text-danger">*</span>
+                        </label>
+                        <select asp-for="CategoryId" class="form-select">
+                            <option value="">-- Kategori Seçin --</option>
+                            @if (ViewBag.Categories != null)
+                            {
+                                foreach (var category in ViewBag.Categories)
+                                {
+                                    <option value="@category.Id">@category.Name</option>
+                                }
+                            }
+                        </select>
+                        <span asp-validation-for="CategoryId" class="text-danger"></span>
+                    </div>
+
+                    <!-- Tedarikçi -->
+                    <div class="mb-3">
+                        <label asp-for="SupplierId" class="form-label">
+                            <i class="fas fa-truck"></i> Tedarikçi ID <span class="text-danger">*</span>
+                        </label>
+                        <input asp-for="SupplierId" type="number" class="form-control" placeholder="1">
+                        <span asp-validation-for="SupplierId" class="text-danger"></span>
+                        <small class="form-text text-muted">Tedarikçi seçimi yakında eklenecek.</small>
+                    </div>
+
+                    <!-- Aktif Mi? -->
+                    <div class="mb-3">
+                        <div class="form-check form-switch">
+                            <input asp-for="IsActive" class="form-check-input" type="checkbox">
+                            <label asp-for="IsActive" class="form-check-label">
+                                <i class="fas fa-toggle-on"></i> Aktif
+                            </label>
+                        </div>
+                    </div>
+
+                    <!-- Öne Çıkan mı? -->
+                    <div class="mb-3">
+                        <div class="form-check form-switch">
+                            <input asp-for="IsFeatured" class="form-check-input" type="checkbox">
+                            <label asp-for="IsFeatured" class="form-check-label">
+                                <i class="fas fa-star"></i> Öne Çıkan
+                            </label>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Buttons -->
+            <hr>
+            <div class="d-flex justify-content-between">
+                <div>
+                    <a asp-action="Index" class="btn btn-secondary">
+                        <i class="fas fa-times"></i> İptal
+                    </a>
+                    <a asp-action="Details" asp-route-id="@Model.Id" class="btn btn-info">
+                        <i class="fas fa-info-circle"></i> Detaylar
+                    </a>
+                </div>
+                <button type="submit" class="btn btn-warning btn-lg">
+                    <i class="fas fa-save"></i> Güncelle
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}
