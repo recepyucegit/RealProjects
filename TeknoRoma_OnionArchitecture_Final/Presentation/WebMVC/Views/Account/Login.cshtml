@@ -1,0 +1,135 @@
+@*
+===================================================================================
+TEKNOROMA - LOGIN SAYFASI (Giriş Yap)
+===================================================================================
+
+SAYFA AMACI:
+Kullanıcıların sistem giriş
+
+ yapması için form sayfası
+
+RAZOR SYNTAX:
+- @model: Bu view'ın kullandığı model tipi
+- asp-*: Tag Helpers (otomatik form binding, validation)
+- @Html.*: HTML Helper'lar (alternatif syntax)
+
+BOOTSTRAP:
+Modern ve responsive tasarım için Bootstrap 5 kullanılıyor
+===================================================================================
+*@
+
+@model Presentation.WebMVC.Models.LoginViewModel
+
+@{
+    ViewData["Title"] = "Giriş Yap";
+    Layout = "_Layout"; // Shared/_Layout.cshtml kullanılacak
+}
+
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-6 col-lg-4">
+            <div class="card shadow">
+                @* CARD HEADER - Logo ve Başlık *@
+                <div class="card-header bg-primary text-white text-center py-4">
+                    <h3 class="mb-0">
+                        <i class="bi bi-shop"></i> TEKNOROMA
+                    </h3>
+                    <p class="mb-0 mt-2">Yönetim Paneli</p>
+                </div>
+
+                @* CARD BODY - Login Formu *@
+                <div class="card-body p-4">
+                    <h5 class="card-title text-center mb-4">Giriş Yap</h5>
+
+                    @* VALIDATION SUMMARY - Genel hata mesajları *@
+                    @* ModelState'deki tüm hataları gösterir *@
+                    <div asp-validation-summary="All" class="text-danger mb-3"></div>
+
+                    @* LOGIN FORM *@
+                    @* asp-action: Form submit edilince hangi action çalışacak *@
+                    @* asp-controller: Hangi controller (default: aynı controller) *@
+                    @* method="post": POST isteği gönder *@
+                    <form asp-action="Login" asp-controller="Account" method="post">
+                        @* ANTI-FORGERY TOKEN - CSRF Koruması *@
+                        @* Form submit edildiğinde güvenlik token'ı gönderilir *@
+                        @* [ValidateAntiForgeryToken] attribute ile kontrol edilir *@
+                        <input type="hidden" asp-for="@ViewData["ReturnUrl"]" />
+
+                        @* EMAIL INPUT *@
+                        <div class="mb-3">
+                            @* LABEL - asp-for ile model property'sine bağlanır *@
+                            @* [Display(Name = "...")] attribute'ünden metni alır *@
+                            <label asp-for="Email" class="form-label"></label>
+
+                            @* INPUT - asp-for ile model property'sine bağlanır *@
+                            @* Type otomatik belirlenir (email validation) *@
+                            @* Client-side validation otomatik eklenir *@
+                            <input asp-for="Email" class="form-control" placeholder="ornek@teknoroma.com" />
+
+                            @* VALIDATION MESSAGE - Bu alan için hata mesajı *@
+                            @* [Required], [EmailAddress] vb. attribute'lerdeki mesajları gösterir *@
+                            <span asp-validation-for="Email" class="text-danger"></span>
+                        </div>
+
+                        @* PASSWORD INPUT *@
+                        <div class="mb-3">
+                            <label asp-for="Password" class="form-label"></label>
+
+                            @* [DataType(DataType.Password)] sayesinde type="password" olur *@
+                            @* Yazılan karakterler gizlenir (****) *@
+                            <input asp-for="Password" class="form-control" placeholder="••••••••" />
+
+                            <span asp-validation-for="Password" class="text-danger"></span>
+                        </div>
+
+                        @* REMEMBER ME CHECKBOX *@
+                        <div class="mb-3 form-check">
+                            @* Checkbox için özel syntax *@
+                            @* asp-for="RememberMe" → checked attribute otomatik yönetilir *@
+                            <input asp-for="RememberMe" class="form-check-input" />
+                            <label asp-for="RememberMe" class="form-check-label"></label>
+                        </div>
+
+                        @* SUBMIT BUTTON *@
+                        <div class="d-grid">
+                            <button type="submit" class="btn btn-primary btn-lg">
+                                <i class="bi bi-box-arrow-in-right"></i> Giriş Yap
+                            </button>
+                        </div>
+                    </form>
+
+                    @* TEST BİLGİLERİ (Geliştirme amaçlı) *@
+                    <div class="alert alert-info mt-4 mb-0" role="alert">
+                        <small>
+                            <strong>Test Giriş Bilgileri:</strong><br />
+                            Email: <code>admin@teknoroma.com</code><br />
+                            Şifre: <code>Admin123!</code>
+                        </small>
+                    </div>
+                </div>
+
+                @* CARD FOOTER - Ek Linkler *@
+                <div class="card-footer text-center py-3">
+                    <small class="text-muted">
+                        @* TODO: Şifremi Unuttum linki eklenecek *@
+                        <a href="#" class="text-decoration-none">Şifremi Unuttum</a>
+                    </small>
+                </div>
+            </div>
+
+            @* COPYRIGHT *@
+            <div class="text-center mt-4">
+                <small class="text-muted">
+                    © @DateTime.Now.Year TeknoRoma - Tüm Hakları Saklıdır
+                </small>
+            </div>
+        </div>
+    </div>
+</div>
+
+@* CLIENT-SIDE VALIDATION SCRIPTS *@
+@* jQuery Validation kütüphanelerini yükler *@
+@* asp-validation-* attribute'leri için gerekli *@
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}
