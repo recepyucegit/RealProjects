@@ -1,0 +1,156 @@
+@model TeknoRoma.Business.DTOs.ProductDto
+
+@{
+    ViewData["Title"] = Model?.Name ?? "Ürün Detayı";
+}
+
+<div class="mb-3">
+    <a asp-action="Index" class="btn btn-secondary">
+        <i class="fas fa-arrow-left"></i> Geri
+    </a>
+</div>
+
+@if (Model != null)
+{
+    <div class="card">
+        <div class="card-body">
+            <div class="row">
+                <!-- Product Image -->
+                <div class="col-md-5">
+                    @if (!string.IsNullOrEmpty(Model.ImageUrl))
+                    {
+                        <img src="@Model.ImageUrl" class="img-fluid rounded" alt="@Model.Name">
+                    }
+                    else
+                    {
+                        <div class="bg-secondary text-white d-flex align-items-center justify-content-center rounded" style="height: 400px;">
+                            <i class="fas fa-image fa-5x"></i>
+                        </div>
+                    }
+                </div>
+
+                <!-- Product Info -->
+                <div class="col-md-7">
+                    <h1 class="mb-3">@Model.Name</h1>
+
+                    <div class="mb-3">
+                        <span class="badge bg-primary">@Model.CategoryName</span>
+                        @if (Model.IsFeatured)
+                        {
+                            <span class="badge bg-warning text-dark">
+                                <i class="fas fa-star"></i> Öne Çıkan
+                            </span>
+                        }
+                        @if (Model.IsActive)
+                        {
+                            <span class="badge bg-success">Aktif</span>
+                        }
+                        else
+                        {
+                            <span class="badge bg-danger">Pasif</span>
+                        }
+                    </div>
+
+                    <!-- Price -->
+                    <div class="mb-4">
+                        @if (Model.DiscountPrice.HasValue)
+                        {
+                            <div>
+                                <h4 class="text-muted text-decoration-line-through mb-1">@Model.Price.ToString("C2")</h4>
+                                <h2 class="text-danger fw-bold mb-1">@Model.DiscountPrice.Value.ToString("C2")</h2>
+                                <span class="badge bg-success fs-6">%@Model.DiscountPercentage İndirim</span>
+                            </div>
+                        }
+                        else
+                        {
+                            <h2 class="text-primary fw-bold">@Model.Price.ToString("C2")</h2>
+                        }
+                    </div>
+
+                    <!-- Stock -->
+                    <div class="alert @(Model.Stock > 0 ? "alert-success" : "alert-danger")" role="alert">
+                        <i class="fas fa-warehouse"></i>
+                        <strong>Stok Durumu:</strong> @Model.Stock adet
+                        @if (Model.Stock > 0)
+                        {
+                            <span class="ms-2">✓ Stokta var</span>
+                        }
+                        else
+                        {
+                            <span class="ms-2">✗ Stokta yok</span>
+                        }
+                    </div>
+
+                    <!-- Description -->
+                    @if (!string.IsNullOrWhiteSpace(Model.Description))
+                    {
+                        <div class="mb-4">
+                            <h5><i class="fas fa-align-left"></i> Açıklama</h5>
+                            <p class="text-muted">@Model.Description</p>
+                        </div>
+                    }
+
+                    <!-- Additional Info -->
+                    <div class="card bg-light mb-4">
+                        <div class="card-body">
+                            <h6 class="card-title">Ek Bilgiler</h6>
+                            <ul class="list-unstyled mb-0">
+                                <li><i class="fas fa-tag text-primary"></i> <strong>Kategori:</strong> @Model.CategoryName</li>
+                                <li><i class="fas fa-truck text-primary"></i> <strong>Tedarikçi:</strong> @Model.SupplierName</li>
+                                <li><i class="fas fa-hashtag text-primary"></i> <strong>Ürün ID:</strong> @Model.Id</li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <!-- Action Buttons -->
+                    <div class="d-grid gap-2">
+                        @if (Model.Stock > 0)
+                        {
+                            <button class="btn btn-success btn-lg" onclick="alert('Sepete ekleme özelliği yakında eklenecek!')">
+                                <i class="fas fa-shopping-cart"></i> Sepete Ekle
+                            </button>
+                        }
+                        else
+                        {
+                            <button class="btn btn-secondary btn-lg" disabled>
+                                <i class="fas fa-times"></i> Stokta Yok
+                            </button>
+                        }
+
+                        <div class="btn-group" role="group">
+                            <a asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-warning">
+                                <i class="fas fa-edit"></i> Düzenle
+                            </a>
+                            <button type="button" class="btn btn-danger" onclick="deleteProduct(@Model.Id, '@Model.Name')">
+                                <i class="fas fa-trash"></i> Sil
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+}
+else
+{
+    <div class="alert alert-danger">
+        <i class="fas fa-exclamation-triangle"></i> Ürün bulunamadı!
+    </div>
+}
+
+<!-- Delete Form (Hidden) -->
+<form id="deleteForm" method="post" style="display: none;">
+    @Html.AntiForgeryToken()
+</form>
+
+@section Scripts {
+    <script>
+        function deleteProduct(id, name) {
+            if (confirm(`"${name}" ürünü silmek istediğinize emin misiniz?`)) {
+                const form = document.getElementById('deleteForm');
+                form.action = `/Products/Delete/${id}`;
+                form.submit();
+            }
+        }
+    </script>
+}

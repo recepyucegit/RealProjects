@@ -1,0 +1,117 @@
+@model TeknoRoma.Business.DTOs.CategoryDto
+
+@{
+    ViewData["Title"] = Model?.Name ?? "Kategori Detayı";
+}
+
+<div class="mb-3">
+    <a asp-action="Index" class="btn btn-secondary">
+        <i class="fas fa-arrow-left"></i> Geri
+    </a>
+</div>
+
+@if (Model != null)
+{
+    <div class="card">
+        <div class="card-body">
+            <div class="row">
+                <!-- Category Image -->
+                <div class="col-md-4">
+                    @if (!string.IsNullOrEmpty(Model.ImageUrl))
+                    {
+                        <img src="@Model.ImageUrl" class="img-fluid rounded" alt="@Model.Name">
+                    }
+                    else
+                    {
+                        <div class="bg-primary text-white d-flex align-items-center justify-content-center rounded" style="height: 300px;">
+                            <i class="fas fa-th-large fa-5x"></i>
+                        </div>
+                    }
+                </div>
+
+                <!-- Category Info -->
+                <div class="col-md-8">
+                    <h1 class="mb-3">@Model.Name</h1>
+
+                    <div class="mb-3">
+                        @if (Model.IsActive)
+                        {
+                            <span class="badge bg-success fs-6">
+                                <i class="fas fa-check"></i> Aktif
+                            </span>
+                        }
+                        else
+                        {
+                            <span class="badge bg-danger fs-6">
+                                <i class="fas fa-times"></i> Pasif
+                            </span>
+                        }
+                    </div>
+
+                    <!-- Description -->
+                    @if (!string.IsNullOrWhiteSpace(Model.Description))
+                    {
+                        <div class="mb-4">
+                            <h5><i class="fas fa-align-left"></i> Açıklama</h5>
+                            <p class="text-muted">@Model.Description</p>
+                        </div>
+                    }
+
+                    <!-- Product Count -->
+                    <div class="alert alert-info" role="alert">
+                        <i class="fas fa-box"></i>
+                        <strong>Bu kategoride @ViewBag.ProductCount ürün bulunmaktadır.</strong>
+                    </div>
+
+                    <!-- Additional Info -->
+                    <div class="card bg-light mb-4">
+                        <div class="card-body">
+                            <h6 class="card-title">Kategori Bilgileri</h6>
+                            <ul class="list-unstyled mb-0">
+                                <li><i class="fas fa-hashtag text-primary"></i> <strong>Kategori ID:</strong> @Model.Id</li>
+                                <li><i class="fas fa-tag text-primary"></i> <strong>Kategori Adı:</strong> @Model.Name</li>
+                                <li><i class="fas fa-toggle-on text-primary"></i> <strong>Durum:</strong> @(Model.IsActive ? "Aktif" : "Pasif")</li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <!-- Action Buttons -->
+                    <div class="btn-group w-100" role="group">
+                        <a asp-controller="Products" asp-action="Index" asp-route-categoryId="@Model.Id" class="btn btn-primary">
+                            <i class="fas fa-list"></i> Ürünleri Görüntüle
+                        </a>
+                        <a asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-warning">
+                            <i class="fas fa-edit"></i> Düzenle
+                        </a>
+                        <button type="button" class="btn btn-danger" onclick="deleteCategory(@Model.Id, '@Model.Name')">
+                            <i class="fas fa-trash"></i> Sil
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+}
+else
+{
+    <div class="alert alert-danger">
+        <i class="fas fa-exclamation-triangle"></i> Kategori bulunamadı!
+    </div>
+}
+
+<!-- Delete Form (Hidden) -->
+<form id="deleteForm" method="post" style="display: none;">
+    @Html.AntiForgeryToken()
+</form>
+
+@section Scripts {
+    <script>
+        function deleteCategory(id, name) {
+            if (confirm(`"${name}" kategorisini silmek istediğinize emin misiniz?`)) {
+                const form = document.getElementById('deleteForm');
+                form.action = `/Categories/Delete/${id}`;
+                form.submit();
+            }
+        }
+    </script>
+}

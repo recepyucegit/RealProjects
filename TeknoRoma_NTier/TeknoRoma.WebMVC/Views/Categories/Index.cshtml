@@ -1,0 +1,96 @@
+@model IEnumerable<TeknoRoma.Business.DTOs.CategoryDto>
+
+@{
+    ViewData["Title"] = "Kategoriler";
+}
+
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h1><i class="fas fa-th-large"></i> Kategoriler</h1>
+    <a asp-action="Create" class="btn btn-success">
+        <i class="fas fa-plus"></i> Yeni Kategori Ekle
+    </a>
+</div>
+
+@if (Model != null && Model.Any())
+{
+    <div class="row">
+        @foreach (var category in Model)
+        {
+            <div class="col-md-4 col-lg-3 mb-4">
+                <div class="card h-100 product-card">
+                    @if (!string.IsNullOrEmpty(category.ImageUrl))
+                    {
+                        <img src="@category.ImageUrl" class="card-img-top" alt="@category.Name" style="height: 150px; object-fit: cover;">
+                    }
+                    else
+                    {
+                        <div class="bg-primary text-white d-flex align-items-center justify-content-center" style="height: 150px;">
+                            <i class="fas fa-th-large fa-3x"></i>
+                        </div>
+                    }
+
+                    <div class="card-body d-flex flex-column">
+                        <h5 class="card-title">@category.Name</h5>
+
+                        @if (!string.IsNullOrWhiteSpace(category.Description))
+                        {
+                            <p class="card-text text-muted small">@category.Description</p>
+                        }
+
+                        <div class="mb-3">
+                            @if (category.IsActive)
+                            {
+                                <span class="badge bg-success">
+                                    <i class="fas fa-check"></i> Aktif
+                                </span>
+                            }
+                            else
+                            {
+                                <span class="badge bg-danger">
+                                    <i class="fas fa-times"></i> Pasif
+                                </span>
+                            }
+                        </div>
+
+                        <div class="mt-auto">
+                            <a asp-action="Details" asp-route-id="@category.Id" class="btn btn-primary btn-sm w-100 mb-2">
+                                <i class="fas fa-info-circle"></i> Detaylar
+                            </a>
+                            <div class="btn-group w-100" role="group">
+                                <a asp-action="Edit" asp-route-id="@category.Id" class="btn btn-warning btn-sm">
+                                    <i class="fas fa-edit"></i> Düzenle
+                                </a>
+                                <button type="button" class="btn btn-danger btn-sm" onclick="deleteCategory(@category.Id, '@category.Name')">
+                                    <i class="fas fa-trash"></i> Sil
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+}
+else
+{
+    <div class="alert alert-info">
+        <i class="fas fa-info-circle"></i> Henüz kategori bulunmamaktadır.
+    </div>
+}
+
+<!-- Delete Form (Hidden) -->
+<form id="deleteForm" method="post" style="display: none;">
+    @Html.AntiForgeryToken()
+</form>
+
+@section Scripts {
+    <script>
+        function deleteCategory(id, name) {
+            if (confirm(`"${name}" kategorisini silmek istediğinize emin misiniz?`)) {
+                const form = document.getElementById('deleteForm');
+                form.action = `/Categories/Delete/${id}`;
+                form.submit();
+            }
+        }
+    </script>
+}

@@ -1,0 +1,84 @@
+@model TeknoRoma.Business.DTOs.UpdateCategoryDto
+
+@{
+    ViewData["Title"] = "Kategori Düzenle";
+}
+
+<div class="mb-3">
+    <a asp-action="Index" class="btn btn-secondary">
+        <i class="fas fa-arrow-left"></i> Geri
+    </a>
+</div>
+
+<div class="card">
+    <div class="card-header bg-warning">
+        <h3 class="mb-0"><i class="fas fa-edit"></i> Kategori Düzenle - @Model?.Name</h3>
+    </div>
+    <div class="card-body">
+        <form asp-action="Edit" method="post">
+            @Html.AntiForgeryToken()
+            <input type="hidden" asp-for="Id" />
+
+            <div class="row">
+                <div class="col-md-8">
+                    <!-- Kategori Adı -->
+                    <div class="mb-3">
+                        <label asp-for="Name" class="form-label">
+                            <i class="fas fa-tag"></i> Kategori Adı <span class="text-danger">*</span>
+                        </label>
+                        <input asp-for="Name" class="form-control" placeholder="Örn: Akıllı Telefonlar">
+                        <span asp-validation-for="Name" class="text-danger"></span>
+                    </div>
+
+                    <!-- Açıklama -->
+                    <div class="mb-3">
+                        <label asp-for="Description" class="form-label">
+                            <i class="fas fa-align-left"></i> Açıklama
+                        </label>
+                        <textarea asp-for="Description" class="form-control" rows="4" placeholder="Kategori açıklaması..."></textarea>
+                        <span asp-validation-for="Description" class="text-danger"></span>
+                    </div>
+
+                    <!-- Resim URL -->
+                    <div class="mb-3">
+                        <label asp-for="ImageUrl" class="form-label">
+                            <i class="fas fa-image"></i> Resim URL
+                        </label>
+                        <input asp-for="ImageUrl" class="form-control" placeholder="https://...">
+                        <span asp-validation-for="ImageUrl" class="text-danger"></span>
+                    </div>
+
+                    <!-- Aktif Mi? -->
+                    <div class="mb-3">
+                        <div class="form-check form-switch">
+                            <input asp-for="IsActive" class="form-check-input" type="checkbox">
+                            <label asp-for="IsActive" class="form-check-label">
+                                <i class="fas fa-toggle-on"></i> Aktif
+                            </label>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Buttons -->
+            <hr>
+            <div class="d-flex justify-content-between">
+                <div>
+                    <a asp-action="Index" class="btn btn-secondary">
+                        <i class="fas fa-times"></i> İptal
+                    </a>
+                    <a asp-action="Details" asp-route-id="@Model.Id" class="btn btn-info">
+                        <i class="fas fa-info-circle"></i> Detaylar
+                    </a>
+                </div>
+                <button type="submit" class="btn btn-warning btn-lg">
+                    <i class="fas fa-save"></i> Güncelle
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}
