@@ -39,22 +39,60 @@ namespace Infrastructure.Persistence.SeedData
         // SABIT DEĞİŞKENLER - İŞ KURALLARINA GÖRE
         // ====================================================================
 
-        // Mağaza sayıları (iş gereksinimi)
-        private const int IstanbulStoreCount = 20;
-        private const int IzmirStoreCount = 13;
-        private const int AnkaraStoreCount = 13;
-        private const int BursaStoreCount = 9;
-        private const int TotalStoreCount = 55; // İstanbul(20) + İzmir(13) + Ankara(13) + Bursa(9)
+        // MAĞAZA SAYILARI
+        // ---------------
+        // TeknoRoma'nın Türkiye'deki mağaza dağılımı (iş gereksinimi)
+        // Bu sabitler, şirketin gerçek organizasyon yapısını yansıtır
+        private const int IstanbulStoreCount = 20;  // En büyük pazar
+        private const int IzmirStoreCount = 13;     // 2. büyük pazar
+        private const int AnkaraStoreCount = 13;    // 3. büyük pazar
+        private const int BursaStoreCount = 9;      // 4. büyük pazar
+        private const int TotalStoreCount = 55;     // Toplam: 20+13+13+9 = 55 mağaza
 
-        private const int TotalDepartmentCount = 30;
-        private const int TotalEmployeeCount = 258;
+        private const int TotalDepartmentCount = 30;   // Her mağazada 30 departman
+        private const int TotalEmployeeCount = 258;    // 55 mağazada toplam 258 çalışan
 
-        // Seed değeri - aynı verileri tekrar üretmek için
+        // RANDOM SEED DEĞERİ
+        // ------------------
+        // AMACI: Her migration'da aynı verilerin üretilmesini sağlamak
+        //
+        // NEDEN ÖNEMLİ?
+        // - Migration'lar deterministik olmalı (her seferinde aynı sonuç)
+        // - Test senaryoları tutarlı olmalı
+        // - Geliştirme ortamında herkes aynı verileri görmeli
+        //
+        // NASIL ÇALIŞIR?
+        // Bogus kütüphanesine aynı seed verildiğinde, aynı rastgele değerler üretilir
+        // Örnek: Seed=12345 ile "Ali Veli" üretildiyse, her zaman "Ali Veli" üretir
         private const int RandomSeed = 12345;
 
         // ====================================================================
-        // CACHE - Veriler bir kez oluşturulup tekrar kullanılır
+        // CACHE MEKANİZMASI - Veriler bir kez oluşturulup tekrar kullanılır
         // ====================================================================
+        //
+        // AMACI: Performans optimizasyonu ve tutarlılık
+        //
+        // NEDEN CACHE KULLANIYORUZ?
+        // 1. PERFORMANS: Binlerce kayıt oluşturmak CPU-intensive bir işlem
+        //    - GetProducts() her çağrıldığında yeniden üretmek yerine
+        //    - İlk çağrıda üret, sonraki çağrılarda cache'ten döndür
+        //
+        // 2. TUTARLILIK: İlişkili entity'ler aynı verileri kullanmalı
+        //    - GetSales() içinde GetCustomers() çağrılıyor
+        //    - GetSaleDetails() içinde de GetCustomers() çağrılıyor
+        //    - Her ikisinde de aynı müşteri listesi kullanılmalı
+        //
+        // 3. FOREIGN KEY GÜVENLİĞİ:
+        //    - SaleDetail.ProductId, Product.Id'ye referans vermeli
+        //    - Product listesi farklı olursa ID'ler uyuşmaz
+        //
+        // NASIL ÇALIŞIR?
+        // - İlk çağrı: Cache null → Veri üret → Cache'e kaydet → Döndür
+        // - Sonraki çağrılar: Cache dolu → Doğrudan cache'ten döndür
+        //
+        // NULLABLE (?) NEDİR?
+        // - List<Store>? → null olabilir demek
+        // - İlk durumda null, veri üretilince dolu
         private static List<Store>? _cachedStores;
         private static List<Supplier>? _cachedSuppliers;
         private static List<Department>? _cachedDepartments;
@@ -68,11 +106,44 @@ namespace Infrastructure.Persistence.SeedData
         private static List<TechnicalService>? _cachedTechnicalServices;
 
         // ====================================================================
-        // ID TRACKER'LAR - Foreign Key İlişkileri İçin
+        // ID COUNTER'LAR (SAYAÇLAR) - Kontrollü ID Üretimi
         // ====================================================================
-        // Her entity için ID sayacı tutuyoruz çünkü Bogus rastgele ID üretirken
-        // foreign key ilişkilerini doğru kurmak için kontrollü ID'ler gerekiyor
-
+        //
+        // AMACI: Her entity için sıralı ve öngörülebilir ID'ler üretmek
+        //
+        // NEDEN KULLANIYORUZ?
+        // 1. FOREIGN KEY GÜVENLİĞİ:
+        //    - Product.CategoryId = 1 → Category tablosunda ID=1 olmalı
+        //    - Rastgele ID'lerle bu garanti edilemez
+        //    - Counter ile ID=1,2,3,4... şeklinde sıralı gider
+        //
+        // 2. MİGRATION TUTARLILIĞI:
+        //    - Aynı migration farklı zamanlarda çalıştırılabilir
+        //    - Her seferinde aynı ID'ler üretilmeli
+        //    - Counter + RandomSeed = Deterministik sonuç
+        //
+        // 3. HATA AYIKLAMA:
+        //    - ID=42 olan ürün her zaman aynı ürün
+        //    - Log'larda ID takibi kolay
+        //    - Test senaryoları tekrarlanabilir
+        //
+        // KRİTİK: RESET MEKANİZMASI
+        // -------------------------
+        // Her Get metodu başında counter'ı 1'e reset etmeliyiz!
+        //
+        // ÖRNEK SORUN (Reset Olmazsa):
+        // - İlk çağrı: GetCategories() → ID'ler: 1,2,3,4,5
+        // - Counter değeri: 6 (son kullanılan ID + 1)
+        // - İkinci çağrı: GetCategories() → ID'ler: 6,7,8,9,10 ❌ YANLIŞ!
+        // - Beklenen: 1,2,3,4,5 olmalıydı
+        //
+        // ÇÖZÜM:
+        // Her metodun başında: _categoryIdCounter = 1;
+        // Böylece her çağrıda 1'den başlar
+        //
+        // STATIC NEDEN?
+        // - Tüm metodlar arasında paylaşılır
+        // - Sınıf instance'ı oluşturmadan kullanılabilir
         private static int _storeIdCounter = 1;
         private static int _departmentIdCounter = 1;
         private static int _categoryIdCounter = 1;
@@ -91,16 +162,35 @@ namespace Infrastructure.Persistence.SeedData
         // ====================================================================
 
         /// <summary>
-        /// Elektronik ürün kategorilerini oluşturur
+        /// Elektronik ürün kategorilerini oluşturur (10 adet)
+        ///
+        /// NEDEN CACHE YOK?
+        /// - Category sayısı az (10 adet)
+        /// - Sabit veriler, her seferinde aynı
+        /// - Cache'lemenin performans kazancı minimal
+        ///
+        /// NEDEN BOGUS YOK?
+        /// - Kategori isimleri iş kuralı (Cep Telefonları, Laptop vb.)
+        /// - Rastgele üretmek mantıklı değil
+        /// - Manuel tanımlamak daha doğru
         /// </summary>
         public static List<Category> GetCategories()
         {
-            // ID counter'ı sıfırla (her çağrıda aynı ID'leri kullanmak için)
+            // ID COUNTER RESET - KRİTİK!
+            // Her çağrıda ID'ler 1'den başlamalı
+            // Yoksa: İlk çağrı 1-10, ikinci çağrı 11-20 olur (YANLIŞ!)
             _categoryIdCounter = 1;
 
-            // Kategoriler sabit, Bogus kullanmaya gerek yok
+            // SABİT KATEGORİLER
+            // İş gereksinimi: TeknoRoma'nın standart ürün kategorileri
+            // Bogus kullanmıyoruz çünkü bu isimler şirket standardı
             var categories = new List<Category>
             {
+                // _categoryIdCounter++ AÇIKLAMASI:
+                // ++ operatörü: "Değeri kullan, sonra 1 artır" anlamına gelir
+                // İlk satır: Id = 1 (sonra counter = 2 olur)
+                // İkinci satır: Id = 2 (sonra counter = 3 olur)
+                // Böylece ID'ler otomatik 1,2,3,4... şeklinde artar
                 new Category { Id = _categoryIdCounter++, Name = "Cep Telefonları", Description = "Akıllı telefonlar ve cep telefonları. iPhone, Samsung, Xiaomi, Oppo ve diğer markalar.", IsActive = true, CreatedDate = DateTime.Now.AddMonths(-12) },
                 new Category { Id = _categoryIdCounter++, Name = "Bilgisayar & Laptop", Description = "Dizüstü ve masaüstü bilgisayarlar. Gaming, iş ve öğrenci laptopları.", IsActive = true, CreatedDate = DateTime.Now.AddMonths(-12) },
                 new Category { Id = _categoryIdCounter++, Name = "Tablet & iPad", Description = "Tablet bilgisayarlar ve iPad modelleri. Çizim ve eğitim tabletleri.", IsActive = true, CreatedDate = DateTime.Now.AddMonths(-12) },
@@ -123,23 +213,47 @@ namespace Infrastructure.Persistence.SeedData
         /// <summary>
         /// 55 TeknoRoma mağazasını oluşturur
         /// İstanbul(20), İzmir(13), Ankara(13), Bursa(9)
+        ///
+        /// NEDEN CACHE VAR?
+        /// - 55 mağaza birçok yerde kullanılıyor (Employee, Department, Sale, Expense)
+        /// - Her çağrıda yeniden üretmek yerine cache'ten dönüyoruz
+        /// - Aynı mağaza listesi = Tutarlı foreign key ilişkileri
+        ///
+        /// NEDEN BOGUS VAR?
+        /// - Mağaza adresi, telefon, email gibi değişken bilgiler için
+        /// - Manuel yazmak 55 mağaza için çok zaman alır
+        /// - Gerçekçi veriler üretir (Faker.tr kütüphanesi)
         /// </summary>
         public static List<Store> GetStores()
         {
+            // CACHE KONTROLÜ
+            // Daha önce oluşturulduysa, tekrar üretme
+            // Performans + Tutarlılık
             if (_cachedStores != null)
                 return _cachedStores;
 
-            // ID counter'ı sıfırla (her çağrıda aynı ID'leri kullanmak için)
+            // ID COUNTER RESET
+            // Her çağrıda aynı ID'leri üretmek için
             _storeIdCounter = 1;
 
+            // RANDOM SEED AYARLA
+            // Bogus'un rastgele değerler üretmesi için seed veriyoruz
+            // Aynı seed = Aynı sonuçlar (Deterministik)
+            // Randomizer: Bogus kütüphanesinin global rastgele sayı üreteci
             Randomizer.Seed = new Random(RandomSeed);
 
             var stores = new List<Store>();
 
-            // İstanbul mağazaları (20 adet)
+            // İSTANBUL MAĞAZALARI (20 adet)
+            // Gerçek ilçe isimleri kullanılıyor (iş gereksinimi)
+            // Array: Sabit ilçe listesi, değişmez
             var istanbulDistricts = new[] { "Kadıköy", "Beşiktaş", "Şişli", "Üsküdar", "Maltepe", "Ataşehir", "Bakırköy", "Beylikdüzü", "Pendik", "Kartal", "Avcılar", "Esenyurt", "Sultanbeyli", "Tuzla", "Sarıyer", "Kağıthane", "Başakşehir", "Bahçelievler", "Bağcılar", "Esenler" };
+
+            // DÖNGÜ: Her ilçe için bir mağaza oluştur
             for (int i = 0; i < IstanbulStoreCount; i++)
             {
+                // CreateStore helper metodu: Mağaza detaylarını Bogus ile doldurur
+                // İl + İlçe bilgisi veriyoruz, geri kalan (adres, telefon) otomatik
                 stores.Add(CreateStore("İstanbul", istanbulDistricts[i]));
             }
 
@@ -164,24 +278,65 @@ namespace Infrastructure.Persistence.SeedData
                 stores.Add(CreateStore("Bursa", bursaDistricts[i]));
             }
 
+            // CACHE'E KAYDET
+            // Bir sonraki çağrıda bu listeyi döndürmek için
             _cachedStores = stores;
             return stores;
         }
 
+        /// <summary>
+        /// Tek bir mağaza oluşturur (Helper metod)
+        ///
+        /// HELPER METOD NEDEN?
+        /// - Kod tekrarını önler (DRY prensibi: Don't Repeat Yourself)
+        /// - 55 mağaza için aynı mantığı kullanıyoruz
+        /// - Değişiklik tek yerden yapılır
+        ///
+        /// PARAMETRELER:
+        /// - city: İl adı (İstanbul, İzmir, Ankara, Bursa)
+        /// - district: İlçe adı (Kadıköy, Bornova vb.)
+        /// </summary>
         private static Store CreateStore(string city, string district)
         {
+            // FAKER OLUŞTUR
+            // "tr": Türkçe locale kullan
+            // Böylece Türkiye'ye uygun adres, telefon formatları üretilir
             var faker = new Faker("tr");
 
             return new Store
             {
+                // ID: Counter ile otomatik artan (1,2,3...)
                 Id = _storeIdCounter++,
+
+                // NAME: String interpolation ($"...") ile dinamik isim
+                // Örnek: "TEKNOROMA Kadıköy Şubesi"
                 Name = $"TEKNOROMA {district} Şubesi",
+
+                // ŞEHİR VE İLÇE: Parametre olarak alıyoruz
                 City = city,
                 District = district,
+
+                // ADRES: Faker ile rastgele Türkçe adres
+                // Örnek: "Cumhuriyet Mahallesi, Atatürk Caddesi No:42 D:5"
                 Address = faker.Address.FullAddress(),
+
+                // TELEFON: Belirlediğimiz formatta rastgele telefon
+                // Format: 0216 ### ## ##
+                // # karakteri rastgele rakamla değiştirilir
+                // Örnek: "0216 456 78 90"
                 Phone = faker.Phone.PhoneNumber("0216 ### ## ##"),
+
+                // EMAIL: İlçe adından otomatik üret
+                // SORUN: İlçe adında Türkçe karakter var (Kadıköy)
+                // ÇÖZÜM: ToLowerInvariant() + Replace ile İngilizce karaktere çevir
+                // Kadıköy → kadıköy → kadiköy → kadikoy@teknoroma.com
+                // Replace zinciri: ı→i, ş→s, ç→c, ğ→g, ü→u, ö→o
                 Email = $"{district.ToLowerInvariant().Replace('ı', 'i').Replace('ş', 's').Replace('ç', 'c').Replace('ğ', 'g').Replace('ü', 'u').Replace('ö', 'o')}@teknoroma.com",
+
+                // AKTIFLIK: Tüm mağazalar aktif
                 IsActive = true,
+
+                // OLUŞTURMA TARİHİ: 12 ay önce açılmış gibi
                 CreatedDate = DateTime.Now.AddMonths(-12)
             };
         }
@@ -193,17 +348,36 @@ namespace Infrastructure.Persistence.SeedData
         /// <summary>
         /// Her mağaza için departmanlar oluşturur
         /// Her mağazada en az 1 departman olacak şekilde toplam 30 departman
+        ///
+        /// VERİTABANI KISITI (UNIQUE INDEX):
+        /// - IX_Departments_StoreId_Name: Aynı mağazada aynı isimde iki departman olamaz
+        /// - Bu kısıt migration'da otomatik oluşturuldu
+        /// - Duplicate değer = Migration hatası!
+        ///
+        /// BU METODDA DÜZELTME YAPILDI:
+        /// - Eski kod: Aynı mağazaya "Satış" departmanını 2 kez ekliyordu (HATA!)
+        /// - Yeni kod: İlk departman her mağazaya, ikinci departman farklı tiplerden
         /// </summary>
         public static List<Department> GetDepartments()
         {
+            // CACHE KONTROLÜ
             if (_cachedDepartments != null)
                 return _cachedDepartments;
 
-            // ID counter'ı sıfırla (her çağrıda aynı ID'leri kullanmak için)
+            // ID COUNTER RESET
             _departmentIdCounter = 1;
 
-            var stores = GetStores(); // Cache'den al
+            // MAĞAZA LİSTESİ AL
+            // GetStores() cache'den döner (daha önce oluşturuldu)
+            // Foreign key için Store ID'lerine ihtiyacımız var
+            var stores = GetStores();
             var departments = new List<Department>();
+
+            // DEPARTMAN TİPLERİ
+            // Tuple kullanılıyor: (UserRole, DepartmanAdı, Açıklama)
+            // Item1 = UserRole enum değeri
+            // Item2 = Departman adı (string)
+            // Item3 = Açıklama (string)
             var departmentTypes = new[]
             {
                 (UserRole.KasaSatis, "Satış ve Müşteri Hizmetleri", "Ürün satışı, müşteri kaydı ve fatura işlemleri"),
@@ -213,30 +387,56 @@ namespace Infrastructure.Persistence.SeedData
                 (UserRole.SubeMuduru, "Şube Yönetimi", "Mağaza yönetimi ve koordinasyon")
             };
 
+            // DEPARTMAN INDEX: Toplam kaç departman eklediğimizi takip eder
             int departmentIndex = 0;
 
-            // Her mağazaya en az bir departman ekle
+            // HER MAĞAZAYA DEPARTMAN EKLE
             foreach (var store in stores)
             {
-                // Her mağazaya satış departmanı ekle (zorunlu)
+                // 1. DEPARTMAN: SATIŞ (ZORUNLU)
+                // Her mağazada mutlaka bir satış departmanı olmalı (iş kuralı)
+                // departmentTypes[0] = İlk eleman = Satış departmanı
                 departments.Add(new Department
                 {
                     Id = _departmentIdCounter++,
-                    Name = departmentTypes[0].Item2,
-                    Description = departmentTypes[0].Item3,
-                    StoreId = store.Id,
-                    DepartmentType = departmentTypes[0].Item1,
+                    Name = departmentTypes[0].Item2,          // "Satış ve Müşteri Hizmetleri"
+                    Description = departmentTypes[0].Item3,   // Açıklama
+                    StoreId = store.Id,                       // Foreign Key: Hangi mağaza
+                    DepartmentType = departmentTypes[0].Item1, // UserRole.KasaSatis
                     CreatedDate = DateTime.Now.AddMonths(-12)
                 });
 
-                departmentIndex++;
+                departmentIndex++; // Sayacı artır (1 departman eklendi)
 
-                // Kalan departmanları dağıt
+                // 2. DEPARTMAN: DİĞER TİPLERDEN (OPSIYONEL)
+                // Toplam 30 departman hedefi, daha eklenecek yer varsa devam et
                 if (departmentIndex < TotalDepartmentCount)
                 {
-                    // İlk departman (Satış) zaten eklendi, diğerlerinden seç (1-4 arası)
+                    // ⚠️ KRİTİK: DUPLICATE KEY FIX!
+                    // ==========================================
+                    // SORUN: (departmentIndex % departmentTypes.Length) kullanırsak
+                    //        Her 5. iterasyonda index=0 olur
+                    //        Index=0 → Satış departmanı
+                    //        Aynı mağazaya 2. kez "Satış" eklenemez (UNIQUE INDEX hatası!)
+                    //
+                    // ÇÖZÜM: İlk index'i (0=Satış) atla, sadece 1-4 arası kullan
+                    //
+                    // FORMÜL AÇIKLAMASI:
+                    // (departmentIndex % (departmentTypes.Length - 1)) + 1
+                    //
+                    // Örnek: departmentTypes.Length = 5 (0,1,2,3,4)
+                    //        İstediğimiz: 1,2,3,4 (Satış hariç)
+                    //
+                    // departmentIndex=1: (1 % 4) + 1 = 1 + 1 = 2 → Teknik Servis
+                    // departmentIndex=2: (2 % 4) + 1 = 2 + 1 = 3 → Depo
+                    // departmentIndex=3: (3 % 4) + 1 = 3 + 1 = 4 → Muhasebe
+                    // departmentIndex=4: (4 % 4) + 1 = 0 + 1 = 1 → Şube Yönetimi
+                    // departmentIndex=5: (5 % 4) + 1 = 1 + 1 = 2 → Teknik Servis (döngü)
+                    //
+                    // ASLA 0 DÖNDÜRMEZ! ✅
                     var typeIndex = (departmentIndex % (departmentTypes.Length - 1)) + 1;
                     var deptType = departmentTypes[typeIndex];
+
                     departments.Add(new Department
                     {
                         Id = _departmentIdCounter++,
@@ -250,6 +450,9 @@ namespace Infrastructure.Persistence.SeedData
                 }
             }
 
+            // TOPLAM 30 DEPARTMAN İLE SINIRLA
+            // Döngü 55 mağaza x 2 departman = 110 departman üretebilir
+            // Sadece ilk 30'unu al (iş gereksinimi)
             _cachedDepartments = departments.Take(TotalDepartmentCount).ToList();
             return _cachedDepartments;
         }
@@ -316,31 +519,102 @@ namespace Infrastructure.Persistence.SeedData
 
         /// <summary>
         /// Müşteri kayıtlarını oluşturur (gerçekçi Türkçe isimler)
+        ///
+        /// BOGUS FAKER<T> KULLANIMI:
+        /// - Faker<Customer>: Customer tipinde objeler üretir
+        /// - "tr": Türkçe locale (Türk isimleri, Türkiye adresleri)
+        /// - RuleFor: Her property için kural tanımlar
+        /// - Generate(n): n adet obje üretir
+        ///
+        /// AVANTAJLARI:
+        /// - 500 müşteri için tek tek yazmaya gerek yok
+        /// - Gerçekçi ve tutarlı veriler
+        /// - Test senaryoları için ideal
         /// </summary>
         public static List<Customer> GetCustomers()
         {
+            // CACHE KONTROLÜ
             if (_cachedCustomers != null)
                 return _cachedCustomers;
 
-            // ID counter'ı sıfırla (her çağrıda aynı ID'leri kullanmak için)
+            // ID COUNTER RESET
             _customerIdCounter = 1;
 
+            // RANDOM SEED AYARLA
             Randomizer.Seed = new Random(RandomSeed);
+
+            // FAKER<T> TANIMI
+            // ---------------
+            // Faker<Customer>: Customer tipinde nesneler üreten factory
+            // "tr": Türkçe lokalizasyon (isimler, adresler Türkçe)
+            //
+            // RULEFOR PATTERN:
+            // .RuleFor(property, factory => değer)
+            // - property: Doldurulacak property (lambda: c => c.Id)
+            // - factory: Faker instance'ı (genelde 'f' harfi kullanılır)
+            // - değer: Üretilecek rastgele değer
             var faker = new Faker<Customer>("tr")
+                // ID: Counter ile sıralı ID
                 .RuleFor(c => c.Id, f => _customerIdCounter++)
-                .RuleFor(c => c.IdentityNumber, f => f.Random.ReplaceNumbers("###########")) // 11 haneli TC
+
+                // TC KİMLİK NO: 11 haneli rastgele sayı
+                // ReplaceNumbers: # karakterlerini rastgele rakamla değiştirir
+                // Örnek: "###########" → "12345678901"
+                .RuleFor(c => c.IdentityNumber, f => f.Random.ReplaceNumbers("###########"))
+
+                // AD-SOYAD: Türkçe rastgele isimler
+                // Name.FirstName(): Ali, Ayşe, Mehmet, Fatma vb.
+                // Name.LastName(): Yılmaz, Kaya, Demir vb.
                 .RuleFor(c => c.FirstName, f => f.Name.FirstName())
                 .RuleFor(c => c.LastName, f => f.Name.LastName())
-                .RuleFor(c => c.BirthDate, f => f.Date.Past(50, DateTime.Now.AddYears(-18))) // 18-68 yaş arası
-                .RuleFor(c => c.Gender, f => f.Random.Bool() ? Gender.Erkek : Gender.Kadin) // Rastgele Erkek veya Kadın
+
+                // DOĞUM TARİHİ: 18-68 yaş arası
+                // Past(50, refDate): refDate'ten 50 yıl öncesine kadar rastgele tarih
+                // refDate = Now - 18 yıl → En genç 18 yaşında
+                // 50 yıl geriye = En yaşlı 68 yaşında (18+50)
+                .RuleFor(c => c.BirthDate, f => f.Date.Past(50, DateTime.Now.AddYears(-18)))
+
+                // ⚠️ CİNSİYET: GENDER ENUM FIX!
+                // ========================================
+                // ESKİ KOD (HATA VERİYORDU):
+                // .RuleFor(c => c.Gender, f => f.PickRandom<Gender?>())
+                //
+                // SORUN: PickRandom<Gender?>() boş nullable enum'dan seçmeye çalışıyor
+                //        "The array is empty" hatası veriyor
+                //
+                // YENİ KOD (ÇÖZÜM):
+                // Bool() ile rastgele true/false üret
+                // true → Gender.Erkek
+                // false → Gender.Kadin
+                // Ternary operator: koşul ? doğruysa : yanlışsa
+                .RuleFor(c => c.Gender, f => f.Random.Bool() ? Gender.Erkek : Gender.Kadin)
+
+                // EMAIL: Rastgele email adresi
+                // Örnek: "ahmet.yilmaz@gmail.com"
                 .RuleFor(c => c.Email, f => f.Internet.Email())
+
+                // TELEFON: Türkiye cep telefonu formatı
+                // 05## ### ## ##
+                // Örnek: "0532 456 78 90"
                 .RuleFor(c => c.Phone, f => f.Phone.PhoneNumber("05## ### ## ##"))
+
+                // ADRES: Tam adres (mahalle, sokak, numara)
                 .RuleFor(c => c.Address, f => f.Address.FullAddress())
+
+                // ŞEHİR: PickRandom ile belirli şehirlerden seç
+                // Sadece TeknoRoma'nın mağazası olan şehirler
                 .RuleFor(c => c.City, f => f.PickRandom("İstanbul", "İzmir", "Ankara", "Bursa"))
+
+                // AKTİFLİK: Tüm müşteriler aktif
                 .RuleFor(c => c.IsActive, f => true)
+
+                // OLUŞTURMA TARİHİ: Son 2 yıl içinde
                 .RuleFor(c => c.CreatedDate, f => f.Date.Past(2));
 
-            _cachedCustomers = faker.Generate(500); // 500 müşteri
+            // GENERATE: 500 müşteri üret
+            // faker.Generate(500): Yukarıdaki kurallara göre 500 adet Customer nesnesi oluşturur
+            // Her çağrıda aynı 500 müşteri (RandomSeed sayesinde)
+            _cachedCustomers = faker.Generate(500);
             return _cachedCustomers;
         }
 
@@ -402,29 +676,60 @@ namespace Infrastructure.Persistence.SeedData
         // ====================================================================
 
         /// <summary>
-        /// Gerçekçi elektronik ürünler oluşturur
+        /// Gerçekçi elektronik ürünler oluşturur (~70 ürün)
+        ///
+        /// ÖZEL YÖNTEM:
+        /// - Ürün isimleri manuel tanımlı (gerçek ürünler: iPhone 15, Samsung S24 vb.)
+        /// - Dictionary ile kategori bazlı organizasyon
+        /// - Fiyat, stok vb. Bogus ile rastgele
+        ///
+        /// NEDEN MANUEL ÜRÜN İSİMLERİ?
+        /// - Faker.Commerce.ProductName() gerçekçi elektronik ürün ismi üretemiyor
+        /// - Test senaryolarında tanıdık ürünler daha anlamlı
+        /// - Gerçek dünya verileriyle benzerlik önemli
         /// </summary>
         public static List<Product> GetProducts()
         {
+            // CACHE KONTROLÜ
             if (_cachedProducts != null)
                 return _cachedProducts;
 
-            // ID counter'ı sıfırla (her çağrıda aynı ID'leri kullanmak için)
+            // ID COUNTER RESET
             _productIdCounter = 1;
 
+            // RANDOM SEED AYARLA
             Randomizer.Seed = new Random(RandomSeed);
-            var categories = GetCategories(); // Direkt çağır (zaten her seferinde aynı değerleri döndürüyor)
-            var suppliers = GetSuppliers(); // Cache'den al
+
+            // BAĞIMLI VERİLERİ AL
+            // Foreign Key ilişkileri için Category ve Supplier ID'leri gerekli
+            var categories = GetCategories(); // Cache yok, her seferinde aynı 10 kategoriyi döner
+            var suppliers = GetSuppliers();   // Cache'den döner
+
             var products = new List<Product>();
 
-            // Kategori veya supplier yoksa boş liste döndür
+            // GÜVENLİK KONTROLÜ: Boş liste kontrolü
+            // Eğer kategori veya supplier yoksa ürün oluşturamayız (foreign key hatası!)
+            // Migration sırasında bu durum olmamalı ama güvenlik için kontrol
             if (!categories.Any() || !suppliers.Any())
             {
                 _cachedProducts = products;
                 return products;
             }
 
-            // Kategori bazında ürün isimleri
+            // ÜRÜN TEMPLATE'LERİ (Kategori Bazlı)
+            // ====================================
+            // DİCTIONARY YAPISI:
+            // Key: Kategori adı (string)
+            // Value: O kategorideki ürün isimleri (string array)
+            //
+            // NEDEN DICTIONARY?
+            // - Her kategoriye özel ürünler tanımlamak için
+            // - Kolay erişim: productTemplates["Cep Telefonları"]
+            // - Organize ve okunabilir kod
+            //
+            // NEDEN ARRAY?
+            // - Ürün isimleri sabit, değişmez
+            // - Hafıza verimli (List'e göre)
             var productTemplates = new Dictionary<string, string[]>
             {
                 ["Cep Telefonları"] = new[] {
@@ -471,31 +776,101 @@ namespace Infrastructure.Persistence.SeedData
                 }
             };
 
+            // HER KATEGORİ İÇİN ÜRÜN OLUŞTUR
+            // =================================
             foreach (var category in categories)
             {
+                // Bu kategorinin template'i var mı kontrol et
+                // Bazı kategoriler için ürün tanımlamadıysak atla
                 if (!productTemplates.ContainsKey(category.Name))
                     continue;
 
+                // Bu kategoriye ait ürün template'lerini al
+                // Örnek: "Cep Telefonları" için iPhone, Samsung vb. array'i
                 var templates = productTemplates[category.Name];
 
+                // HER ÜRÜN TEMPLATE'İ İÇİN BİR ÜRÜN OLUŞTUR
                 foreach (var template in templates)
                 {
+                    // FAKER<PRODUCT> İLE ÜRÜN OLUŞTUR
                     var faker = new Faker<Product>("tr")
+                        // ID: Sıralı counter
                         .RuleFor(p => p.Id, f => _productIdCounter++)
+
+                        // NAME: Template'ten al (manuel tanımlı)
+                        // Örnek: "iPhone 15 Pro Max 256GB"
                         .RuleFor(p => p.Name, f => template)
+
+                        // DESCRIPTION: Lorem Ipsum (10 kelimelik açıklama)
+                        // Örnek: "Yüksek çözünürlüklü ekran ile mükemmel görüntü kalitesi..."
                         .RuleFor(p => p.Description, f => f.Lorem.Sentence(10))
+
+                        // BARCODE: EAN13 formatında barkod (13 haneli)
+                        // Örnek: "5901234123457"
                         .RuleFor(p => p.Barcode, f => f.Commerce.Ean13())
+
+                        // FİYAT: 500₺ ile 50,000₺ arası rastgele
                         .RuleFor(p => p.UnitPrice, f => f.Random.Decimal(500, 50000))
+
+                        // STOK MİKTARI: 0-100 arası rastgele
+                        // 0 = Tükendi, düşük = Kritik stok
                         .RuleFor(p => p.UnitsInStock, f => f.Random.Number(0, 100))
+
+                        // KRİTİK STOK SEVİYESİ: Sabit 10
+                        // Stok 10'un altına düşerse uyarı verilir
                         .RuleFor(p => p.CriticalStockLevel, f => 10)
+
+                        // STOK DURUMU: Koşullu mantık!
+                        // ========================================
+                        // ÖZEL SYNTAX: (f, p) =>
+                        // f: Faker instance (kullanmıyoruz burada)
+                        // p: Oluşturulan Product nesnesi (önceki RuleFor'larla doldurulmuş)
+                        //
+                        // BU SAYEDE:
+                        // p.UnitsInStock değerine göre p.StockStatus'u set edebiliyoruz
+                        //
+                        // MANTIK:
+                        // Stok = 0 → Tükendi
+                        // Stok ≤ 10 (CriticalLevel) → Kritik
+                        // Stok > 10 → Yeterli
+                        //
+                        // TERNARY OPERATOR ZİNCİRİ:
+                        // koşul1 ? değer1 : (koşul2 ? değer2 : değer3)
                         .RuleFor(p => p.StockStatus, (f, p) =>
                             p.UnitsInStock == 0 ? StockStatus.Tukendi :
                             p.UnitsInStock <= p.CriticalStockLevel ? StockStatus.Kritik :
                             StockStatus.Yeterli)
+
+                        // FOREIGN KEY: CategoryId
+                        // Döngüdeki category'nin ID'sini kullan
+                        // Bu sayede ürün doğru kategoriye atanır
                         .RuleFor(p => p.CategoryId, f => category.Id)
+
+                        // FOREIGN KEY: SupplierId
+                        // ========================================
+                        // PICKRANDOM İLE RASTGELE TEDARİKÇİ SEÇİMİ
+                        //
+                        // PickRandom(collection): Koleksiyondan rastgele bir eleman seçer
+                        // suppliers listesinden rastgele bir Supplier seçer
+                        // .Id ile seçilen Supplier'ın ID'sini alır
+                        //
+                        // NEDEN?
+                        // Her ürünün bir tedarikçisi olmalı (iş kuralı)
+                        // Hangi tedarikçiden geldiği önemli değil (rastgele dağıtalım)
+                        //
+                        // ÖRNEK:
+                        // suppliers = [Supplier#1, Supplier#2, Supplier#3, ...]
+                        // PickRandom → Supplier#7
+                        // .Id → 7
                         .RuleFor(p => p.SupplierId, f => f.PickRandom(suppliers).Id)
+
+                        // AKTİFLİK: Tüm ürünler aktif
                         .RuleFor(p => p.IsActive, f => true)
+
+                        // GÖRSEL: Şimdilik null (ileride ürün görselleri eklenebilir)
                         .RuleFor(p => p.ImageUrl, f => null)
+
+                        // OLUŞTURMA TARİHİ: 10 ay önce kataloga eklenmiş
                         .RuleFor(p => p.CreatedDate, f => DateTime.Now.AddMonths(-10));
 
                     products.Add(faker.Generate());
