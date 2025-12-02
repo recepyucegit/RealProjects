@@ -138,15 +138,15 @@
                             </div>
                         </div>
                         <div class="d-none d-md-block">
-                            <span class="d-block small fw-medium">Haluk SAYGIN</span>
-                            <span class="d-block small opacity-75" style="font-size: 0.7rem;">Sube Muduru</span>
+                            <span class="d-block small fw-medium">@Context.Session.GetString("UserName")</span>
+                            <span class="d-block small opacity-75" style="font-size: 0.7rem;">@Context.Session.GetString("UserRole")</span>
                         </div>
                     </a>
                     <ul class="dropdown-menu dropdown-menu-end shadow">
                         <li>
                             <div class="dropdown-header">
-                                <strong>Haluk SAYGIN</strong>
-                                <br><small class="text-muted">haluk.saygin@teknoroma.com</small>
+                                <strong>@Context.Session.GetString("UserName")</strong>
+                                <br><small class="text-muted">@Context.Session.GetString("UserEmail")</small>
                             </div>
                         </li>
                         <li><hr class="dropdown-divider"></li>
@@ -154,7 +154,13 @@
                         <li><a class="dropdown-item" href="#"><i class="bi bi-gear me-2"></i>Ayarlar</a></li>
                         <li><a class="dropdown-item" href="#"><i class="bi bi-question-circle me-2"></i>Yardim</a></li>
                         <li><hr class="dropdown-divider"></li>
-                        <li><a class="dropdown-item text-danger" href="#"><i class="bi bi-box-arrow-right me-2"></i>Cikis Yap</a></li>
+                        <li>
+                            <form asp-controller="Account" asp-action="Logout" method="post" class="d-inline">
+                                <button type="submit" class="dropdown-item text-danger" style="border: none; background: none; width: 100%; text-align: left;">
+                                    <i class="bi bi-box-arrow-right me-2"></i>Cikis Yap
+                                </button>
+                            </form>
+                        </li>
                     </ul>
                 </div>
             </div>
