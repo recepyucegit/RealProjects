@@ -265,9 +265,32 @@ namespace Infrastructure.Services
                     return GetFallbackRate(currencyCode);
                 }
 
-                // TCMB Turkce locale kullanir (ondalik ayirici: virgul)
-                // "32,4567" -> 32.4567
-                if (decimal.TryParse(sellingRateStr, NumberStyles.Any, new CultureInfo("tr-TR"), out decimal rate))
+                // ⚠️ KRİTİK FIX: TCMB Parsing Sorunu
+                // =====================================
+                // SORUN:
+                // TCMB XML'den gelen değer: "34,5678" (virgül ondalık ayracı)
+                // NumberStyles.Any ile parse edilince: 345678 (virgül binlik ayraç sanılıyor!)
+                //
+                // ÇÖZÜM:
+                // Virgülü noktaya çevir ve InvariantCulture ile parse et
+                // "34,5678" → "34.5678" → 34.5678 ✅
+                //
+                // NEDEN INVARIANTCULTURE?
+                // - Nokta her zaman ondalık ayracı
+                // - Binlik ayraç yok
+                // - Tutarlı ve güvenilir parsing
+                //
+                // ÖNCEKİ KOD (HATALI):
+                // decimal.TryParse(sellingRateStr, NumberStyles.Any, new CultureInfo("tr-TR"), out decimal rate)
+                //
+                // YENİ KOD (DOĞRU):
+                var normalizedRateStr = sellingRateStr.Replace(',', '.'); // Virgül → Nokta
+
+                if (decimal.TryParse(
+                    normalizedRateStr,
+                    NumberStyles.AllowDecimalPoint | NumberStyles.AllowLeadingSign, // Sadece ondalık nokta
+                    CultureInfo.InvariantCulture, // Kültürden bağımsız
+                    out decimal rate))
                 {
                     return rate;
                 }
