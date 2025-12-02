@@ -785,6 +785,9 @@ namespace Infrastructure.Persistence.SeedData
             if (_cachedTechnicalServices != null)
                 return _cachedTechnicalServices;
 
+            // ID counter'ı sıfırla (her çağrıda aynı ID'leri kullanmak için)
+            _technicalServiceIdCounter = 1;
+
             Randomizer.Seed = new Random(RandomSeed);
             var customers = GetCustomers();
             var products = GetProducts();

@@ -470,11 +470,15 @@ namespace Infrastructure.Persistence
             // ADIM 10: Expense (500 gider - Employee ve Store'a bağımlı) ✅ TEST EDİLDİ
             modelBuilder.Entity<Expense>().HasData(TeknoRomaSeedData.GetExpenses());
 
-            // ADIM 11: SupplierTransaction (200 işlem - Supplier ve Product'a bağımlı) 🔄 TEST EDİLİYOR
+            // ADIM 11: SupplierTransaction (200 işlem - Supplier ve Product'a bağımlı) ✅ TEST EDİLDİ
             modelBuilder.Entity<SupplierTransaction>().HasData(TeknoRomaSeedData.GetSupplierTransactions());
 
-            // TODO: Kalan işlemsel veriler - TEK TEK EKLENECEK
-            // Adım 12: TechnicalService (100 servis - Employee, Customer, Store'a bağımlı)
+            // ADIM 12: TechnicalService (100 servis - Employee, Customer, Store'a bağımlı) 🔄 TEST EDİLİYOR
+            modelBuilder.Entity<TechnicalService>().HasData(TeknoRomaSeedData.GetTechnicalServices());
+
+            // =================================================================
+            // ✅ TÜM SEED DATA TAMAMLANDI!
+            // Toplam: ~4,500+ kayıt
             // =================================================================
         }
 
