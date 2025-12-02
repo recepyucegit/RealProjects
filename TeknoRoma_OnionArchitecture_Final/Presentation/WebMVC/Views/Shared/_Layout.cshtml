@@ -138,15 +138,15 @@
                             </div>
                         </div>
                         <div class="d-none d-md-block">
-                            <span class="d-block small fw-medium">@Context.Session.GetString("UserName")</span>
-                            <span class="d-block small opacity-75" style="font-size: 0.7rem;">@Context.Session.GetString("UserRole")</span>
+                            <span class="d-block small fw-medium">@(Context.Session.GetString("UserName") ?? "Misafir")</span>
+                            <span class="d-block small opacity-75" style="font-size: 0.7rem;">@(Context.Session.GetString("UserRole") ?? "Ziyaretci")</span>
                         </div>
                     </a>
                     <ul class="dropdown-menu dropdown-menu-end shadow">
                         <li>
                             <div class="dropdown-header">
-                                <strong>@Context.Session.GetString("UserName")</strong>
-                                <br><small class="text-muted">@Context.Session.GetString("UserEmail")</small>
+                                <strong>@(Context.Session.GetString("UserName") ?? "Misafir")</strong>
+                                <br><small class="text-muted">@(Context.Session.GetString("UserEmail") ?? "Giriş yapılmadı")</small>
                             </div>
                         </li>
                         <li><hr class="dropdown-divider"></li>
