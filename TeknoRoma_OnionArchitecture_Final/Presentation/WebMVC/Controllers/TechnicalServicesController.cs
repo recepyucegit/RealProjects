@@ -84,8 +84,8 @@ namespace WebMVC.Controllers
                 if (!ModelState.IsValid)
                     return View(service);
 
-                service.OpenDate = DateTime.Now;
-                service.Status = ServiceStatus.Acik;
+                service.ReportedDate = DateTime.Now;
+                service.Status = TechnicalServiceStatus.Acik;
 
                 await _unitOfWork.TechnicalServices.AddAsync(service);
                 await _unitOfWork.SaveChangesAsync();

@@ -112,6 +112,25 @@ namespace Domain.Entities
         /// </summary>
         public Gender? Gender { get; set; }
 
+        /// <summary>
+        /// Kayıt Tarihi
+        ///
+        /// AÇIKLAMA:
+        /// - Müşterinin sisteme kayıt olduğu tarih/saat
+        /// - Müşteri yaşam döngüsü analizinde kullanılır
+        /// - Yeni müşteri kampanyaları için referans
+        ///
+        /// OTOMATİK ATAMA:
+        /// - Genellikle DateTime.Now ile set edilir
+        /// - Müşteri ilk kayıt olduğunda atanır
+        ///
+        /// KULLANIM:
+        /// - Müşteri sadakati hesaplama (kaç yıldır müşteri)
+        /// - Yeni müşteri raporları
+        /// - Müşteri segmentasyonu
+        /// </summary>
+        public DateTime RegistrationDate { get; set; }
+
         // ====================================================================
         // İLETİŞİM BİLGİLERİ
         // ====================================================================
