@@ -98,7 +98,7 @@ namespace WebMVC.Controllers
 
                 // Sale details'i de yukle
                 var saleDetails = await _unitOfWork.SaleDetails
-                    .FindAsync(sd => sd.SaleId == id);
+                    .GetAllAsync(sd => sd.SaleId == id);
 
                 ViewBag.SaleDetails = saleDetails;
                 return View(sale);
@@ -124,12 +124,12 @@ namespace WebMVC.Controllers
             {
                 // Aktif urunleri yukle
                 var products = await _unitOfWork.Products
-                    .FindAsync(p => p.IsActive && p.Stock > 0);
+                    .GetAllAsync(p => p.IsActive && p.UnitsInStock > 0);
                 ViewBag.Products = products;
 
                 // Aktif musterileri yukle
                 var customers = await _unitOfWork.Customers
-                    .FindAsync(c => c.IsActive);
+                    .GetAllAsync(c => c.IsActive);
                 ViewBag.Customers = customers;
 
                 return View();
@@ -190,17 +190,17 @@ namespace WebMVC.Controllers
                         }
 
                         // Stok kontrolu
-                        if (product.Stock < detail.Quantity)
+                        if (product.UnitsInStock < detail.Quantity)
                         {
                             throw new Exception($"Yetersiz stok: {product.Name}");
                         }
 
                         // Stok dusur
-                        product.Stock -= detail.Quantity;
+                        product.UnitsInStock -= detail.Quantity;
                         await _unitOfWork.Products.UpdateAsync(product);
 
                         // Detail kaydet
-                        detail.UnitPrice = product.Price;
+                        detail.UnitPrice = product.UnitPrice;
                         detail.Subtotal = detail.Quantity * detail.UnitPrice;
                         totalAmount += detail.Subtotal;
 
@@ -287,7 +287,7 @@ namespace WebMVC.Controllers
                     return RedirectToAction(nameof(Index));
                 }
 
-                if (sale.Status == SaleStatus.IptalEdildi)
+                if (sale.Status == SaleStatus.Iptal)
                 {
                     TempData["Warning"] = "Satis zaten iptal edilmis.";
                     return RedirectToAction(nameof(Details), new { id });
@@ -299,19 +299,19 @@ namespace WebMVC.Controllers
                 try
                 {
                     // 1. Satisi iptal et
-                    sale.Status = SaleStatus.IptalEdildi;
+                    sale.Status = SaleStatus.Iptal;
                     await _unitOfWork.Sales.UpdateAsync(sale);
 
                     // 2. Stoklari geri ekle
                     var details = await _unitOfWork.SaleDetails
-                        .FindAsync(sd => sd.SaleId == id);
+                        .GetAllAsync(sd => sd.SaleId == id);
 
                     foreach (var detail in details)
                     {
                         var product = await _unitOfWork.Products.GetByIdAsync(detail.ProductId);
                         if (product != null)
                         {
-                            product.Stock += detail.Quantity;
+                            product.UnitsInStock += detail.Quantity;
                             await _unitOfWork.Products.UpdateAsync(product);
                         }
                     }
