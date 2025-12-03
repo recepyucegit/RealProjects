@@ -1,0 +1,239 @@
+@model IEnumerable<Domain.Entities.Sale>
+@{
+    ViewData["Title"] = ViewData["Title"] ?? "Satislar";
+}
+
+@* ===================================================================================
+   TEKNOROMA - SATIŞ LISTESI
+   ===================================================================================
+
+   Tum satislarin DataTables ile gosterildigi liste sayfasi.
+   Arama, siralama, filtreleme ve sayfalama ozellikleri.
+
+   =================================================================================== *@
+
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h1 class="h3 mb-0">
+        <i class="bi bi-cart-check me-2"></i>@ViewData["Title"]
+    </h1>
+    <div>
+        <a href="/Sales/Pending" class="btn btn-outline-warning me-2">
+            <i class="bi bi-clock me-1"></i>Bekleyen Satislar
+        </a>
+        <a href="/Sales/Create" class="btn btn-primary">
+            <i class="bi bi-plus-lg me-1"></i>Yeni Satis
+        </a>
+    </div>
+</div>
+
+<!-- Filtre Kartlari -->
+<div class="row g-3 mb-4">
+    <div class="col-md-3">
+        <div class="card stat-card h-100 border-0 shadow-sm">
+            <div class="card-body text-center">
+                <i class="bi bi-cart-check text-primary fs-1 mb-2 d-block"></i>
+                <h3 class="mb-1">@Model.Count()</h3>
+                <small class="text-muted">Toplam Satis</small>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card stat-card h-100 border-0 shadow-sm">
+            <div class="card-body text-center">
+                <i class="bi bi-check-circle text-success fs-1 mb-2 d-block"></i>
+                <h3 class="mb-1">@Model.Count(s => s.Status == Domain.Enums.SaleStatus.Tamamlandi)</h3>
+                <small class="text-muted">Tamamlandi</small>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card stat-card h-100 border-0 shadow-sm">
+            <div class="card-body text-center">
+                <i class="bi bi-clock text-warning fs-1 mb-2 d-block"></i>
+                <h3 class="mb-1">@Model.Count(s => s.Status == Domain.Enums.SaleStatus.Beklemede)</h3>
+                <small class="text-muted">Beklemede</small>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card stat-card h-100 border-0 shadow-sm">
+            <div class="card-body text-center">
+                <i class="bi bi-currency-dollar text-success fs-1 mb-2 d-block"></i>
+                <h3 class="mb-1">@Model.Where(s => s.Status == Domain.Enums.SaleStatus.Tamamlandi).Sum(s => s.TotalAmount).ToString("N0") TL</h3>
+                <small class="text-muted">Toplam Ciro</small>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Satis Tablosu -->
+<div class="card shadow-sm">
+    <div class="card-header bg-transparent d-flex justify-content-between align-items-center">
+        <h5 class="mb-0"><i class="bi bi-table me-2"></i>Satis Listesi</h5>
+        <div class="btn-group btn-group-sm" role="group">
+            <button type="button" class="btn btn-outline-secondary" id="btnExportExcel">
+                <i class="bi bi-file-earmark-excel me-1"></i>Excel
+            </button>
+            <button type="button" class="btn btn-outline-secondary" id="btnExportPdf">
+                <i class="bi bi-file-earmark-pdf me-1"></i>PDF
+            </button>
+        </div>
+    </div>
+    <div class="card-body p-0">
+        <div class="table-responsive">
+            <table id="salesTable" class="table table-hover mb-0" style="width:100%">
+                <thead class="table-light">
+                    <tr>
+                        <th>Fis No</th>
+                        <th>Tarih</th>
+                        <th>Musteri</th>
+                        <th>Calisan</th>
+                        <th>Tutar</th>
+                        <th>Durum</th>
+                        <th>Islemler</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var sale in Model)
+                    {
+                        var statusBadge = sale.Status switch
+                        {
+                            Domain.Enums.SaleStatus.Tamamlandi => "bg-success",
+                            Domain.Enums.SaleStatus.Beklemede => "bg-warning text-dark",
+                            Domain.Enums.SaleStatus.Hazirlaniyor => "bg-info",
+                            Domain.Enums.SaleStatus.Iptal => "bg-danger",
+                            _ => "bg-secondary"
+                        };
+
+                        var statusText = sale.Status switch
+                        {
+                            Domain.Enums.SaleStatus.Tamamlandi => "Tamamlandi",
+                            Domain.Enums.SaleStatus.Beklemede => "Beklemede",
+                            Domain.Enums.SaleStatus.Hazirlaniyor => "Hazirlaniyor",
+                            Domain.Enums.SaleStatus.Iptal => "Iptal",
+                            _ => "Bilinmiyor"
+                        };
+
+                        <tr>
+                            <td>
+                                <a href="/Sales/Details/@sale.Id" class="text-decoration-none fw-medium">
+                                    <code>@sale.SaleNumber</code>
+                                </a>
+                            </td>
+                            <td>
+                                @sale.SaleDate.ToString("dd.MM.yyyy HH:mm")
+                            </td>
+                            <td>
+                                @if (sale.Customer != null)
+                                {
+                                    <span>@sale.Customer.FullName</span>
+                                }
+                                else
+                                {
+                                    <span class="text-muted">-</span>
+                                }
+                            </td>
+                            <td>
+                                @if (sale.Employee != null)
+                                {
+                                    <span>@sale.Employee.FullName</span>
+                                }
+                                else
+                                {
+                                    <span class="text-muted">-</span>
+                                }
+                            </td>
+                            <td class="fw-medium">
+                                @sale.TotalAmount.ToString("N2") TL
+                            </td>
+                            <td>
+                                <span class="badge @statusBadge">
+                                    @statusText
+                                </span>
+                            </td>
+                            <td>
+                                <div class="btn-group btn-group-sm" role="group">
+                                    <a href="/Sales/Details/@sale.Id" class="btn btn-outline-info" title="Detay">
+                                        <i class="bi bi-eye"></i>
+                                    </a>
+                                    @if (sale.Status == Domain.Enums.SaleStatus.Beklemede)
+                                    {
+                                        <button type="button" class="btn btn-outline-danger btn-cancel"
+                                                data-id="@sale.Id"
+                                                data-number="@sale.SaleNumber"
+                                                title="Iptal Et">
+                                            <i class="bi bi-x-circle"></i>
+                                        </button>
+                                    }
+                                </div>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+<script>
+    $(document).ready(function() {
+        // DataTables baslat
+        var table = $('#salesTable').DataTable({
+            responsive: true,
+            language: {
+                url: 'https://cdn.datatables.net/plug-ins/1.13.6/i18n/tr.json'
+            },
+            order: [[1, 'desc']], // Tarihe gore ters sirala (en yeni ustte)
+            columnDefs: [
+                { orderable: false, targets: [6] }, // Islemler kolonu siralanamaz
+                { className: 'text-center', targets: [5, 6] }
+            ],
+            pageLength: 25,
+            lengthMenu: [[10, 25, 50, 100, -1], [10, 25, 50, 100, "Tumu"]]
+        });
+
+        // Iptal islemi
+        $(document).on('click', '.btn-cancel', function() {
+            var id = $(this).data('id');
+            var number = $(this).data('number');
+
+            TeknoRoma.confirm(
+                'Satis Iptal',
+                `<strong>${number}</strong> numarali satisi iptal etmek istediginize emin misiniz?<br><br>` +
+                '<span class="text-warning"><i class="bi bi-exclamation-triangle me-1"></i>Stoklar geri eklenecektir.</span>',
+                function() {
+                    $.ajax({
+                        url: '/Sales/Cancel',
+                        type: 'POST',
+                        data: { id: id },
+                        headers: {
+                            'RequestVerificationToken': $('input[name="__RequestVerificationToken"]').val()
+                        },
+                        success: function(result) {
+                            TeknoRoma.toast('Satis iptal edildi.', 'success');
+                            setTimeout(() => location.reload(), 1000);
+                        },
+                        error: function() {
+                            TeknoRoma.toast('Bir hata olustu.', 'error');
+                        }
+                    });
+                }
+            );
+        });
+
+        // Excel export
+        $('#btnExportExcel').click(function() {
+            TeknoRoma.toast('Excel dosyasi hazirlaniyor...', 'info');
+            // TODO: Implement Excel export
+        });
+
+        // PDF export
+        $('#btnExportPdf').click(function() {
+            TeknoRoma.toast('PDF dosyasi hazirlaniyor...', 'info');
+            // TODO: Implement PDF export
+        });
+    });
+</script>
+@Html.AntiForgeryToken()
+}

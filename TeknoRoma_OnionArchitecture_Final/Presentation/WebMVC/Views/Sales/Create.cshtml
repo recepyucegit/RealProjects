@@ -1,0 +1,229 @@
+@model Domain.Entities.Sale
+@{
+    ViewData["Title"] = "Yeni Satis";
+    var products = ViewBag.Products as IEnumerable<Domain.Entities.Product> ?? new List<Domain.Entities.Product>();
+    var customers = ViewBag.Customers as IEnumerable<Domain.Entities.Customer> ?? new List<Domain.Entities.Customer>();
+}
+
+@* ===================================================================================
+   TEKNOROMA - YENİ SATIŞ SAYFASI (POS)
+   ===================================================================================
+
+   Yeni satış kaydı oluşturma sayfası.
+   Basitleştirilmiş POS ekranı.
+
+   TODO: Geliştirilecek özellikler:
+   - Barkod okuyucu desteği
+   - Dinamik ürün ekleme/çıkarma
+   - Stok kontrolü
+   - Hızlı ödeme butonları
+
+   =================================================================================== *@
+
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h1 class="h3 mb-0">
+        <i class="bi bi-cart-plus me-2"></i>@ViewData["Title"]
+    </h1>
+    <a href="/Sales/Index" class="btn btn-outline-secondary">
+        <i class="bi bi-arrow-left me-1"></i>Geri
+    </a>
+</div>
+
+<div class="alert alert-info">
+    <i class="bi bi-info-circle me-2"></i>
+    <strong>Not:</strong> Bu sayfa basitleştirilmiş bir satış formu içermektedir.
+    Tam özellikli POS ekranı için geliştirme devam etmektedir.
+</div>
+
+<div class="row">
+    <div class="col-lg-8">
+        <div class="card shadow-sm mb-4">
+            <div class="card-header bg-transparent">
+                <h5 class="mb-0"><i class="bi bi-cart me-2"></i>Satış Bilgileri</h5>
+            </div>
+            <div class="card-body">
+                <form method="post" action="/Sales/Create" id="salesForm">
+                    @Html.AntiForgeryToken()
+
+                    <div class="row g-3">
+                        <!-- Müşteri Seçimi -->
+                        <div class="col-md-6">
+                            <label class="form-label">Musteri (Opsiyonel)</label>
+                            <select class="form-select" name="CustomerId" id="customerId">
+                                <option value="">Musteri Secilmedi</option>
+                                @foreach (var customer in customers)
+                                {
+                                    <option value="@customer.Id">@customer.FullName - @customer.Phone</option>
+                                }
+                            </select>
+                            <small class="text-muted">Hızlı satış için boş bırakabilirsiniz</small>
+                        </div>
+
+                        <!-- Ödeme Tipi -->
+                        <div class="col-md-6">
+                            <label class="form-label">Odeme Tipi <span class="text-danger">*</span></label>
+                            <select class="form-select" name="PaymentType" required>
+                                <option value="@((int)Domain.Enums.PaymentType.Nakit)">Nakit</option>
+                                <option value="@((int)Domain.Enums.PaymentType.KrediKarti)">Kredi Karti</option>
+                                <option value="@((int)Domain.Enums.PaymentType.BankaHavalesi)">Banka Havalesi</option>
+                            </select>
+                        </div>
+
+                        <!-- Notlar -->
+                        <div class="col-12">
+                            <label class="form-label">Notlar</label>
+                            <textarea class="form-control" name="Notes" rows="2" placeholder="Ek notlar (opsiyonel)"></textarea>
+                        </div>
+                    </div>
+
+                    <hr class="my-4">
+
+                    <h6 class="mb-3">Urunler</h6>
+
+                    <div id="productsContainer">
+                        <!-- Ürün satırları buraya eklenecek -->
+                    </div>
+
+                    <button type="button" class="btn btn-outline-primary btn-sm" id="btnAddProduct">
+                        <i class="bi bi-plus-circle me-1"></i>Urun Ekle
+                    </button>
+
+                    <hr class="my-4">
+
+                    <div class="d-flex justify-content-between align-items-center">
+                        <button type="submit" class="btn btn-success btn-lg">
+                            <i class="bi bi-check-circle me-2"></i>Satisi Tamamla
+                        </button>
+                        <div class="text-end">
+                            <small class="text-muted d-block">Toplam Tutar</small>
+                            <h3 class="mb-0 text-success" id="totalAmount">0.00 TL</h3>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-lg-4">
+        <div class="card shadow-sm">
+            <div class="card-header bg-transparent">
+                <h5 class="mb-0"><i class="bi bi-info-circle me-2"></i>Bilgi</h5>
+            </div>
+            <div class="card-body">
+                <h6>Hızlı Satış İpuçları:</h6>
+                <ul class="small mb-0">
+                    <li>Müşteri kaydı opsiyoneldir</li>
+                    <li>En az 1 ürün eklemelisiniz</li>
+                    <li>Stok kontrolü otomatik yapılır</li>
+                    <li>Satış tamamlandığında stok düşülür</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+<script>
+    $(document).ready(function() {
+        let productRowIndex = 0;
+
+        // Ürün ekleme
+        $('#btnAddProduct').click(function() {
+            addProductRow();
+        });
+
+        // İlk ürün satırını ekle
+        addProductRow();
+
+        function addProductRow() {
+            const products = @Html.Raw(Json.Serialize(products.Select(p => new {
+                id = p.Id,
+                name = p.Name,
+                price = p.UnitPrice,
+                stock = p.UnitsInStock
+            })));
+
+            const row = $(`
+                <div class="card mb-3 product-row" data-index="${productRowIndex}">
+                    <div class="card-body">
+                        <div class="row g-3 align-items-center">
+                            <div class="col-md-5">
+                                <label class="form-label small">Urun</label>
+                                <select class="form-select product-select" name="details[${productRowIndex}].ProductId" required>
+                                    <option value="">Urun Secin</option>
+                                    ${products.map(p => `<option value="${p.id}" data-price="${p.price}" data-stock="${p.stock}">${p.name} (${p.stock} adet)</option>`).join('')}
+                                </select>
+                            </div>
+                            <div class="col-md-2">
+                                <label class="form-label small">Miktar</label>
+                                <input type="number" class="form-control quantity-input" name="details[${productRowIndex}].Quantity" value="1" min="1" required>
+                            </div>
+                            <div class="col-md-2">
+                                <label class="form-label small">Fiyat</label>
+                                <input type="number" step="0.01" class="form-control price-input" name="details[${productRowIndex}].UnitPrice" readonly>
+                            </div>
+                            <div class="col-md-2">
+                                <label class="form-label small">Toplam</label>
+                                <input type="text" class="form-control subtotal-display" readonly>
+                            </div>
+                            <div class="col-md-1">
+                                <label class="form-label small d-block">&nbsp;</label>
+                                <button type="button" class="btn btn-outline-danger btn-sm btn-remove-product">
+                                    <i class="bi bi-trash"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `);
+
+            $('#productsContainer').append(row);
+            productRowIndex++;
+
+            // Event handlers
+            row.find('.product-select').change(function() {
+                const selected = $(this).find(':selected');
+                const price = selected.data('price') || 0;
+                row.find('.price-input').val(price);
+                calculateRowTotal(row);
+            });
+
+            row.find('.quantity-input, .price-input').on('input', function() {
+                calculateRowTotal(row);
+            });
+
+            row.find('.btn-remove-product').click(function() {
+                row.remove();
+                calculateTotal();
+            });
+        }
+
+        function calculateRowTotal(row) {
+            const quantity = parseFloat(row.find('.quantity-input').val()) || 0;
+            const price = parseFloat(row.find('.price-input').val()) || 0;
+            const subtotal = quantity * price;
+            row.find('.subtotal-display').val(subtotal.toFixed(2) + ' TL');
+            calculateTotal();
+        }
+
+        function calculateTotal() {
+            let total = 0;
+            $('.product-row').each(function() {
+                const quantity = parseFloat($(this).find('.quantity-input').val()) || 0;
+                const price = parseFloat($(this).find('.price-input').val()) || 0;
+                total += quantity * price;
+            });
+            $('#totalAmount').text(total.toFixed(2) + ' TL');
+        }
+
+        // Form validation
+        $('#salesForm').submit(function(e) {
+            if ($('.product-row').length === 0) {
+                e.preventDefault();
+                TeknoRoma.toast('En az 1 urun eklemelisiniz!', 'error');
+                return false;
+            }
+        });
+    });
+</script>
+}
