@@ -68,9 +68,9 @@
                             <label class="form-label">Cinsiyet</label>
                             <select class="form-select" name="Gender">
                                 <option value="">Secim Yapin</option>
-                                <option value="@((int)Domain.Enums.Gender.Erkek)" @(Model.Gender == Domain.Enums.Gender.Erkek ? "selected" : "")>Erkek</option>
-                                <option value="@((int)Domain.Enums.Gender.Kadin)" @(Model.Gender == Domain.Enums.Gender.Kadin ? "selected" : "")>Kadin</option>
-                                <option value="@((int)Domain.Enums.Gender.Diger)" @(Model.Gender == Domain.Enums.Gender.Diger ? "selected" : "")>Belirtmek İstemiyorum</option>
+                                <option value="1" @(Model.Gender == Domain.Enums.Gender.Erkek ? "selected" : "")>Erkek</option>
+                                <option value="2" @(Model.Gender == Domain.Enums.Gender.Kadin ? "selected" : "")>Kadin</option>
+                                <option value="3" @(Model.Gender == Domain.Enums.Gender.Belirtilmemis ? "selected" : "")>Belirtmek İstemiyorum</option>
                             </select>
                         </div>
 
