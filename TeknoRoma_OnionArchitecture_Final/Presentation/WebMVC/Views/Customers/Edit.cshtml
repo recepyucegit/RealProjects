@@ -1,0 +1,196 @@
+@model Domain.Entities.Customer
+@{
+    ViewData["Title"] = $"Musteri Duzenle - {Model.FullName}";
+}
+
+@* ===================================================================================
+   TEKNOROMA - MÜŞTERİ DÜZENLEME FORMU
+   ===================================================================================
+
+   Mevcut müşteri bilgilerini düzenleme sayfası.
+
+   =================================================================================== *@
+
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h1 class="h3 mb-0">
+        <i class="bi bi-pencil me-2"></i>Musteri Duzenle
+    </h1>
+    <div>
+        <a href="/Customers/Details/@Model.Id" class="btn btn-outline-secondary me-2">
+            <i class="bi bi-arrow-left me-1"></i>Geri
+        </a>
+        <a href="/Customers/Index" class="btn btn-outline-secondary">
+            <i class="bi bi-list me-1"></i>Listeye Don
+        </a>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-lg-8">
+        <div class="card shadow-sm">
+            <div class="card-header bg-transparent">
+                <h5 class="mb-0"><i class="bi bi-person-vcard me-2"></i>Musteri Bilgileri</h5>
+            </div>
+            <div class="card-body">
+                <form method="post" action="/Customers/Edit/@Model.Id">
+                    @Html.AntiForgeryToken()
+                    <input type="hidden" name="Id" value="@Model.Id" />
+                    <input type="hidden" name="RegistrationDate" value="@Model.RegistrationDate.ToString("o")" />
+                    <input type="hidden" name="CreatedDate" value="@Model.CreatedDate.ToString("o")" />
+
+                    <div class="row g-3">
+                        <!-- Kimlik Bilgileri -->
+                        <div class="col-md-6">
+                            <label class="form-label">Ad <span class="text-danger">*</span></label>
+                            <input type="text" class="form-control" name="FirstName" value="@Model.FirstName" required maxlength="50">
+                        </div>
+
+                        <div class="col-md-6">
+                            <label class="form-label">Soyad <span class="text-danger">*</span></label>
+                            <input type="text" class="form-control" name="LastName" value="@Model.LastName" required maxlength="50">
+                        </div>
+
+                        <div class="col-md-6">
+                            <label class="form-label">TC Kimlik No <span class="text-danger">*</span></label>
+                            <input type="text" class="form-control" name="IdentityNumber" value="@Model.IdentityNumber" required
+                                   pattern="[0-9]{11}" maxlength="11">
+                            <small class="text-muted">11 haneli TC kimlik numarası</small>
+                        </div>
+
+                        <div class="col-md-6">
+                            <label class="form-label">Telefon <span class="text-danger">*</span></label>
+                            <input type="tel" class="form-control" name="Phone" value="@Model.Phone" required
+                                   pattern="[0-9]{10,11}" maxlength="11">
+                        </div>
+
+                        <!-- Kişisel Bilgiler -->
+                        <div class="col-md-6">
+                            <label class="form-label">Cinsiyet</label>
+                            <select class="form-select" name="Gender">
+                                <option value="">Secim Yapin</option>
+                                <option value="@((int)Domain.Enums.Gender.Erkek)" @(Model.Gender == Domain.Enums.Gender.Erkek ? "selected" : "")>Erkek</option>
+                                <option value="@((int)Domain.Enums.Gender.Kadin)" @(Model.Gender == Domain.Enums.Gender.Kadin ? "selected" : "")>Kadin</option>
+                                <option value="@((int)Domain.Enums.Gender.Diger)" @(Model.Gender == Domain.Enums.Gender.Diger ? "selected" : "")>Belirtmek İstemiyorum</option>
+                            </select>
+                        </div>
+
+                        <div class="col-md-6">
+                            <label class="form-label">Dogum Tarihi</label>
+                            <input type="date" class="form-control" name="BirthDate"
+                                   value="@(Model.BirthDate?.ToString("yyyy-MM-dd"))"
+                                   max="@DateTime.Now.AddYears(-18).ToString("yyyy-MM-dd")">
+                        </div>
+
+                        <!-- İletişim Bilgileri -->
+                        <div class="col-md-12">
+                            <label class="form-label">Email</label>
+                            <input type="email" class="form-control" name="Email" value="@Model.Email">
+                        </div>
+
+                        <div class="col-md-6">
+                            <label class="form-label">Sehir</label>
+                            <input type="text" class="form-control" name="City" value="@Model.City" maxlength="50">
+                        </div>
+
+                        <div class="col-md-6">
+                            <label class="form-label">Durum <span class="text-danger">*</span></label>
+                            <select class="form-select" name="IsActive" required>
+                                <option value="true" @(Model.IsActive ? "selected" : "")>Aktif</option>
+                                <option value="false" @(!Model.IsActive ? "selected" : "")>Pasif</option>
+                            </select>
+                        </div>
+
+                        <div class="col-12">
+                            <label class="form-label">Adres</label>
+                            <textarea class="form-control" name="Address" rows="3">@Model.Address</textarea>
+                        </div>
+                    </div>
+
+                    <hr class="my-4">
+
+                    <!-- Kayıt Bilgileri -->
+                    <div class="alert alert-light">
+                        <small class="text-muted">
+                            <strong>Kayit Bilgileri:</strong><br>
+                            Kayit Tarihi: @Model.RegistrationDate.ToString("dd.MM.yyyy HH:mm")<br>
+                            Olusturulma: @Model.CreatedDate.ToString("dd.MM.yyyy HH:mm")
+                            @if (Model.ModifiedDate.HasValue)
+                            {
+                                <br>
+                                <span>Son Guncelleme: @Model.ModifiedDate.Value.ToString("dd.MM.yyyy HH:mm")</span>
+                            }
+                        </small>
+                    </div>
+
+                    <div class="d-flex justify-content-between">
+                        <a href="/Customers/Details/@Model.Id" class="btn btn-outline-secondary">
+                            <i class="bi bi-x-circle me-1"></i>Iptal
+                        </a>
+                        <button type="submit" class="btn btn-primary btn-lg">
+                            <i class="bi bi-check-circle me-2"></i>Degisiklikleri Kaydet
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-lg-4">
+        <!-- Müşteri Özeti -->
+        <div class="card shadow-sm mb-3">
+            <div class="card-header bg-transparent">
+                <h5 class="mb-0"><i class="bi bi-info-circle me-2"></i>Musteri Ozeti</h5>
+            </div>
+            <div class="card-body">
+                <div class="d-flex align-items-center mb-3">
+                    <div class="bg-primary bg-opacity-10 rounded-circle p-3 me-3">
+                        <i class="bi bi-person fs-3 text-primary"></i>
+                    </div>
+                    <div>
+                        <h6 class="mb-0">@Model.FullName</h6>
+                        <small class="text-muted">@Model.IdentityNumber</small>
+                    </div>
+                </div>
+
+                @if (Model.Sales != null && Model.Sales.Any())
+                {
+                    <hr>
+                    <div class="text-center">
+                        <h4 class="text-primary mb-0">@Model.Sales.Count</h4>
+                        <small class="text-muted">Toplam Alisveris</small>
+                    </div>
+                    <div class="text-center mt-2">
+                        <h5 class="text-success mb-0">@Model.Sales.Where(s => s.Status == Domain.Enums.SaleStatus.Tamamlandi).Sum(s => s.TotalAmount).ToString("N2") TL</h5>
+                        <small class="text-muted">Toplam Harcama</small>
+                    </div>
+                }
+            </div>
+        </div>
+
+        <!-- Hızlı İşlemler -->
+        <div class="card shadow-sm">
+            <div class="card-header bg-transparent">
+                <h5 class="mb-0"><i class="bi bi-lightning me-2"></i>Hizli Islemler</h5>
+            </div>
+            <div class="card-body">
+                <div class="d-grid gap-2">
+                    <a href="/Customers/Details/@Model.Id" class="btn btn-outline-info btn-sm">
+                        <i class="bi bi-eye me-1"></i>Detaylari Gor
+                    </a>
+                    <a href="/Sales/Create?customerId=@Model.Id" class="btn btn-outline-success btn-sm">
+                        <i class="bi bi-cart-plus me-1"></i>Yeni Satis
+                    </a>
+                    <hr class="my-2">
+                    <form method="post" action="/Customers/Delete" class="d-inline">
+                        @Html.AntiForgeryToken()
+                        <input type="hidden" name="id" value="@Model.Id" />
+                        <button type="submit" class="btn btn-outline-danger btn-sm w-100"
+                                onclick="return confirm('Bu musteriyi silmek istediginize emin misiniz?')">
+                            <i class="bi bi-trash me-1"></i>Musteriyi Sil
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
