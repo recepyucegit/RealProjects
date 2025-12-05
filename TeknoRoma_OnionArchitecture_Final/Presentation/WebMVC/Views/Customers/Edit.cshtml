@@ -68,9 +68,30 @@
                             <label class="form-label">Cinsiyet</label>
                             <select class="form-select" name="Gender">
                                 <option value="">Secim Yapin</option>
-                                <option value="1" @(Model.Gender == Domain.Enums.Gender.Erkek ? "selected" : "")>Erkek</option>
-                                <option value="2" @(Model.Gender == Domain.Enums.Gender.Kadin ? "selected" : "")>Kadin</option>
-                                <option value="3" @(Model.Gender == Domain.Enums.Gender.Belirtilmemis ? "selected" : "")>Belirtmek İstemiyorum</option>
+                                @if (Model.Gender == Domain.Enums.Gender.Erkek)
+                                {
+                                    <option value="1" selected>Erkek</option>
+                                }
+                                else
+                                {
+                                    <option value="1">Erkek</option>
+                                }
+                                @if (Model.Gender == Domain.Enums.Gender.Kadin)
+                                {
+                                    <option value="2" selected>Kadin</option>
+                                }
+                                else
+                                {
+                                    <option value="2">Kadin</option>
+                                }
+                                @if (Model.Gender == Domain.Enums.Gender.Belirtilmemis)
+                                {
+                                    <option value="3" selected>Belirtmek İstemiyorum</option>
+                                }
+                                else
+                                {
+                                    <option value="3">Belirtmek İstemiyorum</option>
+                                }
                             </select>
                         </div>
 
@@ -95,8 +116,16 @@
                         <div class="col-md-6">
                             <label class="form-label">Durum <span class="text-danger">*</span></label>
                             <select class="form-select" name="IsActive" required>
-                                <option value="true" @(Model.IsActive ? "selected" : "")>Aktif</option>
-                                <option value="false" @(!Model.IsActive ? "selected" : "")>Pasif</option>
+                                @if (Model.IsActive)
+                                {
+                                    <option value="true" selected>Aktif</option>
+                                    <option value="false">Pasif</option>
+                                }
+                                else
+                                {
+                                    <option value="true">Aktif</option>
+                                    <option value="false" selected>Pasif</option>
+                                }
                             </select>
                         </div>
 
