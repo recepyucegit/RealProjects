@@ -1,0 +1,155 @@
+@model Domain.Entities.Customer
+@{
+    ViewData["Title"] = "Yeni Musteri";
+}
+
+@* ===================================================================================
+   TEKNOROMA - YENİ MÜŞTERİ KAYIT FORMU
+   ===================================================================================
+
+   Yeni müşteri kaydı oluşturma sayfası.
+
+   =================================================================================== *@
+
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h1 class="h3 mb-0">
+        <i class="bi bi-person-plus me-2"></i>@ViewData["Title"]
+    </h1>
+    <a href="/Customers/Index" class="btn btn-outline-secondary">
+        <i class="bi bi-arrow-left me-1"></i>Geri
+    </a>
+</div>
+
+<div class="row">
+    <div class="col-lg-8">
+        <div class="card shadow-sm">
+            <div class="card-header bg-transparent">
+                <h5 class="mb-0"><i class="bi bi-person-vcard me-2"></i>Musteri Bilgileri</h5>
+            </div>
+            <div class="card-body">
+                <form method="post" action="/Customers/Create">
+                    @Html.AntiForgeryToken()
+
+                    <div class="row g-3">
+                        <!-- Kimlik Bilgileri -->
+                        <div class="col-md-6">
+                            <label class="form-label">Ad <span class="text-danger">*</span></label>
+                            <input type="text" class="form-control" name="FirstName" required maxlength="50">
+                        </div>
+
+                        <div class="col-md-6">
+                            <label class="form-label">Soyad <span class="text-danger">*</span></label>
+                            <input type="text" class="form-control" name="LastName" required maxlength="50">
+                        </div>
+
+                        <div class="col-md-6">
+                            <label class="form-label">TC Kimlik No <span class="text-danger">*</span></label>
+                            <input type="text" class="form-control" name="IdentityNumber" required
+                                   pattern="[0-9]{11}" maxlength="11"
+                                   placeholder="11 haneli TC No">
+                            <small class="text-muted">11 haneli TC kimlik numarası</small>
+                        </div>
+
+                        <div class="col-md-6">
+                            <label class="form-label">Telefon <span class="text-danger">*</span></label>
+                            <input type="tel" class="form-control" name="Phone" required
+                                   pattern="[0-9]{10,11}" maxlength="11"
+                                   placeholder="05XX XXX XX XX">
+                            <small class="text-muted">Başında 0 olmadan giriniz</small>
+                        </div>
+
+                        <!-- Kişisel Bilgiler -->
+                        <div class="col-md-6">
+                            <label class="form-label">Cinsiyet</label>
+                            <select class="form-select" name="Gender">
+                                <option value="">Secim Yapin</option>
+                                <option value="@((int)Domain.Enums.Gender.Erkek)">Erkek</option>
+                                <option value="@((int)Domain.Enums.Gender.Kadin)">Kadin</option>
+                                <option value="@((int)Domain.Enums.Gender.Diger)">Belirtmek İstemiyorum</option>
+                            </select>
+                        </div>
+
+                        <div class="col-md-6">
+                            <label class="form-label">Dogum Tarihi</label>
+                            <input type="date" class="form-control" name="BirthDate"
+                                   max="@DateTime.Now.AddYears(-18).ToString("yyyy-MM-dd")">
+                            <small class="text-muted">Opsiyonel</small>
+                        </div>
+
+                        <!-- İletişim Bilgileri -->
+                        <div class="col-md-12">
+                            <label class="form-label">Email</label>
+                            <input type="email" class="form-control" name="Email"
+                                   placeholder="ornek@email.com">
+                            <small class="text-muted">Opsiyonel - Fatura gonderimi icin</small>
+                        </div>
+
+                        <div class="col-md-6">
+                            <label class="form-label">Sehir</label>
+                            <input type="text" class="form-control" name="City" maxlength="50">
+                        </div>
+
+                        <div class="col-md-6">
+                            <label class="form-label">Durum</label>
+                            <select class="form-select" name="IsActive">
+                                <option value="true" selected>Aktif</option>
+                                <option value="false">Pasif</option>
+                            </select>
+                        </div>
+
+                        <div class="col-12">
+                            <label class="form-label">Adres</label>
+                            <textarea class="form-control" name="Address" rows="3"
+                                      placeholder="Mahalle, Sokak, Bina No, Daire No"></textarea>
+                            <small class="text-muted">Opsiyonel - Teslimat adresi</small>
+                        </div>
+                    </div>
+
+                    <hr class="my-4">
+
+                    <div class="d-flex justify-content-between">
+                        <a href="/Customers/Index" class="btn btn-outline-secondary">
+                            <i class="bi bi-x-circle me-1"></i>Iptal
+                        </a>
+                        <button type="submit" class="btn btn-primary btn-lg">
+                            <i class="bi bi-check-circle me-2"></i>Musteri Kaydet
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-lg-4">
+        <div class="card shadow-sm">
+            <div class="card-header bg-transparent">
+                <h5 class="mb-0"><i class="bi bi-info-circle me-2"></i>Bilgi</h5>
+            </div>
+            <div class="card-body">
+                <h6>Zorunlu Alanlar:</h6>
+                <ul class="small mb-3">
+                    <li>Ad</li>
+                    <li>Soyad</li>
+                    <li>TC Kimlik No (11 hane)</li>
+                    <li>Telefon (10-11 hane)</li>
+                </ul>
+
+                <h6>Opsiyonel Alanlar:</h6>
+                <ul class="small mb-3">
+                    <li>Cinsiyet</li>
+                    <li>Dogum Tarihi</li>
+                    <li>Email</li>
+                    <li>Sehir</li>
+                    <li>Adres</li>
+                </ul>
+
+                <div class="alert alert-info mb-0">
+                    <small>
+                        <i class="bi bi-lightbulb me-1"></i>
+                        <strong>İpucu:</strong> Hızlı kayıt için sadece zorunlu alanları doldurun.
+                    </small>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,272 @@
+@model Domain.Entities.Customer
+@{
+    ViewData["Title"] = $"Musteri Detay - {Model.FullName}";
+}
+
+@* ===================================================================================
+   TEKNOROMA - MÜŞTERİ DETAY SAYFASI
+   ===================================================================================
+
+   Müşteri bilgilerini ve satış geçmişini gösteren sayfa.
+
+   =================================================================================== *@
+
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h1 class="h3 mb-0">
+        <i class="bi bi-person me-2"></i>Musteri Detay
+    </h1>
+    <div>
+        <a href="/Customers/Index" class="btn btn-outline-secondary me-2">
+            <i class="bi bi-arrow-left me-1"></i>Geri
+        </a>
+        <a href="/Customers/Edit/@Model.Id" class="btn btn-primary">
+            <i class="bi bi-pencil me-1"></i>Duzenle
+        </a>
+    </div>
+</div>
+
+<!-- Durum Badge -->
+<div class="mb-4">
+    @{
+        var statusBadge = Model.IsActive ? "bg-success" : "bg-secondary";
+        var statusText = Model.IsActive ? "Aktif Musteri" : "Pasif Musteri";
+    }
+    <span class="badge @statusBadge fs-6">
+        <i class="bi bi-circle-fill me-1"></i>@statusText
+    </span>
+</div>
+
+<!-- Müşteri Bilgileri -->
+<div class="row g-4 mb-4">
+    <div class="col-md-6">
+        <div class="card shadow-sm h-100">
+            <div class="card-header bg-transparent">
+                <h5 class="mb-0"><i class="bi bi-person-vcard me-2"></i>Kisisel Bilgiler</h5>
+            </div>
+            <div class="card-body">
+                <table class="table table-borderless mb-0">
+                    <tr>
+                        <th width="40%">Ad Soyad:</th>
+                        <td><strong>@Model.FullName</strong></td>
+                    </tr>
+                    <tr>
+                        <th>TC Kimlik No:</th>
+                        <td><code>@Model.IdentityNumber</code></td>
+                    </tr>
+                    @if (Model.Gender.HasValue)
+                    {
+                        <tr>
+                            <th>Cinsiyet:</th>
+                            <td>
+                                @{
+                                    var genderText = Model.Gender switch
+                                    {
+                                        Domain.Enums.Gender.Erkek => "Erkek",
+                                        Domain.Enums.Gender.Kadin => "Kadın",
+                                        Domain.Enums.Gender.Diger => "Belirtilmemiş",
+                                        _ => "-"
+                                    };
+                                }
+                                @genderText
+                            </td>
+                        </tr>
+                    }
+                    @if (Model.BirthDate.HasValue)
+                    {
+                        <tr>
+                            <th>Dogum Tarihi:</th>
+                            <td>
+                                @Model.BirthDate.Value.ToString("dd.MM.yyyy")
+                                @if (Model.Age.HasValue)
+                                {
+                                    <span class="text-muted">(@Model.Age yaş)</span>
+                                }
+                            </td>
+                        </tr>
+                    }
+                    <tr>
+                        <th>Kayit Tarihi:</th>
+                        <td>@Model.RegistrationDate.ToString("dd.MM.yyyy HH:mm")</td>
+                    </tr>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-6">
+        <div class="card shadow-sm h-100">
+            <div class="card-header bg-transparent">
+                <h5 class="mb-0"><i class="bi bi-telephone me-2"></i>Iletisim Bilgileri</h5>
+            </div>
+            <div class="card-body">
+                <table class="table table-borderless mb-0">
+                    <tr>
+                        <th width="40%">Telefon:</th>
+                        <td>
+                            <a href="tel:@Model.Phone" class="text-decoration-none">
+                                <i class="bi bi-telephone me-1"></i>@Model.Phone
+                            </a>
+                        </td>
+                    </tr>
+                    <tr>
+                        <th>Email:</th>
+                        <td>
+                            @if (!string.IsNullOrEmpty(Model.Email))
+                            {
+                                <a href="mailto:@Model.Email" class="text-decoration-none">
+                                    <i class="bi bi-envelope me-1"></i>@Model.Email
+                                </a>
+                            }
+                            else
+                            {
+                                <span class="text-muted">Kayitli degil</span>
+                            }
+                        </td>
+                    </tr>
+                    <tr>
+                        <th>Sehir:</th>
+                        <td>
+                            @if (!string.IsNullOrEmpty(Model.City))
+                            {
+                                <span class="badge bg-light text-dark">@Model.City</span>
+                            }
+                            else
+                            {
+                                <span class="text-muted">Kayitli degil</span>
+                            }
+                        </td>
+                    </tr>
+                    @if (!string.IsNullOrEmpty(Model.Address))
+                    {
+                        <tr>
+                            <th>Adres:</th>
+                            <td>@Model.Address</td>
+                        </tr>
+                    }
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Satış Geçmişi -->
+@if (Model.Sales != null && Model.Sales.Any())
+{
+    <div class="card shadow-sm mb-4">
+        <div class="card-header bg-transparent">
+            <h5 class="mb-0"><i class="bi bi-cart-check me-2"></i>Satis Gecmisi</h5>
+        </div>
+        <div class="card-body">
+            <div class="row g-3 mb-3">
+                <div class="col-md-4">
+                    <div class="text-center">
+                        <h4 class="text-primary mb-0">@Model.Sales.Count</h4>
+                        <small class="text-muted">Toplam Alisveris</small>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="text-center">
+                        <h4 class="text-success mb-0">@Model.Sales.Where(s => s.Status == Domain.Enums.SaleStatus.Tamamlandi).Sum(s => s.TotalAmount).ToString("N2") TL</h4>
+                        <small class="text-muted">Toplam Harcama</small>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="text-center">
+                        <h4 class="text-info mb-0">
+                            @if (Model.Sales.Any())
+                            {
+                                @Model.Sales.Max(s => s.SaleDate).ToString("dd.MM.yyyy")
+                            }
+                            else
+                            {
+                                <span>-</span>
+                            }
+                        </h4>
+                        <small class="text-muted">Son Alisveris</small>
+                    </div>
+                </div>
+            </div>
+
+            <div class="table-responsive">
+                <table class="table table-hover mb-0">
+                    <thead class="table-light">
+                        <tr>
+                            <th>Fis No</th>
+                            <th>Tarih</th>
+                            <th>Tutar</th>
+                            <th>Durum</th>
+                            <th>Detay</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var sale in Model.Sales.OrderByDescending(s => s.SaleDate).Take(10))
+                        {
+                            var statusBadgeClass = sale.Status switch
+                            {
+                                Domain.Enums.SaleStatus.Tamamlandi => "bg-success",
+                                Domain.Enums.SaleStatus.Beklemede => "bg-warning text-dark",
+                                Domain.Enums.SaleStatus.Hazirlaniyor => "bg-info",
+                                Domain.Enums.SaleStatus.Iptal => "bg-danger",
+                                _ => "bg-secondary"
+                            };
+
+                            <tr>
+                                <td><code>@sale.SaleNumber</code></td>
+                                <td>@sale.SaleDate.ToString("dd.MM.yyyy HH:mm")</td>
+                                <td class="fw-medium">@sale.TotalAmount.ToString("N2") TL</td>
+                                <td>
+                                    <span class="badge @statusBadgeClass">
+                                        @sale.Status.ToString()
+                                    </span>
+                                </td>
+                                <td>
+                                    <a href="/Sales/Details/@sale.Id" class="btn btn-sm btn-outline-primary">
+                                        <i class="bi bi-eye"></i> Goruntule
+                                    </a>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+
+            @if (Model.Sales.Count > 10)
+            {
+                <div class="text-center mt-3">
+                    <small class="text-muted">İlk 10 satış gösteriliyor. Tümünü görmek için satış sayfasını ziyaret edin.</small>
+                </div>
+            }
+        </div>
+    </div>
+}
+else
+{
+    <div class="alert alert-info">
+        <i class="bi bi-info-circle me-2"></i>
+        Bu müşteriye ait henüz satış kaydı bulunmamaktadır.
+    </div>
+}
+
+<!-- İşlemler -->
+<div class="card shadow-sm">
+    <div class="card-header bg-transparent">
+        <h5 class="mb-0"><i class="bi bi-gear me-2"></i>Islemler</h5>
+    </div>
+    <div class="card-body">
+        <div class="d-flex gap-2">
+            <a href="/Customers/Edit/@Model.Id" class="btn btn-primary">
+                <i class="bi bi-pencil me-1"></i>Bilgileri Duzenle
+            </a>
+            <a href="/Sales/Create?customerId=@Model.Id" class="btn btn-success">
+                <i class="bi bi-cart-plus me-1"></i>Yeni Satis Yap
+            </a>
+            <form method="post" action="/Customers/Delete" class="d-inline">
+                @Html.AntiForgeryToken()
+                <input type="hidden" name="id" value="@Model.Id" />
+                <button type="submit" class="btn btn-danger" onclick="return confirm('Bu musteriyi silmek istediginize emin misiniz?')">
+                    <i class="bi bi-trash me-1"></i>Musteriyi Sil
+                </button>
+            </form>
+        </div>
+    </div>
+</div>
